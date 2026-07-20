@@ -1,0 +1,36 @@
+
+PLAY [Validate policy from the client] *****************************************
+
+TASK [Test client to server reachability] **************************************
+ok: [h-client]
+
+TASK [Assert client can reach server] ******************************************
+ok: [h-client] => {
+    "changed": false,
+    "msg": "PASS: client can reach server"
+}
+
+TASK [Test client to management reachability] **********************************
+ok: [h-client]
+
+TASK [Assert client cannot reach management] ***********************************
+ok: [h-client] => {
+    "changed": false,
+    "msg": "PASS: client is denied access to management"
+}
+
+PLAY [Validate return path from the server] ************************************
+
+TASK [Test server to client reachability] **************************************
+ok: [h-server]
+
+TASK [Assert server can reach client] ******************************************
+ok: [h-server] => {
+    "changed": false,
+    "msg": "PASS: server can reach client"
+}
+
+PLAY RECAP *********************************************************************
+h-client                   : ok=4    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+h-server                   : ok=2    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+

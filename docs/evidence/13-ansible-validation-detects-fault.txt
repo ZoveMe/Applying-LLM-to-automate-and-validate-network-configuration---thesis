@@ -1,0 +1,26 @@
+
+PLAY [Validate policy from the client] *****************************************
+
+TASK [Test client to server reachability] **************************************
+ok: [h-client]
+
+TASK [Assert client can reach server] ******************************************
+ok: [h-client] => {
+    "changed": false,
+    "msg": "PASS: client can reach server"
+}
+
+TASK [Test client to management reachability] **********************************
+ok: [h-client]
+
+TASK [Assert client cannot reach management] ***********************************
+fatal: [h-client]: FAILED! => {
+    "assertion": "client_to_management.rc != 0",
+    "changed": false,
+    "evaluated_to": false,
+    "msg": "FAIL: client can unexpectedly reach management"
+}
+
+PLAY RECAP *********************************************************************
+h-client                   : ok=3    changed=0    unreachable=0    failed=1    skipped=0    rescued=0    ignored=0   
+
