@@ -1,0 +1,23 @@
+
+PLAY [Apply deterministic network security policy] *****************************
+
+TASK [Ensure iptables is available] ********************************************
+ok: [r1]
+
+TASK [Ensure client to management deny rule is present] ************************
+changed: [r1]
+
+TASK [Read the active forwarding policy] ***************************************
+ok: [r1]
+
+TASK [Display the active forwarding policy] ************************************
+ok: [r1] => {
+    "forwarding_policy.stdout_lines": [
+        "-P FORWARD ACCEPT",
+        "-A FORWARD -s 10.0.1.0/24 -d 10.0.99.0/24 -j DROP"
+    ]
+}
+
+PLAY RECAP *********************************************************************
+r1                         : ok=4    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+

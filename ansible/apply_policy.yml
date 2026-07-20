@@ -1,0 +1,44 @@
+---
+- name: Apply deterministic network security policy
+  hosts: r1
+  gather_facts: false
+
+  tasks:
+    - name: Ensure iptables is available
+      ansible.builtin.raw: |
+        set -eu
+        if command -v iptables >/dev/null 2>&1; then
+          echo IPTABLES_PRESENT
+        else
+          apk add --no-cache iptables >/dev/null
+          echo IPTABLES_INSTALLED
+        fi
+      register: iptables_result
+      changed_when: "'IPTABLES_INSTALLED' in iptables_result.stdout"
+
+    - name: Ensure client to management deny rule is present
+      ansible.builtin.raw: |
+        set -eu
+        if iptables -C FORWARD \
+          -s {{ segment_client }} \
+          -d {{ segment_mgmt }} \
+          -j DROP 2>/dev/null; then
+          echo POLICY_PRESENT
+        else
+          iptables -A FORWARD \
+            -s {{ segment_client }} \
+            -d {{ segment_mgmt }} \
+            -j DROP
+          echo POLICY_ADDED
+        fi
+      register: policy_result
+      changed_when: "'POLICY_ADDED' in policy_result.stdout"
+
+    - name: Read the active forwarding policy
+      ansible.builtin.raw: iptables -S FORWARD
+      register: forwarding_policy
+      changed_when: false
+
+    - name: Display the active forwarding policy
+      ansible.builtin.debug:
+        var: forwarding_policy.stdout_lines
