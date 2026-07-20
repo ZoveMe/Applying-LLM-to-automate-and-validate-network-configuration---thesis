@@ -1,0 +1,23 @@
+---
+- name: Collect state from FRRouting routers
+  hosts: routers
+  gather_facts: false
+
+  tasks:
+    - name: Collect IPv4 routing table
+      ansible.builtin.raw: vtysh -c "show ip route"
+      register: routing_table
+      changed_when: false
+
+    - name: Display IPv4 routing table
+      ansible.builtin.debug:
+        var: routing_table.stdout_lines
+
+    - name: Collect running configuration
+      ansible.builtin.raw: vtysh -c "show running-config"
+      register: running_configuration
+      changed_when: false
+
+    - name: Display running configuration
+      ansible.builtin.debug:
+        var: running_configuration.stdout_lines

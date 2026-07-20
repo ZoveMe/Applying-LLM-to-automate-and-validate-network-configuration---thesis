@@ -1,0 +1,113 @@
+
+PLAY [Collect state from FRRouting routers] ************************************
+
+TASK [Collect IPv4 routing table] **********************************************
+ok: [r1]
+ok: [r2]
+
+TASK [Display IPv4 routing table] **********************************************
+ok: [r1] => {
+    "routing_table.stdout_lines": [
+        "Codes: K - kernel route, C - connected, S - static, R - RIP,",
+        "       O - OSPF, I - IS-IS, B - BGP, E - EIGRP, N - NHRP,",
+        "       T - Table, v - VNC, V - VNC-Direct, A - Babel, F - PBR,",
+        "       f - OpenFabric,",
+        "       > - selected route, * - FIB route, q - queued, r - rejected, b - backup",
+        "       t - trapped, o - offload failure",
+        "",
+        "K>* 0.0.0.0/0 [0/0] via 172.20.20.1, eth0, 01:31:25",
+        "C>* 10.0.1.0/24 is directly connected, eth1, 01:31:25",
+        "S>* 10.0.2.0/24 [1/0] via 10.0.12.2, eth2, weight 1, 01:31:25",
+        "C>* 10.0.12.0/30 is directly connected, eth2, 01:31:25",
+        "S>* 10.0.99.0/24 [1/0] via 10.0.12.2, eth2, weight 1, 01:31:25",
+        "C>* 172.20.20.0/24 is directly connected, eth0, 01:31:25"
+    ]
+}
+ok: [r2] => {
+    "routing_table.stdout_lines": [
+        "Codes: K - kernel route, C - connected, S - static, R - RIP,",
+        "       O - OSPF, I - IS-IS, B - BGP, E - EIGRP, N - NHRP,",
+        "       T - Table, v - VNC, V - VNC-Direct, A - Babel, F - PBR,",
+        "       f - OpenFabric,",
+        "       > - selected route, * - FIB route, q - queued, r - rejected, b - backup",
+        "       t - trapped, o - offload failure",
+        "",
+        "K>* 0.0.0.0/0 [0/0] via 172.20.20.1, eth0, 01:31:25",
+        "S>* 10.0.1.0/24 [1/0] via 10.0.12.1, eth1, weight 1, 01:31:25",
+        "C>* 10.0.2.0/24 is directly connected, eth2, 01:31:25",
+        "C>* 10.0.12.0/30 is directly connected, eth1, 01:31:25",
+        "C>* 10.0.99.0/24 is directly connected, eth3, 01:31:25",
+        "C>* 172.20.20.0/24 is directly connected, eth0, 01:31:25"
+    ]
+}
+
+TASK [Collect running configuration] *******************************************
+ok: [r1]
+ok: [r2]
+
+TASK [Display running configuration] *******************************************
+ok: [r1] => {
+    "running_configuration.stdout_lines": [
+        "Building configuration...",
+        "",
+        "Current configuration:",
+        "!",
+        "frr version 8.4_git",
+        "frr defaults traditional",
+        "hostname r1",
+        "domainname localdomain",
+        "no ipv6 forwarding",
+        "!",
+        "ip route 10.0.2.0/24 10.0.12.2",
+        "ip route 10.0.99.0/24 10.0.12.2",
+        "!",
+        "interface eth1",
+        " description client-segment",
+        " ip address 10.0.1.1/24",
+        "exit",
+        "!",
+        "interface eth2",
+        " description link-to-r2",
+        " ip address 10.0.12.1/30",
+        "exit",
+        "!",
+        "end"
+    ]
+}
+ok: [r2] => {
+    "running_configuration.stdout_lines": [
+        "Building configuration...",
+        "",
+        "Current configuration:",
+        "!",
+        "frr version 8.4_git",
+        "frr defaults traditional",
+        "hostname r2",
+        "domainname localdomain",
+        "no ipv6 forwarding",
+        "!",
+        "ip route 10.0.1.0/24 10.0.12.1",
+        "!",
+        "interface eth1",
+        " description link-to-r1",
+        " ip address 10.0.12.2/30",
+        "exit",
+        "!",
+        "interface eth2",
+        " description server-segment",
+        " ip address 10.0.2.1/24",
+        "exit",
+        "!",
+        "interface eth3",
+        " description management-segment",
+        " ip address 10.0.99.1/24",
+        "exit",
+        "!",
+        "end"
+    ]
+}
+
+PLAY RECAP *********************************************************************
+r1                         : ok=4    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+r2                         : ok=4    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+
