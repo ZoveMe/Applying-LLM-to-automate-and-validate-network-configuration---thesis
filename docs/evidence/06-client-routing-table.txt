@@ -1,0 +1,5 @@
+default via 172.20.20.1 dev eth0 
+10.0.1.0/24 dev eth1 scope link  src 10.0.1.10 
+10.0.2.0/24 via 10.0.1.1 dev eth1 
+10.0.99.0/24 via 10.0.1.1 dev eth1 
+172.20.20.0/24 dev eth0 scope link  src 172.20.20.5 
