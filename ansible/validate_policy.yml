@@ -1,0 +1,49 @@
+---
+- name: Validate policy from the client
+  hosts: h-client
+  gather_facts: false
+
+  tasks:
+    - name: Test client to server reachability
+      ansible.builtin.raw: ping -c 1 -W 2 {{ server_ip }}
+      register: client_to_server
+      changed_when: false
+      failed_when: false
+
+    - name: Assert client can reach server
+      ansible.builtin.assert:
+        that:
+          - client_to_server.rc == 0
+        success_msg: "PASS: client can reach server"
+        fail_msg: "FAIL: client cannot reach server"
+
+    - name: Test client to management reachability
+      ansible.builtin.raw: ping -c 1 -W 2 {{ mgmt_ip }}
+      register: client_to_management
+      changed_when: false
+      failed_when: false
+
+    - name: Assert client cannot reach management
+      ansible.builtin.assert:
+        that:
+          - client_to_management.rc != 0
+        success_msg: "PASS: client is denied access to management"
+        fail_msg: "FAIL: client can unexpectedly reach management"
+
+- name: Validate return path from the server
+  hosts: h-server
+  gather_facts: false
+
+  tasks:
+    - name: Test server to client reachability
+      ansible.builtin.raw: ping -c 1 -W 2 {{ client_ip }}
+      register: server_to_client
+      changed_when: false
+      failed_when: false
+
+    - name: Assert server can reach client
+      ansible.builtin.assert:
+        that:
+          - server_to_client.rc == 0
+        success_msg: "PASS: server can reach client"
+        fail_msg: "FAIL: server cannot reach client"
