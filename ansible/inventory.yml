@@ -1,0 +1,28 @@
+# Basic inventory for the thesis lab.
+# Ansible automation is built out properly in Week 3. For now this just records
+# the nodes and the segment facts the playbooks will use.
+#
+# In Week 3 we connect to the routers either via the community.docker connection
+# plugin (ansible_connection: community.docker.docker, talking to the container
+# names below) or via SSH if we enable it on the FRR nodes.
+
+all:
+  children:
+    routers:
+      hosts:
+        r1:
+          clab_container: clab-thesis-net-r1
+        r2:
+          clab_container: clab-thesis-net-r2
+      vars:
+        segment_client: 10.0.1.0/24
+        segment_server: 10.0.2.0/24
+        segment_mgmt: 10.0.99.0/24
+    lab_hosts:
+      hosts:
+        h-client:
+          clab_container: clab-thesis-net-h-client
+        h-server:
+          clab_container: clab-thesis-net-h-server
+        h-mgmt:
+          clab_container: clab-thesis-net-h-mgmt

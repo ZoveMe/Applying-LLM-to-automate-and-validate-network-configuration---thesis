@@ -1,0 +1,7 @@
+=== Validating network state against intended policy ===
+PASS | client -> server (web)           expected=reachable   got=reachable
+PASS | client -> management (denied)    expected=unreachable got=unreachable
+PASS | server -> client (return)        expected=reachable   got=reachable
+-------------------------------------------------------
+Passed: 3   Failed: 0
+RESULT: network MATCHES the intended policy.

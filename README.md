@@ -1,0 +1,91 @@
+# thesis-net — LLM-assisted network configuration & validation (lab)
+
+Bachelor thesis practical environment for:
+**„Примена на големи јазични модели за автоматизација и валидација на мрежни конфигурации".**
+
+This repo holds the reproducible lab. The whole topology is code, so anyone
+(including your committee) can rebuild it from these files.
+
+## What's here
+
+```
+thesis-net/
+├── topology.clab.yml        # Containerlab topology: 2 routers, 3 segments, 3 hosts
+├── configs/
+│   ├── daemons              # FRR daemons file (shared by r1 and r2)
+│   ├── r1/frr.conf          # r1 routing config
+│   └── r2/frr.conf          # r2 routing config
+├── policies/
+│   ├── apply-policy.sh      # apply intended ACL (client -> management DENY)
+│   └── remove-policy.sh     # remove it (for fault-injection experiments)
+├── verify.sh                # reachability check vs intended policy (validation preview)
+├── ansible/
+│   └── inventory.yml        # inventory stub (built out in Week 3)
+└── docs/
+    ├── thesis_outline.md    # research questions, scope, chapter outline (Macedonian)
+    └── sources.md           # starter bibliography
+```
+
+## The lab
+
+```
+  client 10.0.1.0/24                         server 10.0.2.0/24
+  h-client(.10) ── r1 ──[10.0.12.0/30]── r2 ── h-server(.10)
+                                           └─── h-mgmt(.10)
+                                         management 10.0.99.0/24
+```
+
+Intended access policy:
+- client → server: **allowed** (web)
+- client → management: **denied**
+- server → client: allowed (return path)
+
+## Prerequisites
+
+- Docker
+- Containerlab — install: `bash -c "$(curl -sL https://get.containerlab.dev)"`
+- (later) Ansible and Ollama — only needed from Week 3/4
+
+## Run it
+
+From inside the `thesis-net/` folder:
+
+```bash
+# 1. deploy the lab
+sudo clab deploy -t topology.clab.yml
+
+# 2. apply the intended access policy
+bash policies/apply-policy.sh
+
+# 3. validate the network against the policy
+bash verify.sh
+```
+
+Expected result: all three checks PASS → "network MATCHES the intended policy."
+
+Try the fault-injection idea right away:
+
+```bash
+bash policies/remove-policy.sh   # break the policy
+bash verify.sh                   # the client->management check should now FAIL
+bash policies/apply-policy.sh    # restore it
+```
+
+Tear down when done: `sudo clab destroy -t topology.clab.yml`
+
+## First-deploy notes (read if something doesn't work)
+
+Containerlab + container images vary slightly between versions, so the first
+deploy sometimes needs a small nudge. Common ones:
+
+- **Host IPs/routes didn't apply** (a host `exec` raced the interface creation):
+  re-run `sudo clab deploy -t topology.clab.yml`, or set them by hand, e.g.
+  `docker exec clab-thesis-net-h-client ip addr add 10.0.1.10/24 dev eth1`.
+- **Router didn't pick up its config**: check it with
+  `docker exec -it clab-thesis-net-r1 vtysh -c "show ip route"` and
+  `... -c "show interface brief"`.
+- **`apply-policy.sh` can't install iptables**: the lab's management network
+  needs outbound internet for `apk add`. If it's blocked, tell me your setup
+  and we'll switch to an image that ships iptables.
+
+Paste any error output and I'll help you fix it.

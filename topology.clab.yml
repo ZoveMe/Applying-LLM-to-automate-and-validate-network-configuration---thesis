@@ -1,0 +1,52 @@
+name: thesis-net
+
+# Bachelor thesis lab — LLM-assisted network configuration & validation
+# Topology:
+#   h-client (10.0.1.10) --- r1 --- r2 --- h-server (10.0.2.10)
+#                                     \---- h-mgmt   (10.0.99.10)
+# Segments:
+#   client     10.0.1.0/24
+#   server     10.0.2.0/24
+#   management 10.0.99.0/24
+# Transit link r1<->r2: 10.0.12.0/30
+
+topology:
+  nodes:
+    r1:
+      kind: linux
+      image: frrouting/frr:latest
+      binds:
+        - configs/r1/frr.conf:/etc/frr/frr.conf
+        - configs/daemons:/etc/frr/daemons
+    r2:
+      kind: linux
+      image: frrouting/frr:latest
+      binds:
+        - configs/r2/frr.conf:/etc/frr/frr.conf
+        - configs/daemons:/etc/frr/daemons
+
+    h-client:
+      kind: linux
+      image: alpine:latest
+      exec:
+        - ip addr add 10.0.1.10/24 dev eth1
+        - ip route add 10.0.2.0/24 via 10.0.1.1
+        - ip route add 10.0.99.0/24 via 10.0.1.1
+    h-server:
+      kind: linux
+      image: alpine:latest
+      exec:
+        - ip addr add 10.0.2.10/24 dev eth1
+        - ip route add 10.0.1.0/24 via 10.0.2.1
+    h-mgmt:
+      kind: linux
+      image: alpine:latest
+      exec:
+        - ip addr add 10.0.99.10/24 dev eth1
+        - ip route add 10.0.1.0/24 via 10.0.99.1
+
+  links:
+    - endpoints: ["h-client:eth1", "r1:eth1"]
+    - endpoints: ["r1:eth2", "r2:eth1"]
+    - endpoints: ["r2:eth2", "h-server:eth1"]
+    - endpoints: ["r2:eth3", "h-mgmt:eth1"]

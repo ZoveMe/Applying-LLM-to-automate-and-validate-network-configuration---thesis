@@ -1,0 +1,11 @@
+# Generated Containerlab directory
+/clab-*/
+
+# Secrets and environments
+.env
+.venv/
+__pycache__/
+*.pyc
+
+# Temporary logs
+*.log
