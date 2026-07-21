@@ -1,0 +1,18 @@
+{
+  "rationale": "Configure a route from r1 to the server segment using r1's own transit address.",
+  "static_routes": [
+    {
+      "node": "r1",
+      "prefix": "10.0.2.0/24",
+      "next_hop": "10.0.12.1"
+    }
+  ],
+  "access_policy": [
+    {
+      "node": "r1",
+      "src": "10.0.1.0/24",
+      "dst": "10.0.99.0/24",
+      "action": "deny"
+    }
+  ]
+}

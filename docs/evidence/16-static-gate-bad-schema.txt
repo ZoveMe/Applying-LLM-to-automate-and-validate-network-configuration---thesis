@@ -1,0 +1,4 @@
+FAIL | schema   | suggestion conforms to ConfigSuggestion schema  [1 validation error for ConfigSuggestion]
+------------------------------------------------------------------------
+VERDICT: REJECT  (passed=0, failed=1)
+Gate exit code: 1

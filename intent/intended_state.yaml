@@ -1,0 +1,84 @@
+# intended_state.yaml — formal definition of the network's INTENDED state.
+# Single source of truth for BOTH validators:
+#   - validation/static_gate.py       (pre-deployment: checks a proposed suggestion)
+#   - validation/dynamic_validate.py  (post-deployment: checks the running network)
+# In thesis terms: this file is the machine-readable "намера" (intent).
+
+lab: thesis-net
+
+segments:
+  client:
+    subnet: 10.0.1.0/24
+    gateway: 10.0.1.1
+    host: 10.0.1.10
+  server:
+    subnet: 10.0.2.0/24
+    gateway: 10.0.2.1
+    host: 10.0.2.10
+  management:
+    subnet: 10.0.99.0/24
+    gateway: 10.0.99.1
+    host: 10.0.99.10
+
+transit:
+  subnet: 10.0.12.0/30
+  r1: 10.0.12.1
+  r2: 10.0.12.2
+
+# ---- Dynamic checks: expected data-plane behavior (reachability matrix) ----
+# method: ping (default) or tcp (uses busybox wget; see README for enabling a
+# tiny web server on h-server so the tcp check is meaningful).
+reachability:
+  - id: R1
+    src: h-client
+    dst: 10.0.2.10
+    expect: reachable
+    method: ping
+    why: "client -> server is allowed (web access)"
+  - id: R2
+    src: h-client
+    dst: 10.0.99.10
+    expect: unreachable
+    method: ping
+    why: "client -> management is denied by policy"
+  - id: R3
+    src: h-server
+    dst: 10.0.1.10
+    expect: reachable
+    method: ping
+    why: "server -> client return path"
+
+# ---- Dynamic checks: expected control-plane / config facts ----
+config_facts:
+  - id: C1
+    node: r1
+    kind: iptables_rule
+    match: "-s 10.0.1.0/24 -d 10.0.99.0/24 -j DROP"
+    why: "deny rule present in r1 FORWARD chain"
+  - id: C2
+    node: r1
+    kind: route
+    prefix: 10.0.2.0/24
+    via: 10.0.12.2
+    why: "r1 reaches server segment via transit"
+  - id: C3
+    node: r1
+    kind: route
+    prefix: 10.0.99.0/24
+    via: 10.0.12.2
+    why: "r1 reaches management segment via transit"
+  - id: C4
+    node: r2
+    kind: route
+    prefix: 10.0.1.0/24
+    via: 10.0.12.1
+    why: "r2 reaches client segment via transit"
+
+# ---- Static-gate constraints: what any PROPOSED config must respect ----
+policy_rules:
+  must_deny:
+    - src: 10.0.1.0/24
+      dst: 10.0.99.0/24
+  must_allow:
+    - src: 10.0.1.0/24
+      dst: 10.0.2.0/24

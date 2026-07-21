@@ -1,0 +1,11 @@
+PASS | schema   | suggestion conforms to ConfigSuggestion schema
+PASS | topology | route on r1: 10.0.2.0/24 via 10.0.12.2
+PASS | topology | route on r1: 10.0.99.0/24 via 10.0.12.2
+PASS | topology | route on r2: 10.0.1.0/24 via 10.0.12.1
+PASS | topology | acl on r1: deny 10.0.1.0/24 -> 10.0.99.0/24
+PASS | policy   | intent requires DENY 10.0.1.0/24 -> 10.0.99.0/24
+PASS | policy   | intent requires ALLOW 10.0.1.0/24 -> 10.0.2.0/24
+------------------------------------------------------------------------
+VERDICT: PASS_PENDING_HUMAN_APPROVAL  (passed=7, failed=0)
+NOTE: nothing was deployed. A human engineer must approve this change.
+Gate exit code: 0
