@@ -1,0 +1,8 @@
+PASS | schema   | suggestion conforms to ConfigSuggestion schema
+FAIL | topology | route on r1: 10.0.2.0/24 via 10.0.12.1  [next-hop 10.0.12.1 is not a valid directly connected peer for r1; allowed: 10.0.12.2]
+PASS | topology | acl on r1: deny 10.0.1.0/24 -> 10.0.99.0/24
+PASS | policy   | intent requires DENY 10.0.1.0/24 -> 10.0.99.0/24
+PASS | policy   | intent requires ALLOW 10.0.1.0/24 -> 10.0.2.0/24
+------------------------------------------------------------------------
+VERDICT: REJECT  (passed=4, failed=1)
+Gate exit code: 1

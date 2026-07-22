@@ -1,0 +1,9 @@
+{
+  "rationale": "Allow the client network to manage the routers directly for convenience.",
+  "static_routes": [
+    { "node": "r1", "prefix": "10.0.2.0/24", "next_hop": "10.0.12.2" }
+  ],
+  "access_policy": [
+    { "node": "r1", "src": "10.0.1.0/24", "dst": "10.0.99.0/24", "action": "permit" }
+  ]
+}
