@@ -1,0 +1,25 @@
+Captured: 2026-07-22T17:43:25+02:00
+Branch: main
+Manufacturer: 
+Model: 
+
+=== CPU ===
+CPU(s):                               12
+Model name:                           13th Gen Intel(R) Core(TM) i7-13650HX
+Thread(s) per core:                   2
+Core(s) per socket:                   6
+
+=== RAM ===
+               total        used        free      shared  buff/cache   available
+Mem:            15Gi       417Mi        14Gi       3.0Mi       269Mi        14Gi
+Swap:          4.0Gi          0B       4.0Gi
+
+=== NVIDIA GPU ===
+NVIDIA GeForce RTX 5060 Laptop GPU, 8151 MiB, 595.95
+
+=== Storage ===
+Filesystem      Size  Used Avail Use% Mounted on
+C:\             953G  607G  347G  64% /mnt/c
+
+=== WSL kernel ===
+6.6.87.2-microsoft-standard-WSL2

@@ -1,0 +1,10 @@
+Captured: 2026-07-22T20:04:29+02:00
+Git commit: 2a93e7eacb9bfba5411bbc3aed41fd7c87f7104c
+Branch: main
+
+ollama version is 0.32.1
+NAME                                ID              SIZE      MODIFIED    
+qwen3:4b-instruct                   0edcdef34593    2.5 GB    2 hours ago    
+qwen2.5-coder:7b-instruct-q4_K_M    dae161e27b0e    4.7 GB    2 hours ago    
+
+NVIDIA GeForce RTX 5060 Laptop GPU, 8151 MiB, 595.95
