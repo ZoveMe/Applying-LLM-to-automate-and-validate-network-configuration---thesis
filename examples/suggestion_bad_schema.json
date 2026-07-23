@@ -1,10 +1,21 @@
 {
   "rationale": "Standard connectivity plus a VLAN assignment for the client ports.",
+  "decision": "PROPOSE",
+  "reason_code": "ACTIONABLE_CHANGE",
   "static_routes": [
-    { "node": "r1", "prefix": "10.0.2.0/24", "next_hop": "10.0.12.2" }
+    {
+      "node": "r1",
+      "prefix": "10.0.2.0/24",
+      "next_hop": "10.0.12.2"
+    }
   ],
   "access_policy": [
-    { "node": "r1", "src": "10.0.1.0/24", "dst": "10.0.99.0/24", "action": "deny" }
+    {
+      "node": "r1",
+      "src": "10.0.1.0/24",
+      "dst": "10.0.99.0/24",
+      "action": "deny"
+    }
   ],
   "vlan": 100
 }

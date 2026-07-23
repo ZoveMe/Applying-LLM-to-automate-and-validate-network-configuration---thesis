@@ -1,11 +1,30 @@
 {
   "rationale": "Clients in 10.0.1.0/24 must reach the web server segment 10.0.2.0/24 via the transit link, while access to the management segment 10.0.99.0/24 is explicitly denied on r1. Return routing on r2 points back to the client segment.",
+  "decision": "PROPOSE",
+  "reason_code": "ACTIONABLE_CHANGE",
   "static_routes": [
-    { "node": "r1", "prefix": "10.0.2.0/24", "next_hop": "10.0.12.2" },
-    { "node": "r1", "prefix": "10.0.99.0/24", "next_hop": "10.0.12.2" },
-    { "node": "r2", "prefix": "10.0.1.0/24", "next_hop": "10.0.12.1" }
+    {
+      "node": "r1",
+      "prefix": "10.0.2.0/24",
+      "next_hop": "10.0.12.2"
+    },
+    {
+      "node": "r1",
+      "prefix": "10.0.99.0/24",
+      "next_hop": "10.0.12.2"
+    },
+    {
+      "node": "r2",
+      "prefix": "10.0.1.0/24",
+      "next_hop": "10.0.12.1"
+    }
   ],
   "access_policy": [
-    { "node": "r1", "src": "10.0.1.0/24", "dst": "10.0.99.0/24", "action": "deny" }
+    {
+      "node": "r1",
+      "src": "10.0.1.0/24",
+      "dst": "10.0.99.0/24",
+      "action": "deny"
+    }
   ]
 }

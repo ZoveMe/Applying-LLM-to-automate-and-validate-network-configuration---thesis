@@ -123,17 +123,31 @@ def run_pipeline(requirement: str, model: str = DEFAULT_MODEL, retries: int = 3,
         evidence["outcome"] = "REJECTED_SCHEMA"
         return evidence
 
-    evidence["proposal"] = proposal.model_dump()
+        evidence["proposal"] = proposal.model_dump()
+
+    # CLARIFY and REFUSE are valid decisions, but contain no configuration.
+    # They do not need to enter the configuration safety gate.
+    if proposal.decision == "CLARIFY":
+        evidence["outcome"] = "CLARIFICATION_REQUIRED"
+        return evidence
+
+    if proposal.decision == "REFUSE":
+        evidence["outcome"] = "REFUSED"
+        return evidence
+
+    # Only PROPOSE decisions reach the deterministic gate.
     gate = Gate(load_intent(Path(DEFAULT_INTENT)))
-    report = gate.run(proposal.model_dump_json(), source=f"llm:{evidence['model']}")
+    report = gate.run(
+        proposal.model_dump_json(),
+        source=f"llm:{evidence['model']}",
+    )
     evidence["gate_report"] = report
 
     if report["verdict"] != "PASS_PENDING_HUMAN_APPROVAL":
         evidence["outcome"] = "REJECTED_GATE"
-    elif not evidence["proposal"]["static_routes"] and not evidence["proposal"]["access_policy"]:
-        evidence["outcome"] = "NOOP"
     else:
         evidence["outcome"] = "ACCEPTED"
+
     return evidence
 
 
@@ -174,8 +188,14 @@ def main() -> int:
         out.write_text(json.dumps(ev, indent=2))
         print(f"evidence written to {out}")
 
-    return {"ACCEPTED": 0, "NOOP": 0, "REJECTED_GATE": 1,
-            "REJECTED_SCHEMA": 3, "ERROR_OLLAMA_UNREACHABLE": 4}[ev["outcome"]]
+        return {
+        "ACCEPTED": 0,
+        "CLARIFICATION_REQUIRED": 0,
+        "REFUSED": 0,
+        "REJECTED_GATE": 1,
+        "REJECTED_SCHEMA": 3,
+        "ERROR_OLLAMA_UNREACHABLE": 4,
+    }[ev["outcome"]]
 
 
 if __name__ == "__main__":
