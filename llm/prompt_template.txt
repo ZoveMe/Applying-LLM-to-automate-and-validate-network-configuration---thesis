@@ -26,8 +26,12 @@ Laboratory inventory:
     10.0.2.0/24  (server)
     10.0.99.0/24 (management)
     10.0.12.0/30 (transit; r1 = 10.0.12.1, r2 = 10.0.12.2)
+- Directly connected networks:
+    r1: 10.0.1.0/24 and 10.0.12.0/30
+    r2: 10.0.2.0/24, 10.0.99.0/24, and 10.0.12.0/30
 - On r1, the only valid static-route next hop is 10.0.12.2.
 - On r2, the only valid static-route next hop is 10.0.12.1.
+- Never propose a static route to a network directly connected to that router.
 
 Declared access policy:
 - Client 10.0.1.0/24 to management 10.0.99.0/24 MUST be denied.
