@@ -1,6 +1,8 @@
 """Regression tests for the V2 decision schema and LLM pipeline."""
 
 import json
+import subprocess
+import sys
 import unittest
 from pathlib import Path
 
@@ -147,10 +149,42 @@ class PromptAndPipelineTests(unittest.TestCase):
                 )
 
                 self.assertEqual(evidence["outcome"], expected_outcome)
+                self.assertEqual(evidence["proposal"], response)
                 self.assertEqual(
                     evidence["gate_report"] is not None,
                     expects_gate,
                 )
+
+    def test_cli_exit_codes_without_out_file(self):
+        cases = [
+            ("suggestion_good.json", 0, "OUTCOME:  ACCEPTED"),
+            ("suggestion_bad_policy.json", 1, "OUTCOME:  REJECTED_GATE"),
+            ("suggestion_bad_schema.json", 3, "OUTCOME:  REJECTED_SCHEMA"),
+        ]
+
+        for filename, expected_code, expected_output in cases:
+            with self.subTest(example=filename):
+                completed = subprocess.run(
+                    [
+                        sys.executable,
+                        str(REPO_ROOT / "llm" / "ollama_client.py"),
+                        "--request",
+                        "CLI regression test.",
+                        "--mock",
+                        str(REPO_ROOT / "examples" / filename),
+                    ],
+                    cwd=REPO_ROOT,
+                    capture_output=True,
+                    text=True,
+                    check=False,
+                )
+
+                self.assertEqual(
+                    completed.returncode,
+                    expected_code,
+                    completed.stdout + completed.stderr,
+                )
+                self.assertIn(expected_output, completed.stdout)
 
     def test_forbidden_live_proposal_is_rejected_by_gate(self):
         response = suggestion(

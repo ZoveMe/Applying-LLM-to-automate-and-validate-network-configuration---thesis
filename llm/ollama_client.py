@@ -10,10 +10,12 @@ This module only PRODUCES evidence: the raw model output, the parsed
 proposal, the gate verdict, and timing. It deploys nothing.
 
 Outcomes:
-    ACCEPTED         schema-valid, gate PASS, proposes at least one change
-    NOOP             schema-valid, gate PASS, proposes no changes (safe refusal)
-    REJECTED_GATE    schema-valid, but the deterministic gate rejected it
-    REJECTED_SCHEMA  no schema-valid output after all retries
+    ACCEPTED                 valid proposal that passed the deterministic gate
+    CLARIFICATION_REQUIRED   valid request for additional information
+    REFUSED                  valid refusal of an unsafe or unsupported request
+    REJECTED_GATE            valid proposal rejected by the deterministic gate
+    REJECTED_SCHEMA          no schema-valid output after all retries
+    ERROR_OLLAMA_UNREACHABLE the configured Ollama service could not be reached
 
 Usage:
     python3 llm/ollama_client.py --request "..." [--model NAME] [--out FILE]
@@ -123,7 +125,7 @@ def run_pipeline(requirement: str, model: str = DEFAULT_MODEL, retries: int = 3,
         evidence["outcome"] = "REJECTED_SCHEMA"
         return evidence
 
-        evidence["proposal"] = proposal.model_dump()
+    evidence["proposal"] = proposal.model_dump()
 
     # CLARIFY and REFUSE are valid decisions, but contain no configuration.
     # They do not need to enter the configuration safety gate.
@@ -188,7 +190,7 @@ def main() -> int:
         out.write_text(json.dumps(ev, indent=2))
         print(f"evidence written to {out}")
 
-        return {
+    return {
         "ACCEPTED": 0,
         "CLARIFICATION_REQUIRED": 0,
         "REFUSED": 0,
