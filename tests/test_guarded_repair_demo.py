@@ -8,13 +8,17 @@ import unittest
 from pathlib import Path
 
 from experiments.guarded_repair_demo import (
+    ANSIBLE_INVENTORY,
+    ANSIBLE_REPAIR_PLAYBOOK,
     APPROVAL_TOKEN,
     DYNAMIC_VALIDATOR,
     EXPECTED_ROUTE,
     ApprovalDeclined,
     DemoError,
+    ansible_playbook_args,
     ensure_new_output_dir,
     make_approval_record,
+    make_deployment_record,
     run_demo,
     validate_runtime_report,
     validate_exact_repair,
@@ -47,12 +51,20 @@ def fake_pipeline(requirement, model, retries, mock_raw, url):
 
 
 class FakeLab:
-    def __init__(self, *, fail_restore=False, fail_remove=False):
+    def __init__(
+        self,
+        *,
+        fail_restore=False,
+        fail_remove=False,
+        fail_ansible=False,
+    ):
         self.route_present = True
         self.events = []
         self.validation_runs = 0
+        self.ansible_deployments = 0
         self.fail_restore = fail_restore
         self.fail_remove = fail_remove
+        self.fail_ansible = fail_ansible
 
     def __call__(self, args, *, capture_output=False):
         args = [str(part) for part in args]
@@ -68,6 +80,35 @@ class FakeLab:
 
         if args[:2] == ["docker", "info"]:
             return subprocess.CompletedProcess(args, 0, stdout="ok\n", stderr="")
+
+        if args[:2] == ["ansible-playbook", "--version"]:
+            return subprocess.CompletedProcess(
+                args,
+                0,
+                stdout="ansible-playbook [core 2.19.0]\n",
+                stderr="",
+            )
+
+        if args and args[0] == "ansible-playbook":
+            self.ansible_deployments += 1
+            if self.fail_ansible:
+                return subprocess.CompletedProcess(
+                    args,
+                    2,
+                    stdout="",
+                    stderr="playbook failed",
+                )
+            self.route_present = True
+            return subprocess.CompletedProcess(
+                args,
+                0,
+                stdout=(
+                    "TASK [Apply the approved route idempotently]\n"
+                    "changed: [r1]\n"
+                    "PLAY RECAP\nr1 : ok=5 changed=1 failed=0\n"
+                ),
+                stderr="",
+            )
 
         if args[:3] == ["docker", "inspect", "-f"]:
             return subprocess.CompletedProcess(
@@ -205,6 +246,30 @@ class ExactProposalTests(unittest.TestCase):
         self.assertIn("ip route 10.0.2.0/24 10.0.12.2", restore)
         self.assertNotIn("shell=True", restore)
 
+    def test_ansible_command_uses_fixed_files_and_exact_scope(self):
+        command = ansible_playbook_args(EXPECTED_ROUTE)
+        self.assertEqual(command[0], "ansible-playbook")
+        self.assertEqual(command[1:3], ["-i", str(ANSIBLE_INVENTORY)])
+        self.assertEqual(command[3], str(ANSIBLE_REPAIR_PLAYBOOK))
+        extra_vars = json.loads(command[command.index("--extra-vars") + 1])
+        self.assertEqual(
+            extra_vars,
+            {
+                "repair_node": "r1",
+                "repair_prefix": "10.0.2.0/24",
+                "repair_next_hop": "10.0.12.2",
+            },
+        )
+
+    def test_ansible_playbook_has_a_second_allow_list_check(self):
+        playbook = ANSIBLE_REPAIR_PLAYBOOK.read_text()
+        self.assertIn("hosts: r1", playbook)
+        self.assertIn("Fail closed unless the approved scope is exact", playbook)
+        self.assertIn("repair_node == allowed_repair.node", playbook)
+        self.assertIn("repair_prefix == allowed_repair.prefix", playbook)
+        self.assertIn("repair_next_hop == allowed_repair.next_hop", playbook)
+        self.assertIn("changed_when: \"'REPAIR_ADDED'", playbook)
+
     def test_checked_mock_fixture_passes_the_real_schema_and_gate(self):
         fixture = (
             Path(__file__).resolve().parents[1]
@@ -246,6 +311,33 @@ class EvidenceSafetyTests(unittest.TestCase):
             )
             self.assertFalse(record["automatic_deployment_by_llm"])
             self.assertEqual(record["approval_scope"], EXPECTED_ROUTE.as_dict())
+            self.assertEqual(record["deployment_engine"], "ansible")
+
+    def test_deployment_record_binds_ansible_to_the_approved_proposal(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            proposal = Path(temporary) / "proposal.json"
+            proposal.write_text('{"proposal": "approved"}\n')
+            result = subprocess.CompletedProcess(
+                ["ansible-playbook"],
+                0,
+                stdout="PLAY RECAP\nr1 : ok=5 changed=1 failed=0\n",
+                stderr="",
+            )
+
+            record = make_deployment_record(
+                route=EXPECTED_ROUTE,
+                proposal_path=proposal,
+                result=result,
+            )
+
+            self.assertEqual(record["deployment_engine"], "ansible")
+            self.assertEqual(record["approved_scope"], EXPECTED_ROUTE.as_dict())
+            self.assertEqual(
+                record["proposal_sha256"],
+                hashlib.sha256(proposal.read_bytes()).hexdigest(),
+            )
+            self.assertEqual(record["returncode"], 0)
+            self.assertFalse(record["automatic_deployment_by_llm"])
 
     def test_runtime_report_must_include_the_c2_route_check(self):
         with tempfile.TemporaryDirectory() as temporary:
@@ -287,7 +379,7 @@ class EvidenceSafetyTests(unittest.TestCase):
 
 
 class WorkflowTests(unittest.TestCase):
-    def test_success_requires_approval_and_writes_four_evidence_files(self):
+    def test_success_requires_approval_and_writes_five_evidence_files(self):
         lab = FakeLab()
         approval_events = []
 
@@ -321,14 +413,27 @@ class WorkflowTests(unittest.TestCase):
                     "01-fault-detected.json",
                     "02-ollama-proposal.json",
                     "03-human-approval.json",
-                    "04-repair-validated.json",
+                    "04-ansible-deployment.json",
+                    "05-repair-validated.json",
                 },
             )
             approval = json.loads(paths.approval.read_text())
             self.assertEqual(approval["decision"], "APPROVED")
             self.assertEqual(approval["generation_mode"], "mock")
+            self.assertEqual(approval["deployment_engine"], "ansible")
+            deployment = json.loads(paths.deployment.read_text())
+            self.assertEqual(deployment["deployment_engine"], "ansible")
+            self.assertEqual(
+                deployment["approved_scope"],
+                EXPECTED_ROUTE.as_dict(),
+            )
+            self.assertEqual(
+                deployment["proposal_sha256"],
+                approval["proposal_sha256"],
+            )
             self.assertTrue(lab.route_present)
             self.assertEqual(lab.validation_runs, 3)
+            self.assertEqual(lab.ansible_deployments, 1)
 
     def test_wrong_approval_token_deploys_nothing_and_recovers(self):
         lab = FakeLab()
@@ -371,6 +476,7 @@ class WorkflowTests(unittest.TestCase):
             )
             self.assertEqual(approval["decision"], "NOT_APPROVED")
             self.assertTrue(lab.route_present)
+            self.assertEqual(lab.ansible_deployments, 0)
 
     def test_invalid_proposal_is_never_presented_for_approval(self):
         lab = FakeLab()
@@ -408,6 +514,37 @@ class WorkflowTests(unittest.TestCase):
             self.assertFalse(prompted)
             self.assertFalse((root / "03-human-approval.json").exists())
             self.assertTrue(lab.route_present)
+            self.assertEqual(lab.ansible_deployments, 0)
+
+    def test_failed_ansible_deployment_uses_independent_recovery(self):
+        lab = FakeLab(fail_ansible=True)
+
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary) / "run"
+            mock = Path(temporary) / "mock.json"
+            mock.write_text(json.dumps(accepted_evidence()["proposal"]))
+
+            with self.assertRaisesRegex(
+                DemoError,
+                "Ansible approved-route deployment",
+            ):
+                run_demo(
+                    output_dir=root,
+                    requirement="Restore the missing route.",
+                    model="test-model",
+                    retries=1,
+                    url="http://unused.invalid",
+                    mock_path=mock,
+                    runner=lab,
+                    approval_reader=lambda prompt: APPROVAL_TOKEN,
+                    pipeline=fake_pipeline,
+                    sleeper=lambda seconds: None,
+                )
+
+            self.assertEqual(lab.ansible_deployments, 1)
+            self.assertTrue(lab.route_present)
+            self.assertFalse((root / "04-ansible-deployment.json").exists())
+            self.assertFalse((root / "05-repair-validated.json").exists())
 
     def test_failed_emergency_recovery_is_a_hard_error(self):
         lab = FakeLab(fail_restore=True)

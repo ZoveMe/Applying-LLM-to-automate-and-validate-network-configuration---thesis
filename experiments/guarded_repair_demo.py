@@ -8,8 +8,9 @@ The workflow deliberately separates proposal generation from deployment:
              -> deployment -> runtime validation
 
 The model never receives a command-execution interface. This orchestrator
-deploys one hard-coded, allow-listed repair only after the operator types the
-exact approval token. Any failure or interruption restores the intended route.
+passes one hard-coded, allow-listed repair to an idempotent Ansible playbook
+only after the operator types the exact approval token. Any failure or
+interruption restores the intended route through an independent recovery path.
 """
 
 import argparse
@@ -36,6 +37,8 @@ DYNAMIC_VALIDATOR = REPO_ROOT / "validation" / "dynamic_validate.py"
 INTENT_FILE = REPO_ROOT / "intent" / "intended_state.yaml"
 PROMPT_TEMPLATE = REPO_ROOT / "llm" / "prompt_template.txt"
 TOPOLOGY_FILE = REPO_ROOT / "topology.clab.yml"
+ANSIBLE_INVENTORY = REPO_ROOT / "ansible" / "inventory.yml"
+ANSIBLE_REPAIR_PLAYBOOK = REPO_ROOT / "ansible" / "repair_route.yml"
 EXPECTED_RUNTIME_CHECKS = 7
 DEFAULT_REQUEST = (
     "The route from router r1 to the server network 10.0.2.0/24 is "
@@ -98,8 +101,12 @@ class EvidencePaths:
         return self.root / "03-human-approval.json"
 
     @property
+    def deployment(self) -> Path:
+        return self.root / "04-ansible-deployment.json"
+
+    @property
     def after(self) -> Path:
-        return self.root / "04-repair-validated.json"
+        return self.root / "05-repair-validated.json"
 
 
 CommandRunner = Callable[..., subprocess.CompletedProcess]
@@ -203,6 +210,34 @@ def change_route(
 ) -> None:
     result = runner(vtysh_args(route, action), capture_output=True)
     require_success(result, f"route {action} on {route.node}")
+
+
+def ansible_playbook_args(route: RepairRoute) -> list[str]:
+    approved_scope = json.dumps(
+        {
+            "repair_node": route.node,
+            "repair_prefix": route.prefix,
+            "repair_next_hop": route.next_hop,
+        },
+        sort_keys=True,
+    )
+    return [
+        "ansible-playbook",
+        "-i",
+        str(ANSIBLE_INVENTORY),
+        str(ANSIBLE_REPAIR_PLAYBOOK),
+        "--extra-vars",
+        approved_scope,
+    ]
+
+
+def deploy_route_with_ansible(
+    route: RepairRoute,
+    runner: CommandRunner,
+) -> subprocess.CompletedProcess:
+    result = runner(ansible_playbook_args(route), capture_output=True)
+    require_success(result, "Ansible approved-route deployment")
+    return result
 
 
 def run_runtime_validation(
@@ -317,6 +352,8 @@ def preflight(
         INTENT_FILE,
         PROMPT_TEMPLATE,
         DYNAMIC_VALIDATOR,
+        ANSIBLE_INVENTORY,
+        ANSIBLE_REPAIR_PLAYBOOK,
     ):
         if not required.is_file():
             raise DemoError(f"required project file is missing: {required}")
@@ -328,6 +365,9 @@ def preflight(
 
     docker = runner(["docker", "info"], capture_output=True)
     require_success(docker, "Docker preflight")
+
+    ansible = runner(["ansible-playbook", "--version"], capture_output=True)
+    require_success(ansible, "Ansible preflight")
 
     if mock_path is None:
         ollama_probe(url, model)
@@ -426,6 +466,27 @@ def make_approval_record(
         "proposal_sha256": proposal_sha256(proposal_path),
         "source_commit": commit,
         "generation_mode": generation_mode,
+        "deployment_engine": "ansible",
+        "automatic_deployment_by_llm": False,
+    }
+
+
+def make_deployment_record(
+    *,
+    route: RepairRoute,
+    proposal_path: Path,
+    result: subprocess.CompletedProcess,
+) -> dict:
+    return {
+        "timestamp": datetime.now().isoformat(timespec="seconds"),
+        "deployment_engine": "ansible",
+        "playbook": str(display_path(ANSIBLE_REPAIR_PLAYBOOK)),
+        "inventory": str(display_path(ANSIBLE_INVENTORY)),
+        "approved_scope": route.as_dict(),
+        "proposal_sha256": proposal_sha256(proposal_path),
+        "returncode": result.returncode,
+        "stdout": result.stdout or "",
+        "stderr": result.stderr or "",
         "automatic_deployment_by_llm": False,
     }
 
@@ -516,8 +577,16 @@ def run_demo(
         if proposal_sha256(paths.proposal) != expected_hash:
             raise DemoError("proposal evidence changed after human approval")
 
-        print("\n=== 6. DEPLOY ONLY THE APPROVED ROUTE ===")
-        change_route(route, "restore", runner)
+        print("\n=== 6. DEPLOY THE APPROVED ROUTE WITH ANSIBLE ===")
+        deployment = deploy_route_with_ansible(route, runner)
+        write_json(
+            paths.deployment,
+            make_deployment_record(
+                route=route,
+                proposal_path=paths.proposal,
+                result=deployment,
+            ),
+        )
         sleeper(1)
 
         print("\n=== 7. VALIDATE THE POST-DEPLOYMENT NETWORK ===")
@@ -536,7 +605,7 @@ def run_demo(
         recovery_required = False
         print("\n=== GUARDED REPAIR RESULT: PASS ===")
         print("Fault detected, proposal gated, human approval recorded,")
-        print("and the repaired network matches intent.")
+        print("Ansible deployed the route, and the network matches intent.")
         print(f"Evidence directory: {display_path(paths.root)}")
         return paths
     finally:

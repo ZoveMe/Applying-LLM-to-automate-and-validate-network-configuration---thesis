@@ -84,9 +84,20 @@ python3 experiments/guarded_repair_demo.py
 
 The script removes the allow-listed `r1` route to `10.0.2.0/24`, proves that
 the runtime validator detects the fault, asks Ollama for a structured repair,
-and enforces the schema and deterministic policy gate. It deploys only the
-exact route `10.0.2.0/24 via 10.0.12.2`, and only after the operator types
-`APPROVE`. Failure, rejection, or interruption triggers route recovery.
+and enforces the schema and deterministic policy gate. After the operator
+types `APPROVE`, the orchestrator passes only the exact route
+`10.0.2.0/24 via 10.0.12.2` to `ansible/repair_route.yml`. The playbook checks
+the allow-list again and applies the route idempotently. Failure, rejection,
+or interruption triggers an independent recovery path.
+
+The responsibility boundary is deliberate:
+
+- **Ollama/LLM:** proposes a structured repair and rationale; it cannot execute.
+- **Deterministic gate:** validates schema, topology, scope, and safety rules.
+- **Human operator:** approves the exact proposal and its recorded checksum.
+- **Ansible:** applies the approved change predictably and idempotently.
+- **Runtime validator:** independently proves whether all seven intent checks
+  pass after deployment.
 
 For a model-independent rehearsal, use the checked offline fixture. This still
 requires the live Containerlab, but it does not call Ollama:
