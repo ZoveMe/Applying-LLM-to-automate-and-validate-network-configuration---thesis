@@ -73,6 +73,32 @@ bash policies/apply-policy.sh    # restore it
 
 Tear down when done: `sudo clab destroy -t topology.clab.yml`
 
+## Guarded repair demonstration
+
+After the lab is deployed, the intended policy is applied, and the baseline
+validator passes, run the reusable end-to-end demonstration:
+
+```bash
+python3 experiments/guarded_repair_demo.py
+```
+
+The script removes the allow-listed `r1` route to `10.0.2.0/24`, proves that
+the runtime validator detects the fault, asks Ollama for a structured repair,
+and enforces the schema and deterministic policy gate. It deploys only the
+exact route `10.0.2.0/24 via 10.0.12.2`, and only after the operator types
+`APPROVE`. Failure, rejection, or interruption triggers route recovery.
+
+For a model-independent rehearsal, use the checked offline fixture. This still
+requires the live Containerlab, but it does not call Ollama:
+
+```bash
+python3 experiments/guarded_repair_demo.py \
+  --mock examples/suggestion_repair_route.json
+```
+
+Every run writes to a new timestamped directory under
+`docs/evidence/guarded-repair-runs/`; existing evidence is never overwritten.
+
 ## First-deploy notes (read if something doesn't work)
 
 Containerlab + container images vary slightly between versions, so the first

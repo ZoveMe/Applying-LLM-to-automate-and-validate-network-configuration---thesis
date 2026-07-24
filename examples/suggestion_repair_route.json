@@ -1,0 +1,13 @@
+{
+  "rationale": "The server network route is missing on r1. Restore the declared server prefix through r2 on the directly connected transit link.",
+  "decision": "PROPOSE",
+  "reason_code": "ACTIONABLE_CHANGE",
+  "static_routes": [
+    {
+      "node": "r1",
+      "prefix": "10.0.2.0/24",
+      "next_hop": "10.0.12.2"
+    }
+  ],
+  "access_policy": []
+}
