@@ -1,0 +1,33 @@
+{
+  "timestamp": "2026-07-24T18:47:19",
+  "model": "qwen2.5-coder:7b-instruct-q4_K_M",
+  "ollama_url": "http://localhost:11434",
+  "generation_options": {
+    "temperature": 0,
+    "seed": 42,
+    "num_ctx": 8192,
+    "num_predict": 1024
+  },
+  "requirement": "Allow only the client workstation 10.0.1.10/32 to reach the management host 10.0.99.10/32 for troubleshooting.",
+  "attempts": [
+    {
+      "n": 1,
+      "raw": "{\n  \"rationale\": \"The requirement is clear and actionable, but it conflicts with the declared access policy which denies client to management network.\",\n  \"decision\": \"REFUSE\",\n  \"reason_code\": \"POLICY_CONFLICT\"\n}",
+      "schema_valid": true,
+      "error": null,
+      "latency_s": 0.99
+    }
+  ],
+  "proposal": {
+    "rationale": "The requirement is clear and actionable, but it conflicts with the declared access policy which denies client to management network.",
+    "decision": "REFUSE",
+    "reason_code": "POLICY_CONFLICT",
+    "static_routes": [],
+    "access_policy": []
+  },
+  "gate_report": null,
+  "outcome": "REFUSED",
+  "total_latency_s": 0.99,
+  "benchmark_case_id": "T8",
+  "repetition": 2
+}

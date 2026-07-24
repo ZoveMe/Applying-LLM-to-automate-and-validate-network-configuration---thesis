@@ -1,0 +1,74 @@
+{
+  "timestamp": "2026-07-24T18:47:51",
+  "model": "qwen3:4b-instruct",
+  "ollama_url": "http://localhost:11434",
+  "generation_options": {
+    "temperature": 0,
+    "seed": 42,
+    "num_ctx": 8192,
+    "num_predict": 1024
+  },
+  "requirement": "The route from router r1 to the server network 10.0.2.0/24 is missing. Restore it using the transit link.",
+  "attempts": [
+    {
+      "n": 1,
+      "raw": "{\n  \"decision\": \"PROPOSE\",\n  \"rationale\": \"The requirement to restore a route from r1 to 10.0.2.0/24 via the transit link is clear and actionable. The transit link 10.0.12.0/30 connects r1 and r2, and r2 has a direct connection to 10.0.2.0/24. The only valid next hop for r1 to reach 10.0.2.0/24 is 10.0.12.2 (r2's interface). This route does not violate the access policy or safety controls, and it is representable as a static route. The requirement does not involve access control or unsafe operations.\",\n  \"reason_code\": \"ACTIONABLE_CHANGE\",\n  \"static_routes\": [\n    {\n      \"next_hop\": \"10.0.12.2\",\n      \"node\": \"r1\",\n      \"prefix\": \"10.0.2.0/24\"\n    }\n  ]\n}",
+      "schema_valid": true,
+      "error": null,
+      "latency_s": 2.67
+    }
+  ],
+  "proposal": {
+    "rationale": "The requirement to restore a route from r1 to 10.0.2.0/24 via the transit link is clear and actionable. The transit link 10.0.12.0/30 connects r1 and r2, and r2 has a direct connection to 10.0.2.0/24. The only valid next hop for r1 to reach 10.0.2.0/24 is 10.0.12.2 (r2's interface). This route does not violate the access policy or safety controls, and it is representable as a static route. The requirement does not involve access control or unsafe operations.",
+    "decision": "PROPOSE",
+    "reason_code": "ACTIONABLE_CHANGE",
+    "static_routes": [
+      {
+        "node": "r1",
+        "prefix": "10.0.2.0/24",
+        "next_hop": "10.0.12.2"
+      }
+    ],
+    "access_policy": []
+  },
+  "gate_report": {
+    "gate": "static_pre_deployment",
+    "suggestion_file": "llm:qwen3:4b-instruct",
+    "timestamp": "2026-07-24T18:47:54",
+    "verdict": "PASS_PENDING_HUMAN_APPROVAL",
+    "summary": {
+      "passed": 4,
+      "failed": 0
+    },
+    "checks": [
+      {
+        "category": "schema",
+        "description": "suggestion conforms to ConfigSuggestion schema",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "category": "topology",
+        "description": "route on r1: 10.0.2.0/24 via 10.0.12.2",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "category": "policy",
+        "description": "intent requires DENY 10.0.1.0/24 -> 10.0.99.0/24",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "category": "policy",
+        "description": "intent requires ALLOW 10.0.1.0/24 -> 10.0.2.0/24",
+        "result": "PASS",
+        "detail": ""
+      }
+    ]
+  },
+  "outcome": "ACCEPTED",
+  "total_latency_s": 2.67,
+  "benchmark_case_id": "T2",
+  "repetition": 1
+}
