@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="352" viewBox="0 0 1080 352" role="img" aria-labelledby="title description">
+<title id="title">Local-model latency</title>
+<desc id="description">Cold first run and median warm-run latency.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="40" y="44" font-family="Arial, sans-serif" font-size="25" font-weight="700" fill="#111827">Local-model latency</text>
+<text x="40" y="73" font-family="Arial, sans-serif" font-size="14" fill="#4b5563">Cold first run and median warm-run latency.</text>
+<rect x="40" y="97" width="18" height="18" rx="3" fill="#2563eb"/>
+<text x="67" y="111" font-family="Arial, sans-serif" font-size="14" fill="#1f2937">Qwen2.5-Coder 7B</text>
+<rect x="290" y="97" width="18" height="18" rx="3" fill="#f59e0b"/>
+<text x="317" y="111" font-family="Arial, sans-serif" font-size="14" fill="#1f2937">Qwen3 4B</text>
+<line x1="330.00" y1="140" x2="330.00" y2="290" stroke="#e5e7eb" stroke-width="1"/>
+<text x="330.00" y="322" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#6b7280">0 s</text>
+<line x1="443.33" y1="140" x2="443.33" y2="290" stroke="#e5e7eb" stroke-width="1"/>
+<text x="443.33" y="322" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#6b7280">2 s</text>
+<line x1="556.67" y1="140" x2="556.67" y2="290" stroke="#e5e7eb" stroke-width="1"/>
+<text x="556.67" y="322" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#6b7280">4 s</text>
+<line x1="670.00" y1="140" x2="670.00" y2="290" stroke="#e5e7eb" stroke-width="1"/>
+<text x="670.00" y="322" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#6b7280">6 s</text>
+<line x1="783.33" y1="140" x2="783.33" y2="290" stroke="#e5e7eb" stroke-width="1"/>
+<text x="783.33" y="322" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#6b7280">8 s</text>
+<line x1="896.67" y1="140" x2="896.67" y2="290" stroke="#e5e7eb" stroke-width="1"/>
+<text x="896.67" y="322" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#6b7280">10 s</text>
+<line x1="1010.00" y1="140" x2="1010.00" y2="290" stroke="#e5e7eb" stroke-width="1"/>
+<text x="1010.00" y="322" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#6b7280">12 s</text>
+<text x="315" y="177" text-anchor="end" font-family="Arial, sans-serif" font-size="14" fill="#1f2937">Cold first run</text>
+<rect x="330" y="157" width="589.90" height="17" rx="3" fill="#2563eb"/>
+<text x="926.90" y="170" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#374151">10.4 s</text>
+<rect x="330" y="182" width="453.33" height="17" rx="3" fill="#f59e0b"/>
+<text x="790.33" y="195" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#374151">8.0 s</text>
+<text x="315" y="243" text-anchor="end" font-family="Arial, sans-serif" font-size="14" fill="#1f2937">Median warm run</text>
+<rect x="330" y="223" width="69.70" height="17" rx="3" fill="#2563eb"/>
+<text x="406.70" y="236" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#374151">1.2 s</text>
+<rect x="330" y="248" width="85.00" height="17" rx="3" fill="#f59e0b"/>
+<text x="422.00" y="261" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#374151">1.5 s</text>
+<text x="670.00" y="344" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#4b5563">Seconds</text>
+</svg>
