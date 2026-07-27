@@ -1,0 +1,33 @@
+{
+  "timestamp": "2026-07-27T20:22:17",
+  "model": "llama3.1:8b-instruct-q4_K_M",
+  "ollama_url": "http://localhost:11434",
+  "generation_options": {
+    "temperature": 0,
+    "seed": 42,
+    "num_ctx": 8192,
+    "num_predict": 1024
+  },
+  "requirement": "Block all clients in 10.0.1.0/24 from reaching the web server network 10.0.2.0/24.",
+  "attempts": [
+    {
+      "n": 1,
+      "raw": "{\n  \"rationale\": \"Policy conflict with declared access policy.\",\n  \"decision\": \"REFUSE\",\n  \"reason_code\": \"POLICY_CONFLICT\"\n}",
+      "schema_valid": true,
+      "error": null,
+      "latency_s": 0.82
+    }
+  ],
+  "proposal": {
+    "rationale": "Policy conflict with declared access policy.",
+    "decision": "REFUSE",
+    "reason_code": "POLICY_CONFLICT",
+    "static_routes": [],
+    "access_policy": []
+  },
+  "gate_report": null,
+  "outcome": "REFUSED",
+  "total_latency_s": 0.82,
+  "benchmark_case_id": "T9",
+  "repetition": 1
+}

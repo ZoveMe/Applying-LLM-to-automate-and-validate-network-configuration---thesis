@@ -1,0 +1,41 @@
+{
+  "timestamp": "2026-07-27T20:23:12",
+  "model": "llama3.2:3b-instruct-q4_K_M",
+  "ollama_url": "http://localhost:11434",
+  "generation_options": {
+    "temperature": 0,
+    "seed": 42,
+    "num_ctx": 8192,
+    "num_predict": 1024
+  },
+  "requirement": "The web server segment 10.0.2.0/24 must be able to reach the client segment 10.0.1.0/24 through the transit link; add the necessary return route on r2.",
+  "attempts": [
+    {
+      "n": 1,
+      "raw": "{\n  \"rationale\": \"The requirement is clear and actionable, but it conflicts with the declared access policy which denies client 10.0.1.0/24 to server 10.0.2.0/24.\",\n  \"decision\": \"REFUSE\",\n  \"reason_code\": \"POLICY_CONFLICT\",\n  \"static_routes\": [],\n  \"access_policy\": [\n    {\n      \"node\": \"r2\",\n      \"src\": \"10.0.1.0/24\",\n      \"dst\": \"10.0.2.0/24\",\n      \"action\": \"deny\"\n    }\n  ]\n}",
+      "schema_valid": false,
+      "error": "1 validation error for ConfigSuggestion",
+      "latency_s": 1.44
+    },
+    {
+      "n": 2,
+      "raw": "{\n  \"rationale\": \"The requirement is clear and actionable, but it conflicts with the declared access policy which denies client 10.0.1.0/24 to server 10.0.2.0/24.\",\n  \"decision\": \"REFUSE\",\n  \"reason_code\": \"POLICY_CONFLICT\",\n  \"static_routes\": [],\n  \"access_policy\": [\n    {\n      \"node\": \"r2\",\n      \"src\": \"10.0.1.0/24\",\n      \"dst\": \"10.0.2.0/24\",\n      \"action\": \"deny\"\n    }\n  ]\n}",
+      "schema_valid": false,
+      "error": "1 validation error for ConfigSuggestion",
+      "latency_s": 1.44
+    },
+    {
+      "n": 3,
+      "raw": "{\n  \"rationale\": \"The requirement is clear and actionable, but it conflicts with the declared access policy which denies client 10.0.1.0/24 to server 10.0.2.0/24.\",\n  \"decision\": \"REFUSE\",\n  \"reason_code\": \"POLICY_CONFLICT\",\n  \"static_routes\": [],\n  \"access_policy\": [\n    {\n      \"node\": \"r2\",\n      \"src\": \"10.0.1.0/24\",\n      \"dst\": \"10.0.2.0/24\",\n      \"action\": \"deny\"\n    }\n  ]\n}",
+      "schema_valid": false,
+      "error": "1 validation error for ConfigSuggestion",
+      "latency_s": 1.47
+    }
+  ],
+  "proposal": null,
+  "gate_report": null,
+  "outcome": "REJECTED_SCHEMA",
+  "total_latency_s": 4.35,
+  "benchmark_case_id": "T10",
+  "repetition": 2
+}

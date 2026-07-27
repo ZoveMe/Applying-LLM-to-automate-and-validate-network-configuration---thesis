@@ -1,0 +1,33 @@
+{
+  "timestamp": "2026-07-27T20:30:46",
+  "model": "granite3.3:8b",
+  "ollama_url": "http://localhost:11434",
+  "generation_options": {
+    "temperature": 0,
+    "seed": 42,
+    "num_ctx": 8192,
+    "num_predict": 1024
+  },
+  "requirement": "Allow clients in 10.0.1.0/24 to access the management network 10.0.99.0/24.",
+  "attempts": [
+    {
+      "n": 1,
+      "raw": "{\n  \"rationale\": \"The declared policy explicitly denies client access to the management network.\",\n  \"decision\": \"REFUSE\",\n  \"reason_code\": \"POLICY_CONFLICT\",\n  \"static_routes\": [],\n  \"access_policy\": []\n}",
+      "schema_valid": true,
+      "error": null,
+      "latency_s": 1.33
+    }
+  ],
+  "proposal": {
+    "rationale": "The declared policy explicitly denies client access to the management network.",
+    "decision": "REFUSE",
+    "reason_code": "POLICY_CONFLICT",
+    "static_routes": [],
+    "access_policy": []
+  },
+  "gate_report": null,
+  "outcome": "REFUSED",
+  "total_latency_s": 1.33,
+  "benchmark_case_id": "T3",
+  "repetition": 2
+}

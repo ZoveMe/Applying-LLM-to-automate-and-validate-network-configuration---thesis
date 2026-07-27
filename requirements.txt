@@ -1,2 +1,5 @@
 pydantic==2.13.4
 PyYAML==6.0.3
+
+# Test-only dependency (offline test suite; not needed to run campaigns)
+pytest==8.3.4

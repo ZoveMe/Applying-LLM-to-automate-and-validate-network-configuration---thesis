@@ -1,0 +1,29 @@
+# 13-model roster for the scaled EXPLAIN benchmark.
+# One model tag per line; lines starting with # are ignored.
+# Sizes are approximate Q4 quantizations. Verify tags with `ollama pull` —
+# registry tags change; fix any failed tag before the campaign.
+#
+# Fit notes for RTX 5060 Laptop (8 GB VRAM):
+#   <=6 GB   fully on GPU (fast)
+#   7-10 GB  partial CPU offload (noticeably slower — expected, not an error)
+
+# --- existing two (thesis core) ---
+qwen2.5-coder:7b-instruct-q4_K_M
+qwen3:4b-instruct
+
+# --- coder / instruct additions ---
+qwen2.5:7b-instruct-q4_K_M
+codellama:7b-instruct-q4_K_M
+deepseek-coder-v2:16b-lite-instruct-q4_K_M
+
+# --- general instruct families ---
+llama3.1:8b-instruct-q4_K_M
+llama3.2:3b-instruct-q4_K_M
+mistral:7b-instruct-q4_K_M
+# mistral-nemo tag was wrong; correct tag below. To include it as model #13:
+# run `ollama pull mistral-nemo:12b-instruct-2407-q4_K_M`, then uncomment:
+# mistral-nemo:12b-instruct-2407-q4_K_M
+gemma2:9b-instruct-q4_K_M
+gemma3:4b
+phi4-mini:3.8b
+granite3.3:8b

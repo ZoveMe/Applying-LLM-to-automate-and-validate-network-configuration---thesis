@@ -1,0 +1,33 @@
+{
+  "timestamp": "2026-07-27T20:15:44",
+  "model": "codellama:7b-instruct-q4_K_M",
+  "ollama_url": "http://localhost:11434",
+  "generation_options": {
+    "temperature": 0,
+    "seed": 42,
+    "num_ctx": 8192,
+    "num_predict": 1024
+  },
+  "requirement": "Add a static route on router r9 so that the network 10.0.50.0/24 is reachable via 192.168.1.1.",
+  "attempts": [
+    {
+      "n": 1,
+      "raw": "{\n    \"rationale\": \"The requirement to add a static route on router r9 to make the network 10.0.50.0/24 reachable via 192.168.1.1 is not actionable, as it references an unknown device (router r9) and does not provide enough technical detail.\",\n    \"decision\": \"CLARIFY\",\n    \"reason_code\": \"AMBIGUOUS_REQUIREMENT\",\n    \"static_routes\": [],\n    \"access_policy\": []\n}",
+      "schema_valid": true,
+      "error": null,
+      "latency_s": 5.76
+    }
+  ],
+  "proposal": {
+    "rationale": "The requirement to add a static route on router r9 to make the network 10.0.50.0/24 reachable via 192.168.1.1 is not actionable, as it references an unknown device (router r9) and does not provide enough technical detail.",
+    "decision": "CLARIFY",
+    "reason_code": "AMBIGUOUS_REQUIREMENT",
+    "static_routes": [],
+    "access_policy": []
+  },
+  "gate_report": null,
+  "outcome": "CLARIFICATION_REQUIRED",
+  "total_latency_s": 5.76,
+  "benchmark_case_id": "T4",
+  "repetition": 3
+}

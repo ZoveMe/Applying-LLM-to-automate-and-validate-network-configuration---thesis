@@ -1,0 +1,61 @@
+# intent_l.yaml — intended state of the LARGER benchmark topology (r1-r2-r3).
+# Used ONLY by the EXPLAIN benchmark evaluator as ground truth.
+# The thesis-core lab (topology.clab.yml + intent/intended_state.yaml) is unchanged.
+
+lab: thesis-net-l
+
+segments:
+  client:
+    subnet: 10.0.1.0/24
+    connected_to: r1
+    gateway: 10.0.1.1
+    host: 10.0.1.10
+  server:
+    subnet: 10.0.2.0/24
+    connected_to: r2
+    gateway: 10.0.2.1
+    host: 10.0.2.10
+  management:
+    subnet: 10.0.99.0/24
+    connected_to: r2
+    gateway: 10.0.99.1
+    host: 10.0.99.10
+  dmz:
+    subnet: 10.0.3.0/24
+    connected_to: r3
+    gateway: 10.0.3.1
+    host: 10.0.3.10
+  sensors:
+    subnet: 10.0.4.0/24
+    connected_to: r3
+    gateway: 10.0.4.1
+    host: 10.0.4.10
+
+transits:
+  - subnet: 10.0.12.0/30
+    ips:
+      r1: 10.0.12.1
+      r2: 10.0.12.2
+  - subnet: 10.0.23.0/30
+    ips:
+      r2: 10.0.23.1
+      r3: 10.0.23.2
+
+config_facts:
+  - {id: L-C1, node: r1, kind: route, prefix: 10.0.2.0/24,  via: 10.0.12.2, why: "r1 -> server via r2"}
+  - {id: L-C2, node: r1, kind: route, prefix: 10.0.99.0/24, via: 10.0.12.2, why: "r1 -> management via r2"}
+  - {id: L-C3, node: r1, kind: route, prefix: 10.0.3.0/24,  via: 10.0.12.2, why: "r1 -> dmz via r2"}
+  - {id: L-C4, node: r1, kind: route, prefix: 10.0.4.0/24,  via: 10.0.12.2, why: "r1 -> sensors via r2"}
+  - {id: L-C5, node: r2, kind: route, prefix: 10.0.1.0/24,  via: 10.0.12.1, why: "r2 -> client via r1"}
+  - {id: L-C6, node: r2, kind: route, prefix: 10.0.3.0/24,  via: 10.0.23.2, why: "r2 -> dmz via r3"}
+  - {id: L-C7, node: r2, kind: route, prefix: 10.0.4.0/24,  via: 10.0.23.2, why: "r2 -> sensors via r3"}
+  - {id: L-C8, node: r3, kind: route, prefix: 10.0.1.0/24,  via: 10.0.23.1, why: "r3 -> client via r2"}
+  - {id: L-C9, node: r3, kind: route, prefix: 10.0.2.0/24,  via: 10.0.23.1, why: "r3 -> server via r2"}
+  - {id: L-C10, node: r3, kind: route, prefix: 10.0.99.0/24, via: 10.0.23.1, why: "r3 -> management via r2"}
+
+policy_rules:
+  must_deny:
+    - {node: r1, src: 10.0.1.0/24, dst: 10.0.99.0/24}
+    - {node: r3, src: 10.0.4.0/24, dst: 10.0.1.0/24}
+  must_allow:
+    - {src: 10.0.1.0/24, dst: 10.0.2.0/24}

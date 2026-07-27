@@ -207,8 +207,14 @@ def evaluate(records: list, cases: list, intent: dict) -> dict:
 
 # ---------------------------------------------------------------- IO layer
 def load_evidence_dir(evidence_dir: Path) -> list:
+    """Load run evidence from the directory and any subdirectories.
+
+    rglob (not glob) so a per-model subdirectory layout — used by the
+    multi-model campaign runner for resumability — is read as one corpus.
+    Non-run files (manifests, summaries) are filtered by the "attempts" guard.
+    """
     records = []
-    for f in sorted(evidence_dir.glob("*.json")):
+    for f in sorted(evidence_dir.rglob("*.json")):
         try:
             ev = json.loads(f.read_text())
         except json.JSONDecodeError:

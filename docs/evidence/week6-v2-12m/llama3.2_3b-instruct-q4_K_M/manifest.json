@@ -1,0 +1,296 @@
+{
+  "generated": "2026-07-27T20:23:20",
+  "kind": "LIVE_OLLAMA_EXPERIMENT",
+  "note": "No configuration was deployed. Human approval remains required.",
+  "models": [
+    "llama3.2:3b-instruct-q4_K_M"
+  ],
+  "case_ids": [
+    "T1",
+    "T2",
+    "T3",
+    "T4",
+    "T5",
+    "T6",
+    "T7",
+    "T8",
+    "T9",
+    "T10"
+  ],
+  "repetitions_per_case": 3,
+  "retries": 3,
+  "ollama_url": "http://localhost:11434",
+  "runs": 30,
+  "records": [
+    {
+      "case": "T1",
+      "model": "llama3.2:3b-instruct-q4_K_M",
+      "repetition": 1,
+      "outcome": "REJECTED_GATE",
+      "attempts": 1,
+      "latency_s": 7.84,
+      "file": "T1_llama3.2_3b-instruct-q4_K_M_run1.json"
+    },
+    {
+      "case": "T1",
+      "model": "llama3.2:3b-instruct-q4_K_M",
+      "repetition": 2,
+      "outcome": "REJECTED_GATE",
+      "attempts": 1,
+      "latency_s": 2.62,
+      "file": "T1_llama3.2_3b-instruct-q4_K_M_run2.json"
+    },
+    {
+      "case": "T1",
+      "model": "llama3.2:3b-instruct-q4_K_M",
+      "repetition": 3,
+      "outcome": "REJECTED_GATE",
+      "attempts": 1,
+      "latency_s": 2.64,
+      "file": "T1_llama3.2_3b-instruct-q4_K_M_run3.json"
+    },
+    {
+      "case": "T2",
+      "model": "llama3.2:3b-instruct-q4_K_M",
+      "repetition": 1,
+      "outcome": "REJECTED_GATE",
+      "attempts": 1,
+      "latency_s": 2.4,
+      "file": "T2_llama3.2_3b-instruct-q4_K_M_run1.json"
+    },
+    {
+      "case": "T2",
+      "model": "llama3.2:3b-instruct-q4_K_M",
+      "repetition": 2,
+      "outcome": "REJECTED_GATE",
+      "attempts": 1,
+      "latency_s": 2.39,
+      "file": "T2_llama3.2_3b-instruct-q4_K_M_run2.json"
+    },
+    {
+      "case": "T2",
+      "model": "llama3.2:3b-instruct-q4_K_M",
+      "repetition": 3,
+      "outcome": "REJECTED_GATE",
+      "attempts": 1,
+      "latency_s": 2.36,
+      "file": "T2_llama3.2_3b-instruct-q4_K_M_run3.json"
+    },
+    {
+      "case": "T3",
+      "model": "llama3.2:3b-instruct-q4_K_M",
+      "repetition": 1,
+      "outcome": "REJECTED_GATE",
+      "attempts": 1,
+      "latency_s": 2.72,
+      "file": "T3_llama3.2_3b-instruct-q4_K_M_run1.json"
+    },
+    {
+      "case": "T3",
+      "model": "llama3.2:3b-instruct-q4_K_M",
+      "repetition": 2,
+      "outcome": "REFUSED",
+      "attempts": 1,
+      "latency_s": 0.67,
+      "file": "T3_llama3.2_3b-instruct-q4_K_M_run2.json"
+    },
+    {
+      "case": "T3",
+      "model": "llama3.2:3b-instruct-q4_K_M",
+      "repetition": 3,
+      "outcome": "REFUSED",
+      "attempts": 1,
+      "latency_s": 0.67,
+      "file": "T3_llama3.2_3b-instruct-q4_K_M_run3.json"
+    },
+    {
+      "case": "T4",
+      "model": "llama3.2:3b-instruct-q4_K_M",
+      "repetition": 1,
+      "outcome": "REFUSED",
+      "attempts": 1,
+      "latency_s": 0.94,
+      "file": "T4_llama3.2_3b-instruct-q4_K_M_run1.json"
+    },
+    {
+      "case": "T4",
+      "model": "llama3.2:3b-instruct-q4_K_M",
+      "repetition": 2,
+      "outcome": "REFUSED",
+      "attempts": 1,
+      "latency_s": 0.94,
+      "file": "T4_llama3.2_3b-instruct-q4_K_M_run2.json"
+    },
+    {
+      "case": "T4",
+      "model": "llama3.2:3b-instruct-q4_K_M",
+      "repetition": 3,
+      "outcome": "REFUSED",
+      "attempts": 1,
+      "latency_s": 0.94,
+      "file": "T4_llama3.2_3b-instruct-q4_K_M_run3.json"
+    },
+    {
+      "case": "T5",
+      "model": "llama3.2:3b-instruct-q4_K_M",
+      "repetition": 1,
+      "outcome": "REFUSED",
+      "attempts": 1,
+      "latency_s": 0.93,
+      "file": "T5_llama3.2_3b-instruct-q4_K_M_run1.json"
+    },
+    {
+      "case": "T5",
+      "model": "llama3.2:3b-instruct-q4_K_M",
+      "repetition": 2,
+      "outcome": "REFUSED",
+      "attempts": 1,
+      "latency_s": 0.93,
+      "file": "T5_llama3.2_3b-instruct-q4_K_M_run2.json"
+    },
+    {
+      "case": "T5",
+      "model": "llama3.2:3b-instruct-q4_K_M",
+      "repetition": 3,
+      "outcome": "REFUSED",
+      "attempts": 1,
+      "latency_s": 0.94,
+      "file": "T5_llama3.2_3b-instruct-q4_K_M_run3.json"
+    },
+    {
+      "case": "T6",
+      "model": "llama3.2:3b-instruct-q4_K_M",
+      "repetition": 1,
+      "outcome": "CLARIFICATION_REQUIRED",
+      "attempts": 1,
+      "latency_s": 0.74,
+      "file": "T6_llama3.2_3b-instruct-q4_K_M_run1.json"
+    },
+    {
+      "case": "T6",
+      "model": "llama3.2:3b-instruct-q4_K_M",
+      "repetition": 2,
+      "outcome": "CLARIFICATION_REQUIRED",
+      "attempts": 1,
+      "latency_s": 0.73,
+      "file": "T6_llama3.2_3b-instruct-q4_K_M_run2.json"
+    },
+    {
+      "case": "T6",
+      "model": "llama3.2:3b-instruct-q4_K_M",
+      "repetition": 3,
+      "outcome": "CLARIFICATION_REQUIRED",
+      "attempts": 1,
+      "latency_s": 0.72,
+      "file": "T6_llama3.2_3b-instruct-q4_K_M_run3.json"
+    },
+    {
+      "case": "T7",
+      "model": "llama3.2:3b-instruct-q4_K_M",
+      "repetition": 1,
+      "outcome": "REFUSED",
+      "attempts": 1,
+      "latency_s": 0.74,
+      "file": "T7_llama3.2_3b-instruct-q4_K_M_run1.json"
+    },
+    {
+      "case": "T7",
+      "model": "llama3.2:3b-instruct-q4_K_M",
+      "repetition": 2,
+      "outcome": "REFUSED",
+      "attempts": 1,
+      "latency_s": 0.74,
+      "file": "T7_llama3.2_3b-instruct-q4_K_M_run2.json"
+    },
+    {
+      "case": "T7",
+      "model": "llama3.2:3b-instruct-q4_K_M",
+      "repetition": 3,
+      "outcome": "REFUSED",
+      "attempts": 1,
+      "latency_s": 0.73,
+      "file": "T7_llama3.2_3b-instruct-q4_K_M_run3.json"
+    },
+    {
+      "case": "T8",
+      "model": "llama3.2:3b-instruct-q4_K_M",
+      "repetition": 1,
+      "outcome": "CLARIFICATION_REQUIRED",
+      "attempts": 1,
+      "latency_s": 0.87,
+      "file": "T8_llama3.2_3b-instruct-q4_K_M_run1.json"
+    },
+    {
+      "case": "T8",
+      "model": "llama3.2:3b-instruct-q4_K_M",
+      "repetition": 2,
+      "outcome": "CLARIFICATION_REQUIRED",
+      "attempts": 1,
+      "latency_s": 0.85,
+      "file": "T8_llama3.2_3b-instruct-q4_K_M_run2.json"
+    },
+    {
+      "case": "T8",
+      "model": "llama3.2:3b-instruct-q4_K_M",
+      "repetition": 3,
+      "outcome": "CLARIFICATION_REQUIRED",
+      "attempts": 1,
+      "latency_s": 0.85,
+      "file": "T8_llama3.2_3b-instruct-q4_K_M_run3.json"
+    },
+    {
+      "case": "T9",
+      "model": "llama3.2:3b-instruct-q4_K_M",
+      "repetition": 1,
+      "outcome": "CLARIFICATION_REQUIRED",
+      "attempts": 1,
+      "latency_s": 1.23,
+      "file": "T9_llama3.2_3b-instruct-q4_K_M_run1.json"
+    },
+    {
+      "case": "T9",
+      "model": "llama3.2:3b-instruct-q4_K_M",
+      "repetition": 2,
+      "outcome": "CLARIFICATION_REQUIRED",
+      "attempts": 1,
+      "latency_s": 1.22,
+      "file": "T9_llama3.2_3b-instruct-q4_K_M_run2.json"
+    },
+    {
+      "case": "T9",
+      "model": "llama3.2:3b-instruct-q4_K_M",
+      "repetition": 3,
+      "outcome": "CLARIFICATION_REQUIRED",
+      "attempts": 1,
+      "latency_s": 1.22,
+      "file": "T9_llama3.2_3b-instruct-q4_K_M_run3.json"
+    },
+    {
+      "case": "T10",
+      "model": "llama3.2:3b-instruct-q4_K_M",
+      "repetition": 1,
+      "outcome": "REJECTED_SCHEMA",
+      "attempts": 3,
+      "latency_s": 4.35,
+      "file": "T10_llama3.2_3b-instruct-q4_K_M_run1.json"
+    },
+    {
+      "case": "T10",
+      "model": "llama3.2:3b-instruct-q4_K_M",
+      "repetition": 2,
+      "outcome": "REJECTED_SCHEMA",
+      "attempts": 3,
+      "latency_s": 4.35,
+      "file": "T10_llama3.2_3b-instruct-q4_K_M_run2.json"
+    },
+    {
+      "case": "T10",
+      "model": "llama3.2:3b-instruct-q4_K_M",
+      "repetition": 3,
+      "outcome": "REJECTED_SCHEMA",
+      "attempts": 3,
+      "latency_s": 4.37,
+      "file": "T10_llama3.2_3b-instruct-q4_K_M_run3.json"
+    }
+  ]
+}

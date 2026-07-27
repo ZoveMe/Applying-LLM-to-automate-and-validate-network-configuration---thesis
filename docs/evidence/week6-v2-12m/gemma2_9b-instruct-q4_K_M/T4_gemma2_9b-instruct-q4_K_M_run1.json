@@ -1,0 +1,33 @@
+{
+  "timestamp": "2026-07-27T20:25:53",
+  "model": "gemma2:9b-instruct-q4_K_M",
+  "ollama_url": "http://localhost:11434",
+  "generation_options": {
+    "temperature": 0,
+    "seed": 42,
+    "num_ctx": 8192,
+    "num_predict": 1024
+  },
+  "requirement": "Add a static route on router r9 so that the network 10.0.50.0/24 is reachable via 192.168.1.1.",
+  "attempts": [
+    {
+      "n": 1,
+      "raw": "{\n  \"rationale\": \"r9 is not in the declared inventory.\",\n  \"decision\": \"REFUSE\",\n  \"reason_code\": \"INVALID_INVENTORY\",\n  \"static_routes\": [],\n  \"access_policy\": []\n}",
+      "schema_valid": true,
+      "error": null,
+      "latency_s": 4.03
+    }
+  ],
+  "proposal": {
+    "rationale": "r9 is not in the declared inventory.",
+    "decision": "REFUSE",
+    "reason_code": "INVALID_INVENTORY",
+    "static_routes": [],
+    "access_policy": []
+  },
+  "gate_report": null,
+  "outcome": "REFUSED",
+  "total_latency_s": 4.03,
+  "benchmark_case_id": "T4",
+  "repetition": 1
+}

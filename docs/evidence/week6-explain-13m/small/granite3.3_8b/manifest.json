@@ -1,0 +1,22 @@
+{
+  "task": "EXPLAIN",
+  "generated_at": "2026-07-27T10:30:23",
+  "devices": [
+    "r1",
+    "r2"
+  ],
+  "models": [
+    "granite3.3:8b"
+  ],
+  "reps": 3,
+  "config_root": "/mnt/c/Users/Damjan/Desktop/Thesis/thesis-net/configs",
+  "appendix": true,
+  "mock": false,
+  "generation_options": {
+    "temperature": 0,
+    "seed": 42,
+    "num_ctx": 8192,
+    "num_predict": 1024
+  },
+  "ollama_url": "http://localhost:11434"
+}

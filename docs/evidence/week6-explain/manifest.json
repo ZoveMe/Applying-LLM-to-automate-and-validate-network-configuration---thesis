@@ -1,0 +1,21 @@
+{
+  "task": "EXPLAIN",
+  "generated_at": "2026-07-26T13:02:11",
+  "devices": [
+    "r1",
+    "r2"
+  ],
+  "models": [
+    "qwen2.5-coder:7b-instruct-q4_K_M",
+    "qwen3:4b-instruct"
+  ],
+  "reps": 3,
+  "mock": false,
+  "generation_options": {
+    "temperature": 0,
+    "seed": 42,
+    "num_ctx": 8192,
+    "num_predict": 1024
+  },
+  "ollama_url": "http://localhost:11434"
+}

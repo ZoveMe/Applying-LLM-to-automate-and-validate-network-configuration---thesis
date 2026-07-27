@@ -1,0 +1,142 @@
+{
+  "models_compared": 12,
+  "per_model": [
+    {
+      "model": "codellama:7b-instruct-q4_K_M",
+      "explain_policy_recall": 1.0,
+      "propose_model_policy_safety": 0.5,
+      "propose_system_policy_safety": 1.0,
+      "propose_decision_accuracy": 0.533,
+      "propose_schema_validity": 1.0,
+      "propose_runs": 30
+    },
+    {
+      "model": "deepseek-coder-v2:16b-lite-instruct-q4_K_M",
+      "explain_policy_recall": 1.0,
+      "propose_model_policy_safety": 0.9,
+      "propose_system_policy_safety": 1.0,
+      "propose_decision_accuracy": 0.8,
+      "propose_schema_validity": 1.0,
+      "propose_runs": 30
+    },
+    {
+      "model": "gemma2:9b-instruct-q4_K_M",
+      "explain_policy_recall": 1.0,
+      "propose_model_policy_safety": 0.8,
+      "propose_system_policy_safety": 1.0,
+      "propose_decision_accuracy": 0.8,
+      "propose_schema_validity": 1.0,
+      "propose_runs": 30
+    },
+    {
+      "model": "gemma3:4b",
+      "explain_policy_recall": 0.889,
+      "propose_model_policy_safety": 0.8,
+      "propose_system_policy_safety": 1.0,
+      "propose_decision_accuracy": 0.633,
+      "propose_schema_validity": 0.933,
+      "propose_runs": 30
+    },
+    {
+      "model": "granite3.3:8b",
+      "explain_policy_recall": 1.0,
+      "propose_model_policy_safety": 0.8,
+      "propose_system_policy_safety": 1.0,
+      "propose_decision_accuracy": 0.7,
+      "propose_schema_validity": 1.0,
+      "propose_runs": 30
+    },
+    {
+      "model": "llama3.1:8b-instruct-q4_K_M",
+      "explain_policy_recall": 1.0,
+      "propose_model_policy_safety": 1.0,
+      "propose_system_policy_safety": 1.0,
+      "propose_decision_accuracy": 1.0,
+      "propose_schema_validity": 1.0,
+      "propose_runs": 30
+    },
+    {
+      "model": "llama3.2:3b-instruct-q4_K_M",
+      "explain_policy_recall": 1.0,
+      "propose_model_policy_safety": 0.967,
+      "propose_system_policy_safety": 1.0,
+      "propose_decision_accuracy": 0.667,
+      "propose_schema_validity": 0.9,
+      "propose_runs": 30
+    },
+    {
+      "model": "mistral:7b-instruct-q4_K_M",
+      "explain_policy_recall": 0.0,
+      "propose_model_policy_safety": 1.0,
+      "propose_system_policy_safety": 1.0,
+      "propose_decision_accuracy": 0.9,
+      "propose_schema_validity": 1.0,
+      "propose_runs": 30
+    },
+    {
+      "model": "phi4-mini:3.8b",
+      "explain_policy_recall": 0.555,
+      "propose_model_policy_safety": 0.8,
+      "propose_system_policy_safety": 1.0,
+      "propose_decision_accuracy": 0.7,
+      "propose_schema_validity": 0.9,
+      "propose_runs": 30
+    },
+    {
+      "model": "qwen2.5-coder:7b-instruct-q4_K_M",
+      "explain_policy_recall": 1.0,
+      "propose_model_policy_safety": 0.9,
+      "propose_system_policy_safety": 1.0,
+      "propose_decision_accuracy": 0.9,
+      "propose_schema_validity": 1.0,
+      "propose_runs": 30
+    },
+    {
+      "model": "qwen2.5:7b-instruct-q4_K_M",
+      "explain_policy_recall": 0.0,
+      "propose_model_policy_safety": 0.833,
+      "propose_system_policy_safety": 1.0,
+      "propose_decision_accuracy": 0.833,
+      "propose_schema_validity": 1.0,
+      "propose_runs": 30
+    },
+    {
+      "model": "qwen3:4b-instruct",
+      "explain_policy_recall": 0.0,
+      "propose_model_policy_safety": 1.0,
+      "propose_system_policy_safety": 1.0,
+      "propose_decision_accuracy": 0.8,
+      "propose_schema_validity": 0.9,
+      "propose_runs": 30
+    }
+  ],
+  "correlations_with_explain_policy_recall": {
+    "propose_model_policy_safety": -0.329,
+    "propose_decision_accuracy": -0.265,
+    "propose_schema_validity": 0.193
+  },
+  "group_comparison": {
+    "policy_blind_models": [
+      "mistral:7b-instruct-q4_K_M",
+      "qwen2.5:7b-instruct-q4_K_M",
+      "qwen3:4b-instruct"
+    ],
+    "policy_aware_models": [
+      "codellama:7b-instruct-q4_K_M",
+      "deepseek-coder-v2:16b-lite-instruct-q4_K_M",
+      "gemma2:9b-instruct-q4_K_M",
+      "gemma3:4b",
+      "granite3.3:8b",
+      "llama3.1:8b-instruct-q4_K_M",
+      "llama3.2:3b-instruct-q4_K_M",
+      "phi4-mini:3.8b",
+      "qwen2.5-coder:7b-instruct-q4_K_M"
+    ],
+    "blind_mean_propose_model_policy_safety": 0.944,
+    "aware_mean_propose_model_policy_safety": 0.83,
+    "blind_mean_decision_accuracy": 0.844,
+    "aware_mean_decision_accuracy": 0.748
+  },
+  "system_safety_invariant_holds": true,
+  "models_violating_system_safety": []
+}

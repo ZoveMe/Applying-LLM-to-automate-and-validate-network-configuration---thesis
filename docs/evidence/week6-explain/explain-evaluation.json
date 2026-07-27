@@ -1,0 +1,170 @@
+{
+  "per_run": [
+    {
+      "device": "r1",
+      "model": "qwen2.5-coder:7b-instruct-q4_K_M",
+      "rep": 1,
+      "schema_valid": true,
+      "route_recall": 1.0,
+      "route_precision": 1.0,
+      "iface_recall": 1.0,
+      "iface_precision": 1.0,
+      "policy_recall": 1.0,
+      "hallucinations": []
+    },
+    {
+      "device": "r1",
+      "model": "qwen2.5-coder:7b-instruct-q4_K_M",
+      "rep": 2,
+      "schema_valid": true,
+      "route_recall": 1.0,
+      "route_precision": 1.0,
+      "iface_recall": 1.0,
+      "iface_precision": 1.0,
+      "policy_recall": 1.0,
+      "hallucinations": []
+    },
+    {
+      "device": "r1",
+      "model": "qwen2.5-coder:7b-instruct-q4_K_M",
+      "rep": 3,
+      "schema_valid": true,
+      "route_recall": 1.0,
+      "route_precision": 1.0,
+      "iface_recall": 1.0,
+      "iface_precision": 1.0,
+      "policy_recall": 1.0,
+      "hallucinations": []
+    },
+    {
+      "device": "r1",
+      "model": "qwen3:4b-instruct",
+      "rep": 1,
+      "schema_valid": true,
+      "route_recall": 1.0,
+      "route_precision": 1.0,
+      "iface_recall": 1.0,
+      "iface_precision": 1.0,
+      "policy_recall": 0.0,
+      "hallucinations": []
+    },
+    {
+      "device": "r1",
+      "model": "qwen3:4b-instruct",
+      "rep": 2,
+      "schema_valid": true,
+      "route_recall": 1.0,
+      "route_precision": 1.0,
+      "iface_recall": 1.0,
+      "iface_precision": 1.0,
+      "policy_recall": 0.0,
+      "hallucinations": []
+    },
+    {
+      "device": "r1",
+      "model": "qwen3:4b-instruct",
+      "rep": 3,
+      "schema_valid": true,
+      "route_recall": 1.0,
+      "route_precision": 1.0,
+      "iface_recall": 1.0,
+      "iface_precision": 1.0,
+      "policy_recall": 0.0,
+      "hallucinations": []
+    },
+    {
+      "device": "r2",
+      "model": "qwen2.5-coder:7b-instruct-q4_K_M",
+      "rep": 1,
+      "schema_valid": true,
+      "route_recall": 1.0,
+      "route_precision": 1.0,
+      "iface_recall": 1.0,
+      "iface_precision": 1.0,
+      "policy_recall": null,
+      "hallucinations": []
+    },
+    {
+      "device": "r2",
+      "model": "qwen2.5-coder:7b-instruct-q4_K_M",
+      "rep": 2,
+      "schema_valid": true,
+      "route_recall": 1.0,
+      "route_precision": 1.0,
+      "iface_recall": 1.0,
+      "iface_precision": 1.0,
+      "policy_recall": null,
+      "hallucinations": []
+    },
+    {
+      "device": "r2",
+      "model": "qwen2.5-coder:7b-instruct-q4_K_M",
+      "rep": 3,
+      "schema_valid": true,
+      "route_recall": 1.0,
+      "route_precision": 1.0,
+      "iface_recall": 1.0,
+      "iface_precision": 1.0,
+      "policy_recall": null,
+      "hallucinations": []
+    },
+    {
+      "device": "r2",
+      "model": "qwen3:4b-instruct",
+      "rep": 1,
+      "schema_valid": true,
+      "route_recall": 1.0,
+      "route_precision": 1.0,
+      "iface_recall": 1.0,
+      "iface_precision": 1.0,
+      "policy_recall": null,
+      "hallucinations": []
+    },
+    {
+      "device": "r2",
+      "model": "qwen3:4b-instruct",
+      "rep": 2,
+      "schema_valid": true,
+      "route_recall": 1.0,
+      "route_precision": 1.0,
+      "iface_recall": 1.0,
+      "iface_precision": 1.0,
+      "policy_recall": null,
+      "hallucinations": []
+    },
+    {
+      "device": "r2",
+      "model": "qwen3:4b-instruct",
+      "rep": 3,
+      "schema_valid": true,
+      "route_recall": 1.0,
+      "route_precision": 1.0,
+      "iface_recall": 1.0,
+      "iface_precision": 1.0,
+      "policy_recall": null,
+      "hallucinations": []
+    }
+  ],
+  "aggregate": {
+    "qwen2.5-coder:7b-instruct-q4_K_M": {
+      "runs": 6,
+      "schema_validity": 1.0,
+      "mean_route_recall": 1.0,
+      "mean_route_precision": 1.0,
+      "mean_iface_recall": 1.0,
+      "mean_iface_precision": 1.0,
+      "mean_policy_recall": 1.0,
+      "total_hallucinations": 0
+    },
+    "qwen3:4b-instruct": {
+      "runs": 6,
+      "schema_validity": 1.0,
+      "mean_route_recall": 1.0,
+      "mean_route_precision": 1.0,
+      "mean_iface_recall": 1.0,
+      "mean_iface_precision": 1.0,
+      "mean_policy_recall": 0.0,
+      "total_hallucinations": 0
+    }
+  }
+}
