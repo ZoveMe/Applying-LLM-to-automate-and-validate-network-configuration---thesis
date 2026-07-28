@@ -1,0 +1,18 @@
+{
+  "stage": "baseline_reconciliation",
+  "timestamp": "2026-07-28T14:50:16.429621",
+  "started_at": "2026-07-28T14:50:12.928933",
+  "completed_at": "2026-07-28T14:50:16.429621",
+  "duration_seconds": 3.500681,
+  "command": [
+    "ansible-playbook",
+    "-i",
+    "/mnt/c/Users/Damjan/Desktop/Thesis/thesis-net/ansible/inventory_topology_l.yml",
+    "/mnt/c/Users/Damjan/Desktop/Thesis/thesis-net/ansible/reconcile_topology_l.yml",
+    "--extra-vars",
+    "{\"approved_bundle_sha256\": \"5cb0982cac13a78e139e29e1c02529cf8c849e6cc9c2bf86693cd0b2b3572e90\", \"repair_profile\": \"topology_l_intent_v1\"}"
+  ],
+  "returncode": 2,
+  "stdout": "\nPLAY [Reconcile the approved larger-topology intent bundle] ********************\n\nTASK [Fail closed unless the approved bundle is exact] *************************\nfatal: [r1]: FAILED! => {\n    \"assertion\": \"approved_bundle_sha256 | default('') == calculated_bundle_sha256\",\n    \"changed\": false,\n    \"evaluated_to\": false,\n    \"msg\": \"Refusing reconciliation: the profile, bundle checksum, inventory, or allow-listed intent is not exact.\"\n}\n\nPLAY RECAP *********************************************************************\nr1                         : ok=0    changed=0    unreachable=0    failed=1    skipped=0    rescued=0    ignored=0   \n\n",
+  "stderr": ""
+}

@@ -2,7 +2,7 @@
 
 ## Status
 
-Implementation is complete and all 120 offline tests pass, including 31 tests
+Implementation is complete and all 130 offline tests pass, including 31 tests
 specific to this extension. Live results must not be
 reported until the Containerlab experiment is executed and its new evidence
 directory is reviewed.

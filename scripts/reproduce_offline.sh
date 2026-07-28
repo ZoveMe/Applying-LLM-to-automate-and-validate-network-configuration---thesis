@@ -13,7 +13,7 @@ set -Eeuo pipefail
 IFS=$'\n\t'
 
 EXPECTED_BASE_COMMIT="${REPRO_BASE_COMMIT:-cad3e2e}"
-EXPECTED_TESTS=120
+EXPECTED_TESTS=130
 EXPECTED_CHECKSUM_FILES=39
 EXPECTED_CHECKSUM_ENTRIES=444
 EXPECTED_EXPLAIN_PILOT_RUNS=12
@@ -435,6 +435,9 @@ step "6/8" "Deterministic derived Chapter 6 outputs"
 
 python3 experiments/generate_thesis_results.py --check
 pass "Chapter 6 and Week 5 figures match their preserved inputs"
+
+python3 experiments/analyze_safety_ablation.py --check
+pass "safety-layer ablation matches all 360 preserved PROPOSE runs"
 
 step "7/8" "Offline test suite"
 

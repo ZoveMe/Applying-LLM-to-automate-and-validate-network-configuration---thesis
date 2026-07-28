@@ -327,6 +327,13 @@ class PlaybookSafetyTests(unittest.TestCase):
         self.assertIn("any_errors_fatal: true", text)
         self.assertIn("approved_bundle_sha256", text)
         self.assertIn("calculated_bundle_sha256", text)
+        self.assertNotIn("allowed_bundle_text", text)
+        checksum_block = text.split(
+            "calculated_bundle_sha256:", maxsplit=1
+        )[1].split("node_routes:", maxsplit=1)[0]
+        self.assertIn("lookup(", checksum_block)
+        self.assertIn("rstrip=false", checksum_block)
+        self.assertIn("| hash('sha256')", checksum_block)
         self.assertIn("Fail closed unless the approved bundle is exact", text)
         self.assertIn("STALE_ROUTE_REMOVED", text)
         self.assertIn("ROUTE_ADDED", text)

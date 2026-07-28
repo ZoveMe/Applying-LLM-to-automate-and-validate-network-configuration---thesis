@@ -71,9 +71,7 @@ Ground truth is `content_violates_intent`, recomputed independently of the gate 
 
 **Precision requires a caveat, and the caveat is not a weakness.** The ground truth used here covers *policy* violations only, whereas the gate additionally enforces topology and scope constraints. Inspection of the 29 nominally "false positive" rejections confirms they are correct rejections on non-policy grounds — for example, DeepSeek-Coder-V2 and Gemma3 on case T1 each proposed policy-clean changes that were rejected while carrying 3 and 1 extraneous changes respectively (invalid next hops or routes outside the declared scope). Reported precision is therefore a **lower bound**: it counts every non-policy rejection as an error even when the rejection was correct under the gate's full specification.
 
-Honest phrasing for the thesis: *"Against a policy-only ground truth the gate achieves perfect recall (1.000) and a precision lower bound of 0.637; manual inspection indicates the residual rejections are correct enforcement of topology and scope constraints not represented in the policy ground truth."*
-
-Optional refinement (not required, ~1 hour): recompute the ground truth to include independently derived topology validity, which would raise measured precision toward its true value. Recall — the number that matters for safety — is unaffected.
+Honest phrasing for the thesis: *"Against a policy-only ground truth the gate achieves perfect recall (1.000) and a precision lower bound of 0.637. A subsequent deterministic ablation independently replayed the topology and policy checks and confirmed that all 29 residual rejections are topology violations not represented in the policy-only ground truth."*
 
 ## Result 5 — where the models actually fail
 
@@ -88,6 +86,22 @@ Optional refinement (not required, ~1 hour): recompute the ground truth to inclu
 **Failure taxonomy over 360 runs:** proposed when it should have refused or clarified — 54; extraneous changes — 42; clarified instead of deciding — 14; schema-invalid output — 11; refused a legitimate request — 3.
 
 The dominant failure is **over-eagerness**: 54 cases of proposing a change where refusal or clarification was correct, plus 42 cases of adding changes nobody asked for. Refusing legitimate work is rare (3). The two hardest cases — T9 (a request conflicting with a mandatory deny) and T8 (a narrow probe at the policy boundary) — defeated 10 and 9 of the 12 models respectively. These are precisely the adversarial cases where a model most needs to say no, and where the deterministic gate did the work instead.
+
+## Result 6 — ablation proves that the safety layers make distinct contributions
+
+The ablation reuses all 360 preserved live PROPOSE outputs and holds the 156 schema-valid actionable proposals constant across configurations. It independently reruns every recorded gate report; mismatches: **0**.
+
+| Safety configuration | Allowed | Known unsafe allowed | Unsafe share of allowed |
+|---|---:|---:|---:|
+| No deterministic gate | 156 | 80 | 51.3% |
+| Strict schema only | 156 | 80 | 51.3% |
+| Schema + policy | 105 | 29 | 27.6% |
+| Schema + topology + policy | 76 | 0 | 0.0% |
+| Complete gate + SHA-256 approval | 76 | 0 | 0.0% |
+
+The 80 known violations comprise 36 policy-only, 29 topology-only, and 15 combined failures. The policy layer blocks all 51 policy violations but cannot replace topology validation; without topology checks, 29 known-unsafe proposals would continue. The complete gate blocks all 80 and allows all 76 proposals with no known encoded violation. Exact-byte approval then rejects **76/76 one-byte tampering probes** and accepts none.
+
+This result refines, rather than contradicts, the policy-only confusion matrix. The earlier precision of 0.637 remains the correct lower bound when only policy is treated as ground truth. Against the explicitly enumerated schema, topology, and policy rules used by the system, the full gate rejects every known violation and passes every proposal with no known violation. This is not a claim of universal configuration safety: risks outside the encoded checks remain outside the experiment.
 
 ---
 

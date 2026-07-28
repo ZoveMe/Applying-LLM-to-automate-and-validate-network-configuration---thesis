@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="600" viewBox="0 0 1120 600" role="img" aria-labelledby="title desc">
+  <title id="title">Познати небезбедни предлози што би продолжиле</title>
+  <desc id="desc">Хоризонтални столбови за пет контролни конфигурации врз 156 шема-валидни PROPOSE предлози.</desc>
+  <style>
+    .title { font: 700 28px "Segoe UI", Arial, sans-serif; fill: #172033; }
+    .subtitle { font: 16px "Segoe UI", Arial, sans-serif; fill: #596579; }
+    .label { font: 600 17px "Segoe UI", Arial, sans-serif; fill: #283449; }
+    .value { font: 700 18px "Cascadia Mono", Consolas, monospace; fill: #172033; }
+    .tick { font: 14px "Cascadia Mono", Consolas, monospace; fill: #68758A; }
+    .source { font: 13px "Segoe UI", Arial, sans-serif; fill: #68758A; }
+  </style>
+  <rect width="100%" height="100%" fill="#FAFBFD" />
+  <text x="54" y="55" class="title">Познати небезбедни предлози што би продолжиле</text>
+  <text x="54" y="88" class="subtitle">156 шема-валидни PROPOSE предлози од 360 живи извршувања; број на прекршувања дозволени по слој</text>
+  <path d="M1040 34 l12 12 -12 12 -12 -12 z" fill="#D5A21A" opacity="0.9" />
+  <line x1="310.0" y1="160" x2="310.0" y2="525" stroke="#D9DEE7" stroke-width="1" /><text x="310.0" y="552" text-anchor="middle" class="tick">0</text><line x1="485.0" y1="160" x2="485.0" y2="525" stroke="#D9DEE7" stroke-width="1" /><text x="485.0" y="552" text-anchor="middle" class="tick">20</text><line x1="660.0" y1="160" x2="660.0" y2="525" stroke="#D9DEE7" stroke-width="1" /><text x="660.0" y="552" text-anchor="middle" class="tick">40</text><line x1="835.0" y1="160" x2="835.0" y2="525" stroke="#D9DEE7" stroke-width="1" /><text x="835.0" y="552" text-anchor="middle" class="tick">60</text><line x1="1010.0" y1="160" x2="1010.0" y2="525" stroke="#D9DEE7" stroke-width="1" /><text x="1010.0" y="552" text-anchor="middle" class="tick">80</text>
+  <text x="292" y="208" text-anchor="end" class="label">Без порта</text><rect x="310" y="175" width="700.0" height="50" rx="6" fill="#D97706" /><text x="1024.0" y="209" class="value">80</text><text x="292" y="290" text-anchor="end" class="label">Само шема</text><rect x="310" y="257" width="700.0" height="50" rx="6" fill="#D97706" /><text x="1024.0" y="291" class="value">80</text><text x="292" y="372" text-anchor="end" class="label">Само политика</text><rect x="310" y="339" width="253.8" height="50" rx="6" fill="#8A7A17" /><text x="577.8" y="373" class="value">29</text><text x="292" y="454" text-anchor="end" class="label">Целосна порта</text><rect x="310" y="421" width="0.0" height="50" rx="6" fill="#2563A6" /><text x="328.0" y="455" class="value">0</text><text x="292" y="536" text-anchor="end" class="label">Порта + SHA-256</text><rect x="310" y="503" width="0.0" height="50" rx="6" fill="#2563A6" /><text x="328.0" y="537" class="value">0</text>
+  <text x="54" y="584" class="source">Извор: зачувани Week 6 докази; портата е повторно пресметана, без нови LLM или мрежни извршувања.</text>
+</svg>

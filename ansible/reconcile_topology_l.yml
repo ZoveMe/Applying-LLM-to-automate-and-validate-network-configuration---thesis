@@ -9,9 +9,24 @@
     allowed_profile: topology_l_intent_v1
     allowed_bundle_path: >-
       {{ playbook_dir }}/../examples/topology_l_intent_bundle.json
-    allowed_bundle_text: "{{ lookup('ansible.builtin.file', allowed_bundle_path, rstrip=false) }}"
-    allowed_bundle: "{{ allowed_bundle_text | from_json }}"
-    calculated_bundle_sha256: "{{ allowed_bundle_text | hash('sha256') }}"
+    allowed_bundle: >-
+      {{
+        lookup(
+          'ansible.builtin.file',
+          allowed_bundle_path,
+          rstrip=false
+        )
+        | from_json
+      }}
+    calculated_bundle_sha256: >-
+      {{
+        lookup(
+          'ansible.builtin.file',
+          allowed_bundle_path,
+          rstrip=false
+        )
+        | hash('sha256')
+      }}
     node_routes: >-
       {{
         allowed_bundle.routes

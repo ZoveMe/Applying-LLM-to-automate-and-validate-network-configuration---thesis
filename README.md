@@ -110,6 +110,26 @@ python3 experiments/guarded_repair_demo.py \
 Every run writes to a new timestamped directory under
 `docs/evidence/guarded-repair-runs/`; existing evidence is never overwritten.
 
+## Safety-layer ablation
+
+The deterministic ablation in
+`experiments/analyze_safety_ablation.py` reuses all 360 preserved live PROPOSE
+outputs and independently replays their schema, topology, and policy checks.
+It shows what would happen if each protection were removed: 80 of 156
+schema-valid actionable proposals would continue without the deterministic
+gate, 29 would still continue with policy checks alone, and none continue with
+the complete gate. Exact-byte SHA-256 approval also rejects all 76 one-byte
+tampering probes.
+
+Rebuild and verify the JSON, Macedonian report, and SVG with:
+
+```bash
+python3 experiments/analyze_safety_ablation.py --check
+```
+
+See `docs/derived/safety-ablation/week6-safety-ablation-mk.md` for the
+thesis-ready interpretation and its explicit claim boundary.
+
 ## Larger-topology Ansible multi-fault experiment
 
 The Week 7 extension raises the configuration difficulty without changing the

@@ -66,7 +66,8 @@
 
 - [x] ~~Week 7 larger-topology Ansible multi-fault experiment implemented~~
 - [x] ~~Checksum-bound intent bundle, explicit twelve-action human review, exact approval, serial reconciliation, verified stage timing, runtime validation, idempotency check, emergency recovery, pinned controller and container profiles, and independent evidence verification covered by 31 new offline tests~~
-- [x] ~~Full offline suite passes: 120/120 tests~~
+- [x] ~~Safety-layer ablation completed over all 360 preserved PROPOSE runs, with 10 dedicated tests and independently replayed gate reports~~
+- [x] ~~Full offline suite passes: 130/130 tests (including 31 Week 7-specific tests)~~
 - [x] ~~Single guarded live-run command added with isolated dependency setup, post-deploy clean-tree gate, independent verification, and automatic lab cleanup~~
 - [x] ~~Macedonian Chapter 5 methodology text and guarded Chapter 6 results template prepared in `docs/thesis-text-additions.md`~~
 
