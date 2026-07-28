@@ -2,7 +2,7 @@
 
 ## Status
 
-Implementation is complete and all 118 offline tests pass, including 29 tests
+Implementation is complete and all 120 offline tests pass, including 31 tests
 specific to this extension. Live results must not be
 reported until the Containerlab experiment is executed and its new evidence
 directory is reviewed.
@@ -132,6 +132,17 @@ At the approval prompt, review the printed SHA-256 and enter:
 ```text
 APPROVE_TOPOLOGY_L_REPAIR
 ```
+
+The prompt first prints the exact twelve checksum-bound actions: ten routes and
+two deny policies. The approval record stores the same ordered action list,
+action count, source commit, and bundle SHA-256. The independent verifier
+rejects a missing, shortened, reordered, or modified action list.
+
+Every command record contains microsecond-resolution start and completion
+timestamps plus a monotonic `duration_seconds`. The verifier rejects negative,
+non-finite, reversed, or internally inconsistent timing and produces measured
+durations for the approved reconciliation, post-repair validation, idempotency
+rerun, and all recorded automated stages.
 
 After the experiment:
 

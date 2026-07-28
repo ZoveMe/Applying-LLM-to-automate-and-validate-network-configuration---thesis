@@ -12,6 +12,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 import re
 import sys
 from datetime import datetime
@@ -36,6 +37,7 @@ from experiments.topology_l_ansible_demo import (
     VERIFY_FAULTS_PLAYBOOK,
     EvidencePaths,
     ansible_core_version,
+    bundle_actions,
     bundle_sha256,
     container_identity,
     docker_collection_versions,
@@ -146,6 +148,37 @@ def require_returncode(record: dict[str, Any], label: str) -> int:
     if isinstance(value, bool) or not isinstance(value, int):
         raise EvidenceVerificationError(f"{label} returncode is not an integer")
     return value
+
+
+def require_command_timing(
+    record: dict[str, Any],
+    label: str,
+) -> tuple[datetime, float]:
+    started = require_timestamp(record.get("started_at"), f"{label} start")
+    completed = require_timestamp(
+        record.get("completed_at"),
+        f"{label} completion",
+    )
+    timestamp = require_timestamp(record.get("timestamp"), label)
+    if completed < started:
+        raise EvidenceVerificationError(
+            f"{label} completion precedes its start"
+        )
+    if timestamp != completed:
+        raise EvidenceVerificationError(
+            f"{label} timestamp differs from completed_at"
+        )
+    duration = record.get("duration_seconds")
+    if (
+        isinstance(duration, bool)
+        or not isinstance(duration, (int, float))
+        or not math.isfinite(duration)
+        or duration < 0
+    ):
+        raise EvidenceVerificationError(
+            f"{label} duration_seconds is invalid"
+        )
+    return completed, float(duration)
 
 
 def normalized_basename(value: Any) -> str:
@@ -260,6 +293,7 @@ def validate_preflight(
             raise EvidenceVerificationError(
                 f"preflight command {index} did not succeed"
             )
+        require_command_timing(check, f"preflight check {index}")
 
     if (checks[0].get("stdout") or "").strip() != source_commit:
         raise EvidenceVerificationError(
@@ -323,6 +357,7 @@ def validate_approval(
     *,
     source_commit: str,
     current_checksum: str,
+    current_actions: list[dict[str, str]],
 ) -> datetime:
     if record.get("stage") != "human_approval":
         raise EvidenceVerificationError("approval stage label is incorrect")
@@ -333,6 +368,9 @@ def validate_approval(
         "repair_profile": REPAIR_PROFILE,
         "intent_bundle_sha256": current_checksum,
         "source_commit": source_commit,
+        "approved_action_count": len(current_actions),
+        "approved_actions": current_actions,
+        "human_review_required": True,
         "automatic_deployment_by_llm": False,
         "deployment_engine": "ansible",
     }
@@ -383,6 +421,7 @@ def verify_evidence(
         )
 
     current_checksum = bundle_sha256(intent_bundle)
+    current_actions = bundle_actions(intent_bundle)
     preflight = load_json_object(root / "00-preflight.json")
     (
         source_commit,
@@ -398,9 +437,11 @@ def verify_evidence(
         approval,
         source_commit=source_commit,
         current_checksum=current_checksum,
+        current_actions=current_actions,
     )
 
     records: dict[str, dict[str, Any]] = {}
+    stage_durations: dict[str, float] = {}
     times = [preflight_time]
     reconcile_vars = {
         "repair_profile": REPAIR_PROFILE,
@@ -418,7 +459,9 @@ def verify_evidence(
             raise EvidenceVerificationError(
                 f"{filename} has the wrong stage label"
             )
-        times.append(require_timestamp(record.get("timestamp"), stage))
+        stage_time, stage_duration = require_command_timing(record, stage)
+        times.append(stage_time)
+        stage_durations[stage] = stage_duration
         returncode = require_returncode(record, stage)
         if outcome == "success" and returncode != 0:
             raise EvidenceVerificationError(f"{stage} did not succeed")
@@ -479,10 +522,23 @@ def verify_evidence(
         ),
         "baseline_validation": "PASS",
         "human_approval": "APPROVED",
+        "approved_action_count": len(current_actions),
         "automatic_deployment_by_llm": False,
         "approved_reconciliation": "PASS",
+        "approved_reconciliation_duration_seconds": stage_durations[
+            "approved_reconciliation"
+        ],
         "post_repair_validation": "PASS",
+        "post_repair_validation_duration_seconds": stage_durations[
+            "post_repair_validation"
+        ],
         "idempotency_changed": changed,
+        "idempotency_duration_seconds": stage_durations["idempotency"],
+        "recorded_automation_duration_seconds": round(
+            sum(stage_durations.values()),
+            6,
+        ),
+        "stage_durations_seconds": stage_durations,
         "emergency_recovery_present": False,
         "started_at": preflight_time.isoformat(),
         "approved_at": approval_time.isoformat(),
@@ -509,11 +565,20 @@ def render_macedonian_summary(summary: dict[str, Any]) -> str:
 - Валидација по инјектирањето: очекувано неуспешна \
 (return code {summary["fault_validation_returncode"]})
 - Човечко одобрување: {summary["human_approval"]}
+- Експлицитно прегледани акции: {summary["approved_action_count"]}
 - Автоматска примена од LLM: не
 - Усогласување со Ansible: {summary["approved_reconciliation"]}
+- Време за одобреното усогласување: \
+{summary["approved_reconciliation_duration_seconds"]:.3f} s
 - Валидација по поправката: {summary["post_repair_validation"]}
+- Време за валидација по поправката: \
+{summary["post_repair_validation_duration_seconds"]:.3f} s
 - Идемпотентност: `r1 changed={changed["r1"]}`, \
 `r2 changed={changed["r2"]}`, `r3 changed={changed["r3"]}`
+- Време за идемпотентното повторување: \
+{summary["idempotency_duration_seconds"]:.3f} s
+- Вкупно време на снимените автоматизирани фази: \
+{summary["recorded_automation_duration_seconds"]:.3f} s
 - Итно враќање во нормалниот успешен тек: не е активирано
 
 Овој резултат се однесува на детерминистичкиот Ansible и валидациски слој.

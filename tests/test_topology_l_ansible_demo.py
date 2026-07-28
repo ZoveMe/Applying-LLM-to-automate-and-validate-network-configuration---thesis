@@ -31,6 +31,7 @@ from experiments.topology_l_ansible_demo import (
     DemoError,
     ansible_args,
     assert_idempotent,
+    bundle_actions,
     bundle_sha256,
     fault_injection_args,
     reconciliation_args,
@@ -444,6 +445,9 @@ class WorkflowTests(unittest.TestCase):
                 approval["intent_bundle_sha256"],
                 bundle_sha256(),
             )
+            self.assertEqual(approval["approved_action_count"], 12)
+            self.assertEqual(approval["approved_actions"], bundle_actions())
+            self.assertTrue(approval["human_review_required"])
             self.assertTrue(paths.post_validation.is_file())
             self.assertTrue(paths.idempotency.is_file())
             self.assertFalse(paths.emergency_recovery.exists())

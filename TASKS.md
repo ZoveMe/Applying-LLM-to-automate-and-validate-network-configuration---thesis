@@ -65,8 +65,8 @@
 ## Done (28 July)
 
 - [x] ~~Week 7 larger-topology Ansible multi-fault experiment implemented~~
-- [x] ~~Checksum-bound intent bundle, exact approval, serial reconciliation, runtime validation, idempotency check, emergency recovery, pinned controller and container profiles, and independent evidence verification covered by 29 new offline tests~~
-- [x] ~~Full offline suite passes: 118/118 tests~~
+- [x] ~~Checksum-bound intent bundle, explicit twelve-action human review, exact approval, serial reconciliation, verified stage timing, runtime validation, idempotency check, emergency recovery, pinned controller and container profiles, and independent evidence verification covered by 31 new offline tests~~
+- [x] ~~Full offline suite passes: 120/120 tests~~
 - [x] ~~Macedonian Chapter 5 methodology text and guarded Chapter 6 results template prepared in `docs/thesis-text-additions.md`~~
 
 ## Waiting On

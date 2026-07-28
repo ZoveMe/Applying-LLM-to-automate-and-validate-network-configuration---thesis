@@ -124,6 +124,15 @@ reconciled serially, runtime behavior is validated, and a second run must
 report `changed=0` on all three routers. A failure after fault injection
 activates an emergency deterministic reconciliation.
 
+Before the approval token is accepted, the runner prints all ten route actions
+and both deny-policy actions. The evidence record stores that exact reviewed
+list, its count, and the same bundle checksum.
+
+Each recorded command also includes monotonic duration in seconds plus
+microsecond-resolution start and completion timestamps. The independent
+verifier rejects invalid timing and exposes reconciliation, validation,
+idempotency, and total recorded automation time for Chapter 6.
+
 The live runner also refuses a dirty Git worktree. After a completed run,
 `experiments/verify_topology_l_ansible_evidence.py` independently checks the
 recorded commands, approval checksum, fault-time failure, post-repair success,

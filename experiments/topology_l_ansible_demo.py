@@ -22,6 +22,7 @@ import json
 import re
 import subprocess
 import sys
+import time
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
@@ -162,13 +163,67 @@ def bundle_sha256(path: Path = INTENT_BUNDLE) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def bundle_actions(path: Path = INTENT_BUNDLE) -> list[dict[str, str]]:
+    bundle = json.loads(path.read_text(encoding="utf-8"))
+    actions = [
+        {
+            "kind": "route",
+            "node": route["node"],
+            "prefix": route["prefix"],
+            "next_hop": route["next_hop"],
+        }
+        for route in bundle["routes"]
+    ]
+    actions.extend(
+        {
+            "kind": "policy",
+            "node": policy["node"],
+            "src": policy["src"],
+            "dst": policy["dst"],
+            "action": policy["action"],
+        }
+        for policy in bundle["policies"]
+    )
+    return actions
+
+
+def print_approval_plan(
+    actions: list[dict[str, str]],
+    checksum: str,
+) -> None:
+    print("\nExact checksum-bound actions requiring human approval:")
+    for index, action in enumerate(actions, start=1):
+        if action["kind"] == "route":
+            detail = (
+                f"{action['node']}: route {action['prefix']} "
+                f"via {action['next_hop']}"
+            )
+        else:
+            detail = (
+                f"{action['node']}: {action['action']} "
+                f"{action['src']} -> {action['dst']}"
+            )
+        print(f"  {index:02d}. {detail}")
+    print(f"Intent bundle SHA-256: {checksum}")
+
+
 def command_record(
     stage: str,
     result: subprocess.CompletedProcess,
+    *,
+    started_at: datetime | None = None,
+    completed_at: datetime | None = None,
+    duration_seconds: float | None = None,
 ) -> dict:
+    completed = completed_at or datetime.now()
+    started = started_at or completed
+    duration = 0.0 if duration_seconds is None else duration_seconds
     return {
         "stage": stage,
-        "timestamp": datetime.now().isoformat(timespec="seconds"),
+        "timestamp": completed.isoformat(timespec="microseconds"),
+        "started_at": started.isoformat(timespec="microseconds"),
+        "completed_at": completed.isoformat(timespec="microseconds"),
+        "duration_seconds": round(duration, 6),
         "command": [str(part) for part in result.args],
         "returncode": result.returncode,
         "stdout": result.stdout or "",
@@ -184,8 +239,21 @@ def run_stage(
     runner: CommandRunner,
     require_success: bool = True,
 ) -> subprocess.CompletedProcess:
+    started_at = datetime.now()
+    timer_started = time.perf_counter()
     result = runner(args, capture_output=True)
-    write_json(output, command_record(stage, result))
+    duration_seconds = time.perf_counter() - timer_started
+    completed_at = datetime.now()
+    write_json(
+        output,
+        command_record(
+            stage,
+            result,
+            started_at=started_at,
+            completed_at=completed_at,
+            duration_seconds=duration_seconds,
+        ),
+    )
     if require_success and result.returncode != 0:
         detail = (result.stderr or result.stdout or "no output").strip()
         first_line = detail.splitlines()[0] if detail else "no output"
@@ -371,8 +439,20 @@ def preflight(runner: CommandRunner, output: Path) -> None:
         for node in LAB_NODES
     )
     for command in commands:
+        started_at = datetime.now()
+        timer_started = time.perf_counter()
         result = runner(command, capture_output=True)
-        records.append(command_record("preflight", result))
+        duration_seconds = time.perf_counter() - timer_started
+        completed_at = datetime.now()
+        records.append(
+            command_record(
+                "preflight",
+                result,
+                started_at=started_at,
+                completed_at=completed_at,
+                duration_seconds=duration_seconds,
+            )
+        )
         if result.returncode != 0:
             raise DemoError(f"preflight command failed: {' '.join(command)}")
         if command == ["git", "status", "--porcelain"]:
@@ -432,6 +512,7 @@ def approval_record(
     approved: bool,
     checksum: str,
     commit: str,
+    actions: list[dict[str, str]],
 ) -> dict:
     return {
         "stage": "human_approval",
@@ -442,6 +523,9 @@ def approval_record(
         "intent_bundle": str(INTENT_BUNDLE.relative_to(REPO_ROOT)),
         "intent_bundle_sha256": checksum,
         "source_commit": commit,
+        "approved_action_count": len(actions),
+        "approved_actions": actions,
+        "human_review_required": True,
         "automatic_deployment_by_llm": False,
         "deployment_engine": "ansible",
     }
@@ -481,6 +565,7 @@ def run_demo(
     paths.root.mkdir(parents=True)
 
     checksum = bundle_sha256()
+    actions = bundle_actions()
     preflight(runner, paths.preflight)
 
     print("\n=== 1. ESTABLISH AND VALIDATE THE CLEAN BASELINE ===")
@@ -528,6 +613,7 @@ def run_demo(
             )
 
         print("\n=== 4. REQUIRE CHECKSUM-BOUND HUMAN APPROVAL ===")
+        print_approval_plan(actions, checksum)
         answer = approval_reader(
             f"Type {APPROVAL_TOKEN} to reconcile the exact bundle "
             f"{checksum}: "
@@ -539,6 +625,7 @@ def run_demo(
                 approved=approved,
                 checksum=checksum,
                 commit=source_commit(runner),
+                actions=actions,
             ),
         )
         if not approved:
@@ -582,13 +669,25 @@ def run_demo(
     finally:
         if recovery_required:
             print("\nRestoring the approved intent bundle before exit...")
+            recovery_started_at = datetime.now()
+            recovery_timer_started = time.perf_counter()
             recovery = runner(
                 reconciliation_args(checksum),
                 capture_output=True,
             )
+            recovery_duration_seconds = (
+                time.perf_counter() - recovery_timer_started
+            )
+            recovery_completed_at = datetime.now()
             write_json(
                 paths.emergency_recovery,
-                command_record("emergency_recovery", recovery),
+                command_record(
+                    "emergency_recovery",
+                    recovery,
+                    started_at=recovery_started_at,
+                    completed_at=recovery_completed_at,
+                    duration_seconds=recovery_duration_seconds,
+                ),
             )
             if recovery.returncode != 0:
                 raise DemoError(

@@ -17,6 +17,7 @@ from experiments.topology_l_ansible_demo import (
     RECONCILE_PLAYBOOK,
     ansible_args,
     approval_record,
+    bundle_actions,
     bundle_sha256,
     fault_injection_args,
     fault_verification_args,
@@ -46,6 +47,9 @@ def command_record(
     return {
         "stage": stage,
         "timestamp": TIMESTAMP,
+        "started_at": TIMESTAMP,
+        "completed_at": TIMESTAMP,
+        "duration_seconds": 0.125,
         "command": command,
         "returncode": returncode,
         "stdout": stdout,
@@ -197,6 +201,7 @@ def build_valid_evidence(root: Path) -> None:
         approved=True,
         checksum=checksum,
         commit=SOURCE_COMMIT,
+        actions=bundle_actions(),
     )
     approval["timestamp"] = TIMESTAMP
     write_json(root / "06-human-approval.json", approval)
@@ -268,8 +273,53 @@ class EvidenceVerifierTests(unittest.TestCase):
                 set(summary["container_images"]),
                 set(LAB_NODES),
             )
+            self.assertEqual(summary["approved_action_count"], 12)
+            self.assertEqual(
+                summary["approved_reconciliation_duration_seconds"],
+                0.125,
+            )
+            self.assertEqual(
+                summary["post_repair_validation_duration_seconds"],
+                0.125,
+            )
+            self.assertEqual(
+                summary["idempotency_duration_seconds"],
+                0.125,
+            )
             self.assertNotIn("[ПОПОЛНИ]", markdown)
             self.assertIn("Статус на независната проверка: PASS", markdown)
+
+    def test_rejects_negative_stage_duration(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary) / "run"
+            build_valid_evidence(root)
+            stage = root / "07-approved-reconciliation.json"
+            mutate_json(
+                stage,
+                lambda value: value.update({"duration_seconds": -0.001}),
+            )
+
+            with self.assertRaisesRegex(
+                EvidenceVerificationError,
+                "duration_seconds is invalid",
+            ):
+                verify_evidence(root)
+
+    def test_rejects_approval_action_list_mismatch(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary) / "run"
+            build_valid_evidence(root)
+            approval = root / "06-human-approval.json"
+            mutate_json(
+                approval,
+                lambda value: value["approved_actions"].pop(),
+            )
+
+            with self.assertRaisesRegex(
+                EvidenceVerificationError,
+                "approved_actions",
+            ):
+                verify_evidence(root)
 
     def test_rejects_unexpected_container_image_in_preflight(self):
         with tempfile.TemporaryDirectory() as temporary:
