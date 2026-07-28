@@ -70,10 +70,11 @@
 - [x] ~~Full offline suite passes: 130/130 tests (including 31 Week 7-specific tests)~~
 - [x] ~~Single guarded live-run command added with isolated dependency setup, post-deploy clean-tree gate, independent verification, and automatic lab cleanup~~
 - [x] ~~Macedonian Chapter 5 methodology text and guarded Chapter 6 results template prepared in `docs/thesis-text-additions.md`~~
+- [x] ~~Final clean Week 7 live run independently verified: 3/3 faults detected, post-repair validation passed, and `changed=0` on all routers~~
+- [x] ~~Measured Week 7 timings and results promoted into the Macedonian Chapter 6 text with the verified evidence SHA-256~~
 
 ## Waiting On
 
-- [ ] Run and manually review the Week 7 live evidence before promoting measured recovery claims into Chapter 6
 - [ ] Advisor feedback on Chapter 5 draft
 
 ## Someday

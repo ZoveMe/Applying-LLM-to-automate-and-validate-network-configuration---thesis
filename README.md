@@ -177,9 +177,16 @@ The topology also pins `quay.io/frrouting/frr:9.1.1` and `alpine:3.20.10`;
 preflight records and verifies the immutable Docker image ID of every node.
 
 See `docs/week7-ansible-multifault.md` for the hypotheses, acceptance criteria,
-and exact live protocol. Until a new live evidence directory has been reviewed,
-the repository claims only that this experiment is implemented and passes its
-offline safety tests.
+and exact live protocol.
+
+The final clean live run, `20260728T142716Z-6f54385caf16`, passed the
+independent verifier: all three faults were detected, the approved
+reconciliation changed each affected router once, post-repair control-plane,
+policy, and data-plane validation passed, and the idempotency rerun reported
+`changed=0` for `r1`, `r2`, and `r3`. The verified evidence-set SHA-256 is
+`1a495cfc61192da1508155a4b2680d6bfd6475d2d0910c6ca070fb3542993e6d`.
+The reconciliation took 29.997 seconds, post-repair validation 13.462 seconds,
+and the complete set of recorded automated stages 116.275 seconds.
 
 ## First-deploy notes (read if something doesn't work)
 

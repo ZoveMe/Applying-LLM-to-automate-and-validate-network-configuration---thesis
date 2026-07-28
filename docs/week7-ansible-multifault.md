@@ -3,9 +3,14 @@
 ## Status
 
 Implementation is complete and all 130 offline tests pass, including 31 tests
-specific to this extension. Live results must not be
-reported until the Containerlab experiment is executed and its new evidence
-directory is reviewed.
+specific to this extension. The final clean live run
+`20260728T142716Z-6f54385caf16` passed the independent verifier. It detected
+all three injected faults, reconciled all three routers, passed the complete
+post-repair validation, and reported `changed=0` on every router on the second
+run.
+
+The verified evidence-set SHA-256 is
+`1a495cfc61192da1508155a4b2680d6bfd6475d2d0910c6ca070fb3542993e6d`.
 
 This experiment is additive. It does not regenerate, overwrite, or reinterpret
 the frozen Week 4, Week 5, or Week 6 model evidence.

@@ -1,0 +1,18 @@
+{
+  "stage": "fault_injection",
+  "timestamp": "2026-07-28T16:28:06.461249",
+  "started_at": "2026-07-28T16:28:01.246648",
+  "completed_at": "2026-07-28T16:28:06.461249",
+  "duration_seconds": 5.214594,
+  "command": [
+    "ansible-playbook",
+    "-i",
+    "/mnt/c/Users/Damjan/Desktop/Thesis/thesis-net/ansible/inventory_topology_l.yml",
+    "/mnt/c/Users/Damjan/Desktop/Thesis/thesis-net/ansible/inject_topology_l_faults.yml",
+    "--extra-vars",
+    "{\"fault_confirmation\": \"INJECT_THESIS_FAULTS\", \"fault_profile\": \"topology_l_three_faults_v1\"}"
+  ],
+  "returncode": 0,
+  "stdout": "\nPLAY [Inject the exact larger-topology thesis fault profile] *******************\n\nTASK [Require explicit laboratory fault-injection authorization] ***************\nok: [r1] => {\n    \"changed\": false,\n    \"msg\": \"PASS: exact laboratory fault profile authorized\"\n}\n\nTASK [Inject F1 by removing the r1 route to the DMZ] ***************************\nchanged: [r1]\n\nTASK [Inject F2 by replacing the r2 DMZ next hop] ******************************\nskipping: [r1]\n\nTASK [Inject F3 by removing the sensors-to-client deny rule] *******************\nskipping: [r1]\n\nPLAY [Inject the exact larger-topology thesis fault profile] *******************\n\nTASK [Require explicit laboratory fault-injection authorization] ***************\nok: [r2] => {\n    \"changed\": false,\n    \"msg\": \"PASS: exact laboratory fault profile authorized\"\n}\n\nTASK [Inject F1 by removing the r1 route to the DMZ] ***************************\nskipping: [r2]\n\nTASK [Inject F2 by replacing the r2 DMZ next hop] ******************************\nchanged: [r2]\n\nTASK [Inject F3 by removing the sensors-to-client deny rule] *******************\nskipping: [r2]\n\nPLAY [Inject the exact larger-topology thesis fault profile] *******************\n\nTASK [Require explicit laboratory fault-injection authorization] ***************\nok: [r3] => {\n    \"changed\": false,\n    \"msg\": \"PASS: exact laboratory fault profile authorized\"\n}\n\nTASK [Inject F1 by removing the r1 route to the DMZ] ***************************\nskipping: [r3]\n\nTASK [Inject F2 by replacing the r2 DMZ next hop] ******************************\nskipping: [r3]\n\nTASK [Inject F3 by removing the sensors-to-client deny rule] *******************\nchanged: [r3]\n\nPLAY RECAP *********************************************************************\nr1                         : ok=2    changed=1    unreachable=0    failed=0    skipped=2    rescued=0    ignored=0   \nr2                         : ok=2    changed=1    unreachable=0    failed=0    skipped=2    rescued=0    ignored=0   \nr3                         : ok=2    changed=1    unreachable=0    failed=0    skipped=2    rescued=0    ignored=0   \n\n",
+  "stderr": ""
+}
