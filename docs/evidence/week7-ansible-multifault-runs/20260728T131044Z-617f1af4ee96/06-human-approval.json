@@ -1,0 +1,90 @@
+{
+  "stage": "human_approval",
+  "timestamp": "2026-07-28T15:48:22",
+  "decision": "APPROVED",
+  "approval_token_required": "APPROVE_TOPOLOGY_L_REPAIR",
+  "repair_profile": "topology_l_intent_v1",
+  "intent_bundle": "examples/topology_l_intent_bundle.json",
+  "intent_bundle_sha256": "5cb0982cac13a78e139e29e1c02529cf8c849e6cc9c2bf86693cd0b2b3572e90",
+  "source_commit": "eb392dc840cec7d8de81682845540b70d038e1be",
+  "approved_action_count": 12,
+  "approved_actions": [
+    {
+      "kind": "route",
+      "node": "r1",
+      "prefix": "10.0.2.0/24",
+      "next_hop": "10.0.12.2"
+    },
+    {
+      "kind": "route",
+      "node": "r1",
+      "prefix": "10.0.99.0/24",
+      "next_hop": "10.0.12.2"
+    },
+    {
+      "kind": "route",
+      "node": "r1",
+      "prefix": "10.0.3.0/24",
+      "next_hop": "10.0.12.2"
+    },
+    {
+      "kind": "route",
+      "node": "r1",
+      "prefix": "10.0.4.0/24",
+      "next_hop": "10.0.12.2"
+    },
+    {
+      "kind": "route",
+      "node": "r2",
+      "prefix": "10.0.1.0/24",
+      "next_hop": "10.0.12.1"
+    },
+    {
+      "kind": "route",
+      "node": "r2",
+      "prefix": "10.0.3.0/24",
+      "next_hop": "10.0.23.2"
+    },
+    {
+      "kind": "route",
+      "node": "r2",
+      "prefix": "10.0.4.0/24",
+      "next_hop": "10.0.23.2"
+    },
+    {
+      "kind": "route",
+      "node": "r3",
+      "prefix": "10.0.1.0/24",
+      "next_hop": "10.0.23.1"
+    },
+    {
+      "kind": "route",
+      "node": "r3",
+      "prefix": "10.0.2.0/24",
+      "next_hop": "10.0.23.1"
+    },
+    {
+      "kind": "route",
+      "node": "r3",
+      "prefix": "10.0.99.0/24",
+      "next_hop": "10.0.23.1"
+    },
+    {
+      "kind": "policy",
+      "node": "r1",
+      "src": "10.0.1.0/24",
+      "dst": "10.0.99.0/24",
+      "action": "DROP"
+    },
+    {
+      "kind": "policy",
+      "node": "r3",
+      "src": "10.0.4.0/24",
+      "dst": "10.0.1.0/24",
+      "action": "DROP"
+    }
+  ],
+  "human_review_required": true,
+  "automatic_deployment_by_llm": false,
+  "deployment_engine": "ansible"
+}

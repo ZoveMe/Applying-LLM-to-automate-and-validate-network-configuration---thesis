@@ -339,6 +339,31 @@ class PlaybookSafetyTests(unittest.TestCase):
         self.assertIn("ROUTE_ADDED", text)
         self.assertIn("POLICY_ADDED", text)
 
+        runner_text = (
+            REPO_ROOT / "scripts" / "run_topology_l_live.sh"
+        ).read_text(encoding="utf-8")
+        self.assertIn(
+            "python3 -m experiments.topology_l_ansible_demo",
+            runner_text,
+        )
+        self.assertIn(
+            "python3 -m experiments.verify_topology_l_ansible_evidence",
+            runner_text,
+        )
+
+        demo_text = (
+            REPO_ROOT / "experiments" / "topology_l_ansible_demo.py"
+        ).read_text(encoding="utf-8")
+        self.assertIn(
+            "preflight_commit = preflight(runner, paths.preflight)",
+            demo_text,
+        )
+        self.assertEqual(
+            demo_text.count("source_commit(runner) != preflight_commit"),
+            2,
+        )
+        self.assertIn("commit=preflight_commit", demo_text)
+
     def test_validation_covers_control_plane_policy_and_data_plane(self):
         text = VALIDATE_PLAYBOOK.read_text(encoding="utf-8")
         self.assertIn("expected route uses the intended next hop", text)

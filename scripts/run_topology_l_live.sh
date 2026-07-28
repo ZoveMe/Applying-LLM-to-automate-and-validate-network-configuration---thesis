@@ -171,10 +171,10 @@ sudo containerlab deploy -t "$TOPOLOGY_FILE"
 assert_clean_worktree
 
 printf '\n=== RUN GUARDED THREE-FAULT EXPERIMENT ===\n'
-python3 experiments/topology_l_ansible_demo.py --output-dir "$RUN_DIR"
+python3 -m experiments.topology_l_ansible_demo --output-dir "$RUN_DIR"
 
 printf '\n=== INDEPENDENTLY VERIFY RAW EVIDENCE ===\n'
-python3 experiments/verify_topology_l_ansible_evidence.py "$RUN_DIR" \
+python3 -m experiments.verify_topology_l_ansible_evidence "$RUN_DIR" \
     --json-out "$JSON_OUT" \
     --markdown-out "$MARKDOWN_OUT"
 

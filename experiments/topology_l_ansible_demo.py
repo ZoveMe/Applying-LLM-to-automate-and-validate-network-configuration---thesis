@@ -402,7 +402,7 @@ def validate_controller_profile_files() -> None:
         )
 
 
-def preflight(runner: CommandRunner, output: Path) -> None:
+def preflight(runner: CommandRunner, output: Path) -> str:
     required_files = (
         ANSIBLE_INVENTORY,
         RECONCILE_PLAYBOOK,
@@ -505,6 +505,7 @@ def preflight(runner: CommandRunner, output: Path) -> None:
             "checks": records,
         },
     )
+    return commit
 
 
 def approval_record(
@@ -566,7 +567,7 @@ def run_demo(
 
     checksum = bundle_sha256()
     actions = bundle_actions()
-    preflight(runner, paths.preflight)
+    preflight_commit = preflight(runner, paths.preflight)
 
     print("\n=== 1. ESTABLISH AND VALIDATE THE CLEAN BASELINE ===")
     run_stage(
@@ -613,18 +614,27 @@ def run_demo(
             )
 
         print("\n=== 4. REQUIRE CHECKSUM-BOUND HUMAN APPROVAL ===")
+        if source_commit(runner) != preflight_commit:
+            raise DemoError(
+                "source Git commit changed after preflight; refusing approval"
+            )
         print_approval_plan(actions, checksum)
         answer = approval_reader(
             f"Type {APPROVAL_TOKEN} to reconcile the exact bundle "
             f"{checksum}: "
         ).strip()
         approved = answer == APPROVAL_TOKEN
+        if source_commit(runner) != preflight_commit:
+            raise DemoError(
+                "source Git commit changed while approval was pending; "
+                "refusing reconciliation"
+            )
         write_json(
             paths.approval,
             approval_record(
                 approved=approved,
                 checksum=checksum,
-                commit=source_commit(runner),
+                commit=preflight_commit,
                 actions=actions,
             ),
         )
