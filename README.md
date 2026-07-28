@@ -138,6 +138,17 @@ The live runner also refuses a dirty Git worktree. After a completed run,
 recorded commands, approval checksum, fault-time failure, post-repair success,
 and idempotency before producing any thesis-ready derived summary.
 
+The complete live protocol is available as one guarded command:
+
+```bash
+bash scripts/run_topology_l_live.sh --setup
+```
+
+It creates an isolated pinned Ansible environment, deploys Topology L, runs the
+interactive experiment, invokes the independent verifier, and destroys the lab
+even when a stage fails. Generated `clab-*` runtime directories are ignored at
+any repository depth so deployment cannot invalidate the clean-commit gate.
+
 For reproducibility on the existing Python 3.10 WSL controller, the experiment
 pins `ansible-core 2.17.14` in `requirements-ansible.txt` and
 `community.docker 5.2.1` in `ansible/requirements.yml`. The runner and

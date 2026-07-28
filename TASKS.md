@@ -67,10 +67,12 @@
 - [x] ~~Week 7 larger-topology Ansible multi-fault experiment implemented~~
 - [x] ~~Checksum-bound intent bundle, explicit twelve-action human review, exact approval, serial reconciliation, verified stage timing, runtime validation, idempotency check, emergency recovery, pinned controller and container profiles, and independent evidence verification covered by 31 new offline tests~~
 - [x] ~~Full offline suite passes: 120/120 tests~~
+- [x] ~~Single guarded live-run command added with isolated dependency setup, post-deploy clean-tree gate, independent verification, and automatic lab cleanup~~
 - [x] ~~Macedonian Chapter 5 methodology text and guarded Chapter 6 results template prepared in `docs/thesis-text-additions.md`~~
 
 ## Waiting On
 
+- [ ] Run and manually review the Week 7 live evidence before promoting measured recovery claims into Chapter 6
 - [ ] Advisor feedback on Chapter 5 draft
 
 ## Someday

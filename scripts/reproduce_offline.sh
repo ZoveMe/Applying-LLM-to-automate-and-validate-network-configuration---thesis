@@ -155,6 +155,11 @@ else
     else
         pass "worktree is clean"
     fi
+
+    git check-ignore -q -- \
+        "benchmarks/topology-l/clab-thesis-net-l/.generated" ||
+        die "nested Containerlab runtime directories are not ignored"
+    pass "nested Containerlab runtime directories preserve the clean-tree gate"
 fi
 
 step "2/8" "Python and pinned dependency versions"
@@ -436,6 +441,12 @@ step "7/8" "Offline test suite"
 if ((SKIP_TESTS == 1)); then
     warn "pytest skipped; this run is diagnostic, not a full reproduction."
 else
+    bash -n scripts/run_topology_l_live.sh
+    live_help="$(bash scripts/run_topology_l_live.sh --help)"
+    grep -q "APPROVE_TOPOLOGY_L_REPAIR" <<<"$live_help" ||
+        die "live runner help does not describe the exact approval token"
+    pass "live runner parses and exposes the guarded approval contract"
+
     test_output="$(python3 -m pytest -q 2>&1)" || {
         printf '%s\n' "$test_output" >&2
         die "offline test suite failed"

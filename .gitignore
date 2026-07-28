@@ -1,5 +1,5 @@
 # Generated Containerlab directory
-/clab-*/
+clab-*/
 
 # Secrets and environments
 .env

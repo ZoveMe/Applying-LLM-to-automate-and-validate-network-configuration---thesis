@@ -96,24 +96,22 @@ reconciliation.
 Keep the existing Week 6 evidence untouched. From the repository root:
 
 ```bash
-python3 -m venv .venv-ansible
-source .venv-ansible/bin/activate
-python -m pip install --upgrade pip
-python -m pip install -r requirements-ansible.txt
-ansible-galaxy collection install -r ansible/requirements.yml
-
-git status --short
-
-cd benchmarks/topology-l
-sudo clab deploy -t topology-l.clab.yml
-cd ../..
-
-python3 experiments/topology_l_ansible_demo.py
+bash scripts/run_topology_l_live.sh --setup
 ```
 
-The experiment refuses to start unless `git status --short` is empty. This
-ensures the approval record names a commit that contains the exact experimental
-code rather than an uncommitted working copy.
+On later runs, after the isolated environment already exists, omit `--setup`.
+The script refuses to start unless `git status --short` is empty. This ensures
+the approval record names a commit containing the exact experimental code
+rather than an uncommitted working copy.
+
+The script performs the entire live lifecycle: it installs the pinned
+controller and collection into `.venv-ansible`, checks Docker access, deploys
+the isolated lab, rechecks source cleanliness after deployment, runs the
+interactive experiment, independently verifies the raw evidence, writes the
+derived JSON and Macedonian summary, and destroys the lab through an exit trap.
+Cleanup therefore also runs after a refused approval or failed stage. Generated
+Containerlab `clab-*` directories are ignored at any repository depth; they
+cannot invalidate the clean-commit gate after deployment.
 
 The controller profile is frozen to `ansible-core 2.17.14` and
 `community.docker 5.2.1`, matching the existing Python 3.10 WSL environment.
@@ -144,18 +142,13 @@ non-finite, reversed, or internally inconsistent timing and produces measured
 durations for the approved reconciliation, post-repair validation, idempotency
 rerun, and all recorded automated stages.
 
-After the experiment:
-
-```bash
-sudo clab destroy -t benchmarks/topology-l/topology-l.clab.yml --cleanup
-```
-
 The orchestrator writes a new timestamped evidence directory under:
 
 `docs/evidence/week7-ansible-multifault-runs/`
 
-Independently verify the completed run and write only derived outputs outside
-the raw evidence directory:
+The live script independently verifies the completed run and writes only
+derived outputs outside the raw evidence directory. The equivalent manual
+verification command is:
 
 ```bash
 RUN_DIR="$(find docs/evidence/week7-ansible-multifault-runs \
