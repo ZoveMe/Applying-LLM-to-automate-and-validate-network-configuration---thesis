@@ -44,7 +44,7 @@ Intended access policy:
 
 - Docker
 - Containerlab — install: `bash -c "$(curl -sL https://get.containerlab.dev)"`
-- (later) Ansible and Ollama — only needed from Week 3/4
+- Ansible and Ollama — only needed for their respective live experiments
 
 ## Run it
 
@@ -109,6 +109,37 @@ python3 experiments/guarded_repair_demo.py \
 
 Every run writes to a new timestamped directory under
 `docs/evidence/guarded-repair-runs/`; existing evidence is never overwritten.
+
+## Larger-topology Ansible multi-fault experiment
+
+The Week 7 extension raises the configuration difficulty without changing the
+frozen LLM campaigns. It uses the optional three-router topology and injects
+three simultaneous faults: a missing route on `r1`, a wrong next hop on `r2`,
+and a missing deny policy on `r3`.
+
+The repair is limited to the fixed intent bundle in
+`examples/topology_l_intent_bundle.json`. Human approval is bound to that
+bundle's SHA-256, Ansible independently checks the same hash, routers are
+reconciled serially, runtime behavior is validated, and a second run must
+report `changed=0` on all three routers. A failure after fault injection
+activates an emergency deterministic reconciliation.
+
+The live runner also refuses a dirty Git worktree. After a completed run,
+`experiments/verify_topology_l_ansible_evidence.py` independently checks the
+recorded commands, approval checksum, fault-time failure, post-repair success,
+and idempotency before producing any thesis-ready derived summary.
+
+For reproducibility on the existing Python 3.10 WSL controller, the experiment
+pins `ansible-core 2.17.14` in `requirements-ansible.txt` and
+`community.docker 5.2.1` in `ansible/requirements.yml`. The runner and
+independent verifier both reject a different version before accepting evidence.
+The topology also pins `quay.io/frrouting/frr:9.1.1` and `alpine:3.20.10`;
+preflight records and verifies the immutable Docker image ID of every node.
+
+See `docs/week7-ansible-multifault.md` for the hypotheses, acceptance criteria,
+and exact live protocol. Until a new live evidence directory has been reviewed,
+the repository claims only that this experiment is implemented and passes its
+offline safety tests.
 
 ## First-deploy notes (read if something doesn't work)
 

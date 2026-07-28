@@ -1,0 +1,2 @@
+# Reproducible Week 7 Ansible controller for the existing Python 3.10 WSL lab.
+ansible-core==2.17.14

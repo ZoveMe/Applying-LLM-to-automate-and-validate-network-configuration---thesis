@@ -1,0 +1,54 @@
+---
+- name: Prove the exact three-fault profile is active
+  hosts: topology_l_routers
+  gather_facts: false
+  any_errors_fatal: true
+
+  tasks:
+    - name: Read the r1 DMZ route after F1
+      ansible.builtin.raw: vtysh -c 'show ip route 10.0.3.0/24'
+      when: inventory_hostname == 'r1'
+      register: f1_route
+      changed_when: false
+
+    - name: Prove F1 removed the expected r1 next hop
+      ansible.builtin.assert:
+        that:
+          - "'10.0.12.2' not in f1_route.stdout"
+        success_msg: "PASS: F1 missing-route fault is active"
+        fail_msg: "FAIL: F1 was not injected"
+      when: inventory_hostname == 'r1'
+
+    - name: Read the r2 DMZ route after F2
+      ansible.builtin.raw: vtysh -c 'show ip route 10.0.3.0/24'
+      when: inventory_hostname == 'r2'
+      register: f2_route
+      changed_when: false
+
+    - name: Prove F2 installed only the wrong r2 next hop
+      ansible.builtin.assert:
+        that:
+          - "'10.0.12.1' in f2_route.stdout"
+          - "'10.0.23.2' not in f2_route.stdout"
+        success_msg: "PASS: F2 wrong-next-hop fault is active"
+        fail_msg: "FAIL: F2 was not injected exactly"
+      when: inventory_hostname == 'r2'
+
+    - name: Read the r3 sensors-to-client deny rule after F3
+      ansible.builtin.raw: >-
+        iptables -C FORWARD
+        -s 10.0.4.0/24
+        -d 10.0.1.0/24
+        -j DROP
+      when: inventory_hostname == 'r3'
+      register: f3_policy
+      changed_when: false
+      failed_when: false
+
+    - name: Prove F3 removed the r3 deny rule
+      ansible.builtin.assert:
+        that:
+          - f3_policy.rc != 0
+        success_msg: "PASS: F3 missing-policy fault is active"
+        fail_msg: "FAIL: F3 was not injected"
+      when: inventory_hostname == 'r3'

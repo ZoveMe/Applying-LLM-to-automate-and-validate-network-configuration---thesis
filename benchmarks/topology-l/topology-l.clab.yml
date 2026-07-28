@@ -16,50 +16,50 @@ topology:
   nodes:
     r1:
       kind: linux
-      image: frrouting/frr:latest
+      image: quay.io/frrouting/frr:9.1.1
       binds:
         - configs/r1/frr.conf:/etc/frr/frr.conf
         - ../../configs/daemons:/etc/frr/daemons
     r2:
       kind: linux
-      image: frrouting/frr:latest
+      image: quay.io/frrouting/frr:9.1.1
       binds:
         - configs/r2/frr.conf:/etc/frr/frr.conf
         - ../../configs/daemons:/etc/frr/daemons
     r3:
       kind: linux
-      image: frrouting/frr:latest
+      image: quay.io/frrouting/frr:9.1.1
       binds:
         - configs/r3/frr.conf:/etc/frr/frr.conf
         - ../../configs/daemons:/etc/frr/daemons
 
     h-client:
       kind: linux
-      image: alpine:latest
+      image: alpine:3.20.10
       exec:
         - ip addr add 10.0.1.10/24 dev eth1
         - ip route add 10.0.0.0/16 via 10.0.1.1
     h-server:
       kind: linux
-      image: alpine:latest
+      image: alpine:3.20.10
       exec:
         - ip addr add 10.0.2.10/24 dev eth1
         - ip route add 10.0.0.0/16 via 10.0.2.1
     h-mgmt:
       kind: linux
-      image: alpine:latest
+      image: alpine:3.20.10
       exec:
         - ip addr add 10.0.99.10/24 dev eth1
         - ip route add 10.0.0.0/16 via 10.0.99.1
     h-dmz:
       kind: linux
-      image: alpine:latest
+      image: alpine:3.20.10
       exec:
         - ip addr add 10.0.3.10/24 dev eth1
         - ip route add 10.0.0.0/16 via 10.0.3.1
     h-sensors:
       kind: linux
-      image: alpine:latest
+      image: alpine:3.20.10
       exec:
         - ip addr add 10.0.4.10/24 dev eth1
         - ip route add 10.0.0.0/16 via 10.0.4.1

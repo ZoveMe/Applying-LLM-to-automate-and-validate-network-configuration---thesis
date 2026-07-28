@@ -4,6 +4,7 @@
 # Secrets and environments
 .env
 .venv/
+.venv-ansible/
 __pycache__/
 *.pyc
 

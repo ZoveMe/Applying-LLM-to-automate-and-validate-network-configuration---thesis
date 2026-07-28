@@ -13,7 +13,7 @@ set -Eeuo pipefail
 IFS=$'\n\t'
 
 EXPECTED_BASE_COMMIT="${REPRO_BASE_COMMIT:-cad3e2e}"
-EXPECTED_TESTS=89
+EXPECTED_TESTS=118
 EXPECTED_CHECKSUM_FILES=39
 EXPECTED_CHECKSUM_ENTRIES=444
 EXPECTED_EXPLAIN_PILOT_RUNS=12
@@ -105,7 +105,8 @@ from pathlib import Path
 
 root = Path(sys.argv[1])
 digest = hashlib.sha256()
-for path in sorted(p for p in root.rglob("*") if p.is_file()):
+files = (path for path in root.rglob("*") if path.is_file())
+for path in sorted(files, key=lambda item: item.relative_to(root).as_posix()):
     relative = path.relative_to(root).as_posix().encode("utf-8")
     digest.update(relative)
     digest.update(b"\0")
@@ -126,8 +127,10 @@ git_state_before=""
 if ((SKIP_GIT == 1)); then
     warn "Git checks skipped; this run is diagnostic, not a full reproduction."
 else
-    actual_root="$(git rev-parse --show-toplevel 2>/dev/null)" ||
+    actual_root_raw="$(git rev-parse --show-toplevel 2>/dev/null)" ||
         die "the script is not inside a Git repository"
+    actual_root="$(cd -- "$actual_root_raw" 2>/dev/null && pwd -P)" ||
+        die "cannot resolve the Git repository root: $actual_root_raw"
     [[ "$actual_root" == "$REPO_ROOT" ]] ||
         die "script root and Git root differ: $REPO_ROOT != $actual_root"
 

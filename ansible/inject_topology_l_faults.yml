@@ -1,0 +1,80 @@
+---
+- name: Inject the exact larger-topology thesis fault profile
+  hosts: topology_l_routers
+  gather_facts: false
+  serial: 1
+  any_errors_fatal: true
+
+  pre_tasks:
+    - name: Require explicit laboratory fault-injection authorization
+      ansible.builtin.assert:
+        that:
+          - fault_profile | default('') == 'topology_l_three_faults_v1'
+          - fault_confirmation | default('') == 'INJECT_THESIS_FAULTS'
+          - inventory_hostname in ['r1', 'r2', 'r3']
+        fail_msg: >-
+          Refusing fault injection: exact profile and confirmation are required.
+        success_msg: "PASS: exact laboratory fault profile authorized"
+
+  tasks:
+    - name: Inject F1 by removing the r1 route to the DMZ
+      ansible.builtin.raw: |
+        set -eu
+        current_route="$(vtysh -c 'show ip route 10.0.3.0/24')"
+        if printf '%s\n' "$current_route" | grep -Fq '10.0.12.2'; then
+          vtysh \
+            -c 'configure terminal' \
+            -c 'no ip route 10.0.3.0/24 10.0.12.2'
+          echo FAULT_F1_INJECTED
+        else
+          echo FAULT_F1_ALREADY_PRESENT
+        fi
+      when: inventory_hostname == 'r1'
+      register: fault_f1
+      changed_when: "'FAULT_F1_INJECTED' in fault_f1.stdout"
+
+    - name: Inject F2 by replacing the r2 DMZ next hop
+      ansible.builtin.raw: |
+        set -eu
+        current_route="$(vtysh -c 'show ip route 10.0.3.0/24')"
+        changed=0
+        if printf '%s\n' "$current_route" | grep -Fq '10.0.23.2'; then
+          vtysh \
+            -c 'configure terminal' \
+            -c 'no ip route 10.0.3.0/24 10.0.23.2'
+          changed=1
+        fi
+        current_route="$(vtysh -c 'show ip route 10.0.3.0/24')"
+        if ! printf '%s\n' "$current_route" | grep -Fq '10.0.12.1'; then
+          vtysh \
+            -c 'configure terminal' \
+            -c 'ip route 10.0.3.0/24 10.0.12.1'
+          changed=1
+        fi
+        if [ "$changed" -eq 1 ]; then
+          echo FAULT_F2_INJECTED
+        else
+          echo FAULT_F2_ALREADY_PRESENT
+        fi
+      when: inventory_hostname == 'r2'
+      register: fault_f2
+      changed_when: "'FAULT_F2_INJECTED' in fault_f2.stdout"
+
+    - name: Inject F3 by removing the sensors-to-client deny rule
+      ansible.builtin.raw: |
+        set -eu
+        if iptables -C FORWARD \
+          -s 10.0.4.0/24 \
+          -d 10.0.1.0/24 \
+          -j DROP 2>/dev/null; then
+          iptables -D FORWARD \
+            -s 10.0.4.0/24 \
+            -d 10.0.1.0/24 \
+            -j DROP
+          echo FAULT_F3_INJECTED
+        else
+          echo FAULT_F3_ALREADY_PRESENT
+        fi
+      when: inventory_hostname == 'r3'
+      register: fault_f3
+      changed_when: "'FAULT_F3_INJECTED' in fault_f3.stdout"

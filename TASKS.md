@@ -6,12 +6,13 @@
 
 - [ ] **Deploy the lab** - `sudo clab deploy -t topology.clab.yml` then `bash policies/apply-policy.sh` then `bash verify.sh` (expect 3/3 PASS)
 - [ ] **Run the live guarded repair demo** - `python3 experiments/guarded_repair_demo.py` - this is the piece you demo at the defense
+- [ ] **Run the Week 7 larger-topology Ansible experiment** - follow `docs/week7-ansible-multifault.md`; do not report success until the new evidence directory is reviewed
 - [ ] **Capture screenshots/recording** of the demo for the thesis and slides
-- [ ] **Optional: deploy the larger topology** - `cd benchmarks/topology-l && sudo clab deploy -t topology-l.clab.yml` (8 containers; only for figures, benchmark does not need it)
 
 ### WRITING
 
 - [ ] **Paste text blocks 1-5, 4b, 4c** from docs/thesis-text-additions.md into the chapters
+- [ ] **After the Week 7 live run, fill block 6a only from the reviewed evidence** - replace every `[ПОПОЛНИ]`; report any failure honestly
 - [ ] **Qualify the repeatability claim in Ch6 (V2 section)** - 3 of 12 models broke determinism
 - [ ] **Re-run explain evaluations** to pick up the new phantom-policy metric:
       `python3 experiments/evaluate_explain.py --evidence docs/evidence/week6-explain-13m/small --out docs/evidence/week6-explain-13m/small-evaluation.json`
@@ -37,7 +38,7 @@
 
 ## Done (27 July, latest)
 
-- [x] ~~All 89 tests pass~~
+- [x] ~~All original 89 tests pass~~
 - [x] ~~**GATE CONFUSION MATRIX: recall = 1.000** (51 TP, 0 FN over 156 gated runs) - the headline safety number~~
 - [x] ~~Precision 0.637 investigated: the 29 "false positives" are correct topology/scope rejections not covered by the policy-only ground truth; reported as a lower bound~~
 - [x] ~~Verbosity confound CONFIRMED significant (|r|=0.885 > 0.576): the safety metric partly measures caution~~
@@ -61,13 +62,19 @@
 - [x] ~~Ch6 12-model section in Macedonian + table + figure~~ (thesis-text-additions.md block 4b)
 - [x] ~~Findings: 3 models never report policy (0% over 24 runs each); 2 unstable; 7 perfect. Zero hallucinations in 288 runs. 3 models broke determinism despite temp 0 + seed 42~~
 
+## Done (28 July)
+
+- [x] ~~Week 7 larger-topology Ansible multi-fault experiment implemented~~
+- [x] ~~Checksum-bound intent bundle, exact approval, serial reconciliation, runtime validation, idempotency check, emergency recovery, pinned controller and container profiles, and independent evidence verification covered by 29 new offline tests~~
+- [x] ~~Full offline suite passes: 118/118 tests~~
+- [x] ~~Macedonian Chapter 5 methodology text and guarded Chapter 6 results template prepared in `docs/thesis-text-additions.md`~~
+
 ## Waiting On
 
 - [ ] Advisor feedback on Chapter 5 draft
 
 ## Someday
 
-- [ ] Extend to multi-step repairs (currently single route fixes)
 - [ ] Test with additional LLM models beyond Qwen
 - [ ] Document lessons for future network automation + LLM work
 

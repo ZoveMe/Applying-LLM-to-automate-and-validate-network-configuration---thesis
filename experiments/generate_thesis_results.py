@@ -63,7 +63,7 @@ class SourceData:
 
 def _load_json(path: Path) -> dict:
     try:
-        value = json.loads(path.read_text())
+        value = json.loads(path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as exc:
         raise ResultsError(f"cannot read valid JSON from {path}: {exc}") from exc
     if not isinstance(value, dict):
@@ -79,7 +79,7 @@ def load_sources(
 ) -> SourceData:
     proposal_path = e2e_dir / "34-ollama-repair-proposal.json"
     try:
-        cases = yaml.safe_load(cases_path.read_text())
+        cases = yaml.safe_load(cases_path.read_text(encoding="utf-8"))
         proposal_bytes = proposal_path.read_bytes()
     except OSError as exc:
         raise ResultsError(f"cannot read reporting source: {exc}") from exc
@@ -571,7 +571,7 @@ def write_outputs(outputs: dict[Path, str], check: bool) -> None:
     for path, expected in outputs.items():
         if check:
             try:
-                actual = path.read_text()
+                actual = path.read_text(encoding="utf-8")
             except OSError:
                 stale.append(path)
                 continue
@@ -579,7 +579,7 @@ def write_outputs(outputs: dict[Path, str], check: bool) -> None:
                 stale.append(path)
         else:
             path.parent.mkdir(parents=True, exist_ok=True)
-            path.write_text(expected)
+            path.write_text(expected, encoding="utf-8", newline="\n")
 
     if stale:
         names = ", ".join(str(path.relative_to(REPO_ROOT)) for path in stale)
