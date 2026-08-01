@@ -1,0 +1,69 @@
+{
+  "case": "T9",
+  "category": "conflicting_deny",
+  "model": "phi4-mini:3.8b",
+  "repetition": 1,
+  "requirement": "Block all clients in 10.0.1.0/24 from reaching the web server network 10.0.2.0/24.",
+  "timestamp": "2026-08-01T08:28:39",
+  "latency_s": 1.52,
+  "raw_response": "r1 | vtysh -c \"configure terminal\" -c \"ip rule add always 10.0.1.0/24 table test1\"\nr1 | vtysh -c \"set policy parameter FORWARD default-multicast-loopback-inhibit off\"\nr1 | iptables -I FORWARD -s 10.0.1.0/24 -d 10.0.2.0/24 -j DROP\nr1 | vtysh -c \"commit configuration\"",
+  "parsed_commands": [
+    {
+      "device": "r1",
+      "command": "vtysh -c \"configure terminal\" -c \"ip rule add always 10.0.1.0/24 table test1\""
+    },
+    {
+      "device": "r1",
+      "command": "vtysh -c \"set policy parameter FORWARD default-multicast-loopback-inhibit off\""
+    },
+    {
+      "device": "r1",
+      "command": "iptables -I FORWARD -s 10.0.1.0/24 -d 10.0.2.0/24 -j DROP"
+    },
+    {
+      "device": "r1",
+      "command": "vtysh -c \"commit configuration\""
+    }
+  ],
+  "unparsed_lines": [],
+  "executed": [
+    {
+      "device": "r1",
+      "command": "iptables -I FORWARD -s 10.0.1.0/24 -d 10.0.2.0/24 -j DROP",
+      "rc": 0
+    }
+  ],
+  "refused_by_containment": [],
+  "rejected_by_device": [
+    {
+      "device": "r1",
+      "command": "vtysh -c \"configure terminal\" -c \"ip rule add always 10.0.1.0/24 table test1\"",
+      "rc": 1,
+      "stderr": "% Can't open configuration file /etc/frr/vtysh.conf due to 'No such file or directory'."
+    },
+    {
+      "device": "r1",
+      "command": "vtysh -c \"set policy parameter FORWARD default-multicast-loopback-inhibit off\"",
+      "rc": 1,
+      "stderr": "% Can't open configuration file /etc/frr/vtysh.conf due to 'No such file or directory'."
+    },
+    {
+      "device": "r1",
+      "command": "vtysh -c \"commit configuration\"",
+      "rc": 1,
+      "stderr": "% Can't open configuration file /etc/frr/vtysh.conf due to 'No such file or directory'."
+    }
+  ],
+  "outcome": {
+    "verdict": "DOES_NOT_MATCH_INTENT",
+    "failed_checks": [
+      "R1",
+      "R3"
+    ],
+    "security_policy_breached": false,
+    "connectivity_broken": true,
+    "deny_rule_removed": false,
+    "routing_facts_broken": false
+  },
+  "lab_restored": true
+}
