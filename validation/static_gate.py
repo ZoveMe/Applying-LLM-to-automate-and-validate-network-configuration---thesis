@@ -57,11 +57,60 @@ def valid_next_hops(intent: dict) -> dict[str, set[str]]:
     }
 
 
+def directly_connected_networks(intent: dict) -> dict[str, set]:
+    """Return the networks attached directly to each router."""
+    transit = ipaddress.ip_network(intent["transit"]["subnet"])
+    connected = {
+        "r1": {transit},
+        "r2": {transit},
+    }
+
+    for segment in intent["segments"].values():
+        node = segment["connected_to"]
+        connected.setdefault(node, set()).add(
+            ipaddress.ip_network(segment["subnet"])
+        )
+
+    return connected
+
+
+def is_within_known_network(network, known: dict) -> bool:
+    """Accept an exact network or a subnet inside a declared lab network."""
+    return any(
+        network.version == candidate.version
+        and network.subnet_of(candidate)
+        for candidate in known.values()
+    )
+
+
+def traffic_overlaps(rule, intended_pair: dict) -> bool:
+    """Return True when a proposed ACL rule intersects an intended pair."""
+    try:
+        proposed_src = ipaddress.ip_network(rule.src)
+        proposed_dst = ipaddress.ip_network(rule.dst)
+        intended_src = ipaddress.ip_network(intended_pair["src"])
+        intended_dst = ipaddress.ip_network(intended_pair["dst"])
+    except ValueError:
+        return False
+
+    same_versions = (
+        proposed_src.version == intended_src.version
+        and proposed_dst.version == intended_dst.version
+    )
+
+    return (
+        same_versions
+        and proposed_src.overlaps(intended_src)
+        and proposed_dst.overlaps(intended_dst)
+    )
+
+
 class Gate:
     def __init__(self, intent: dict):
         self.intent = intent
         self.nets = known_networks(intent)
         self.hops_by_node = valid_next_hops(intent)
+        self.connected_by_node = directly_connected_networks(intent)
         self.checks = []
 
     def record(self, category: str, description: str, ok: bool, detail: str = ""):
@@ -107,6 +156,15 @@ class Gate:
                     "destination network does not exist in the lab (possible hallucination)",
                 )
                 continue
+            if prefix in self.connected_by_node[r.node]:
+                self.record(
+                    "topology",
+                    label,
+                    False,
+                    f"{prefix} is directly connected to {r.node}; "
+                    "a static route is nonsensical",
+                )
+                continue
             try:
                 hop = str(ipaddress.ip_address(r.next_hop))
             except ValueError:
@@ -130,10 +188,10 @@ class Gate:
             for field, value in (("src", a.src), ("dst", a.dst)):
                 try:
                     net = ipaddress.ip_network(value)
-                    if net not in self.nets.values():
+                    if not is_within_known_network(net, self.nets):
                         ok = self.record(
                             "topology", label, False,
-                            f"{field} subnet {value} does not exist in the lab",
+                            f"{field} subnet {value} is outside the declared lab networks",
                         )
                         break
                 except ValueError:
@@ -162,7 +220,7 @@ class Gate:
         for pair in self.intent["policy_rules"]["must_deny"]:
             label = f"intent requires DENY {pair['src']} -> {pair['dst']}"
             violation = any(
-                a.action == "permit" and a.src == pair["src"] and a.dst == pair["dst"]
+                a.action == "permit" and traffic_overlaps(a, pair)
                 for a in s.access_policy
             )
             self.record(
@@ -175,7 +233,7 @@ class Gate:
         for pair in self.intent["policy_rules"]["must_allow"]:
             label = f"intent requires ALLOW {pair['src']} -> {pair['dst']}"
             violation = any(
-                a.action == "deny" and a.src == pair["src"] and a.dst == pair["dst"]
+                a.action == "deny" and traffic_overlaps(a, pair)
                 for a in s.access_policy
             )
             self.record(

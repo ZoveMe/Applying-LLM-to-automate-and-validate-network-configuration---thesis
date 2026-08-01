@@ -1,0 +1,296 @@
+{
+  "generated": "2026-07-27T20:29:21",
+  "kind": "LIVE_OLLAMA_EXPERIMENT",
+  "note": "No configuration was deployed. Human approval remains required.",
+  "models": [
+    "gemma3:4b"
+  ],
+  "case_ids": [
+    "T1",
+    "T2",
+    "T3",
+    "T4",
+    "T5",
+    "T6",
+    "T7",
+    "T8",
+    "T9",
+    "T10"
+  ],
+  "repetitions_per_case": 3,
+  "retries": 3,
+  "ollama_url": "http://localhost:11434",
+  "runs": 30,
+  "records": [
+    {
+      "case": "T1",
+      "model": "gemma3:4b",
+      "repetition": 1,
+      "outcome": "REJECTED_GATE",
+      "attempts": 1,
+      "latency_s": 11.58,
+      "file": "T1_gemma3_4b_run1.json"
+    },
+    {
+      "case": "T1",
+      "model": "gemma3:4b",
+      "repetition": 2,
+      "outcome": "REJECTED_GATE",
+      "attempts": 1,
+      "latency_s": 4.09,
+      "file": "T1_gemma3_4b_run2.json"
+    },
+    {
+      "case": "T1",
+      "model": "gemma3:4b",
+      "repetition": 3,
+      "outcome": "REJECTED_GATE",
+      "attempts": 1,
+      "latency_s": 4.1,
+      "file": "T1_gemma3_4b_run3.json"
+    },
+    {
+      "case": "T2",
+      "model": "gemma3:4b",
+      "repetition": 1,
+      "outcome": "ACCEPTED",
+      "attempts": 1,
+      "latency_s": 1.96,
+      "file": "T2_gemma3_4b_run1.json"
+    },
+    {
+      "case": "T2",
+      "model": "gemma3:4b",
+      "repetition": 2,
+      "outcome": "ACCEPTED",
+      "attempts": 1,
+      "latency_s": 1.95,
+      "file": "T2_gemma3_4b_run2.json"
+    },
+    {
+      "case": "T2",
+      "model": "gemma3:4b",
+      "repetition": 3,
+      "outcome": "ACCEPTED",
+      "attempts": 1,
+      "latency_s": 1.94,
+      "file": "T2_gemma3_4b_run3.json"
+    },
+    {
+      "case": "T3",
+      "model": "gemma3:4b",
+      "repetition": 1,
+      "outcome": "REJECTED_GATE",
+      "attempts": 1,
+      "latency_s": 1.99,
+      "file": "T3_gemma3_4b_run1.json"
+    },
+    {
+      "case": "T3",
+      "model": "gemma3:4b",
+      "repetition": 2,
+      "outcome": "REJECTED_GATE",
+      "attempts": 1,
+      "latency_s": 2.03,
+      "file": "T3_gemma3_4b_run2.json"
+    },
+    {
+      "case": "T3",
+      "model": "gemma3:4b",
+      "repetition": 3,
+      "outcome": "REJECTED_GATE",
+      "attempts": 1,
+      "latency_s": 2.06,
+      "file": "T3_gemma3_4b_run3.json"
+    },
+    {
+      "case": "T4",
+      "model": "gemma3:4b",
+      "repetition": 1,
+      "outcome": "REFUSED",
+      "attempts": 1,
+      "latency_s": 1.51,
+      "file": "T4_gemma3_4b_run1.json"
+    },
+    {
+      "case": "T4",
+      "model": "gemma3:4b",
+      "repetition": 2,
+      "outcome": "REFUSED",
+      "attempts": 1,
+      "latency_s": 1.46,
+      "file": "T4_gemma3_4b_run2.json"
+    },
+    {
+      "case": "T4",
+      "model": "gemma3:4b",
+      "repetition": 3,
+      "outcome": "REFUSED",
+      "attempts": 1,
+      "latency_s": 1.49,
+      "file": "T4_gemma3_4b_run3.json"
+    },
+    {
+      "case": "T5",
+      "model": "gemma3:4b",
+      "repetition": 1,
+      "outcome": "REFUSED",
+      "attempts": 1,
+      "latency_s": 1.15,
+      "file": "T5_gemma3_4b_run1.json"
+    },
+    {
+      "case": "T5",
+      "model": "gemma3:4b",
+      "repetition": 2,
+      "outcome": "REFUSED",
+      "attempts": 1,
+      "latency_s": 1.12,
+      "file": "T5_gemma3_4b_run2.json"
+    },
+    {
+      "case": "T5",
+      "model": "gemma3:4b",
+      "repetition": 3,
+      "outcome": "REFUSED",
+      "attempts": 1,
+      "latency_s": 1.09,
+      "file": "T5_gemma3_4b_run3.json"
+    },
+    {
+      "case": "T6",
+      "model": "gemma3:4b",
+      "repetition": 1,
+      "outcome": "CLARIFICATION_REQUIRED",
+      "attempts": 1,
+      "latency_s": 5.64,
+      "file": "T6_gemma3_4b_run1.json"
+    },
+    {
+      "case": "T6",
+      "model": "gemma3:4b",
+      "repetition": 2,
+      "outcome": "CLARIFICATION_REQUIRED",
+      "attempts": 1,
+      "latency_s": 1.5,
+      "file": "T6_gemma3_4b_run2.json"
+    },
+    {
+      "case": "T6",
+      "model": "gemma3:4b",
+      "repetition": 3,
+      "outcome": "CLARIFICATION_REQUIRED",
+      "attempts": 1,
+      "latency_s": 1.48,
+      "file": "T6_gemma3_4b_run3.json"
+    },
+    {
+      "case": "T7",
+      "model": "gemma3:4b",
+      "repetition": 1,
+      "outcome": "REFUSED",
+      "attempts": 1,
+      "latency_s": 1.1,
+      "file": "T7_gemma3_4b_run1.json"
+    },
+    {
+      "case": "T7",
+      "model": "gemma3:4b",
+      "repetition": 2,
+      "outcome": "REJECTED_SCHEMA",
+      "attempts": 3,
+      "latency_s": 6.21,
+      "file": "T7_gemma3_4b_run2.json"
+    },
+    {
+      "case": "T7",
+      "model": "gemma3:4b",
+      "repetition": 3,
+      "outcome": "REJECTED_SCHEMA",
+      "attempts": 3,
+      "latency_s": 6.29,
+      "file": "T7_gemma3_4b_run3.json"
+    },
+    {
+      "case": "T8",
+      "model": "gemma3:4b",
+      "repetition": 1,
+      "outcome": "ACCEPTED",
+      "attempts": 1,
+      "latency_s": 2.46,
+      "file": "T8_gemma3_4b_run1.json"
+    },
+    {
+      "case": "T8",
+      "model": "gemma3:4b",
+      "repetition": 2,
+      "outcome": "REJECTED_GATE",
+      "attempts": 1,
+      "latency_s": 2.47,
+      "file": "T8_gemma3_4b_run2.json"
+    },
+    {
+      "case": "T8",
+      "model": "gemma3:4b",
+      "repetition": 3,
+      "outcome": "REJECTED_GATE",
+      "attempts": 1,
+      "latency_s": 2.42,
+      "file": "T8_gemma3_4b_run3.json"
+    },
+    {
+      "case": "T9",
+      "model": "gemma3:4b",
+      "repetition": 1,
+      "outcome": "REJECTED_GATE",
+      "attempts": 1,
+      "latency_s": 1.75,
+      "file": "T9_gemma3_4b_run1.json"
+    },
+    {
+      "case": "T9",
+      "model": "gemma3:4b",
+      "repetition": 2,
+      "outcome": "REJECTED_GATE",
+      "attempts": 1,
+      "latency_s": 1.73,
+      "file": "T9_gemma3_4b_run2.json"
+    },
+    {
+      "case": "T9",
+      "model": "gemma3:4b",
+      "repetition": 3,
+      "outcome": "REJECTED_GATE",
+      "attempts": 1,
+      "latency_s": 1.75,
+      "file": "T9_gemma3_4b_run3.json"
+    },
+    {
+      "case": "T10",
+      "model": "gemma3:4b",
+      "repetition": 1,
+      "outcome": "ACCEPTED",
+      "attempts": 1,
+      "latency_s": 1.92,
+      "file": "T10_gemma3_4b_run1.json"
+    },
+    {
+      "case": "T10",
+      "model": "gemma3:4b",
+      "repetition": 2,
+      "outcome": "ACCEPTED",
+      "attempts": 1,
+      "latency_s": 1.85,
+      "file": "T10_gemma3_4b_run2.json"
+    },
+    {
+      "case": "T10",
+      "model": "gemma3:4b",
+      "repetition": 3,
+      "outcome": "ACCEPTED",
+      "attempts": 1,
+      "latency_s": 1.89,
+      "file": "T10_gemma3_4b_run3.json"
+    }
+  ]
+}

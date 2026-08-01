@@ -1,0 +1,66 @@
+# intent_l_faulty.yaml — ground truth for the FAULTY config variants.
+# A perfect explanation of a faulty config matches the faulty reality exactly:
+# it neither invents the missing elements nor "corrects" the wrong ones.
+# Score drops against this file reveal a model's bias toward typical/expected
+# configurations instead of the text it was actually given.
+#
+# Injected faults (vs intent_l.yaml):
+#   r1: route to 10.0.3.0/24 REMOVED           (omission fault)
+#   r2: route to 10.0.3.0/24 via 10.0.12.1     (wrong-next-hop fault)
+#   r3: deny rule sensors->client REMOVED       (missing-policy fault)
+
+lab: thesis-net-l-faulty
+
+segments:
+  client:
+    subnet: 10.0.1.0/24
+    connected_to: r1
+    gateway: 10.0.1.1
+    host: 10.0.1.10
+  server:
+    subnet: 10.0.2.0/24
+    connected_to: r2
+    gateway: 10.0.2.1
+    host: 10.0.2.10
+  management:
+    subnet: 10.0.99.0/24
+    connected_to: r2
+    gateway: 10.0.99.1
+    host: 10.0.99.10
+  dmz:
+    subnet: 10.0.3.0/24
+    connected_to: r3
+    gateway: 10.0.3.1
+    host: 10.0.3.10
+  sensors:
+    subnet: 10.0.4.0/24
+    connected_to: r3
+    gateway: 10.0.4.1
+    host: 10.0.4.10
+
+transits:
+  - subnet: 10.0.12.0/30
+    ips:
+      r1: 10.0.12.1
+      r2: 10.0.12.2
+  - subnet: 10.0.23.0/30
+    ips:
+      r2: 10.0.23.1
+      r3: 10.0.23.2
+
+config_facts:
+  - {id: F-C1, node: r1, kind: route, prefix: 10.0.2.0/24,  via: 10.0.12.2, why: "present"}
+  - {id: F-C2, node: r1, kind: route, prefix: 10.0.99.0/24, via: 10.0.12.2, why: "present"}
+  - {id: F-C3, node: r1, kind: route, prefix: 10.0.4.0/24,  via: 10.0.12.2, why: "present (10.0.3.0/24 route is intentionally absent)"}
+  - {id: F-C4, node: r2, kind: route, prefix: 10.0.1.0/24,  via: 10.0.12.1, why: "present"}
+  - {id: F-C5, node: r2, kind: route, prefix: 10.0.3.0/24,  via: 10.0.12.1, why: "present with WRONG next hop (the injected fault)"}
+  - {id: F-C6, node: r2, kind: route, prefix: 10.0.4.0/24,  via: 10.0.23.2, why: "present"}
+  - {id: F-C7, node: r3, kind: route, prefix: 10.0.1.0/24,  via: 10.0.23.1, why: "present"}
+  - {id: F-C8, node: r3, kind: route, prefix: 10.0.2.0/24,  via: 10.0.23.1, why: "present"}
+  - {id: F-C9, node: r3, kind: route, prefix: 10.0.99.0/24, via: 10.0.23.1, why: "present"}
+
+policy_rules:
+  must_deny:
+    - {node: r1, src: 10.0.1.0/24, dst: 10.0.99.0/24}
+  must_allow:
+    - {src: 10.0.1.0/24, dst: 10.0.2.0/24}

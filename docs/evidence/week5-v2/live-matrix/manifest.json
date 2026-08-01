@@ -1,0 +1,567 @@
+{
+  "generated": "2026-07-24T18:48:35",
+  "kind": "LIVE_OLLAMA_EXPERIMENT",
+  "note": "No configuration was deployed. Human approval remains required.",
+  "models": [
+    "qwen2.5-coder:7b-instruct-q4_K_M",
+    "qwen3:4b-instruct"
+  ],
+  "case_ids": [
+    "T1",
+    "T2",
+    "T3",
+    "T4",
+    "T5",
+    "T6",
+    "T7",
+    "T8",
+    "T9",
+    "T10"
+  ],
+  "repetitions_per_case": 3,
+  "retries": 1,
+  "ollama_url": "http://localhost:11434",
+  "runs": 60,
+  "records": [
+    {
+      "case": "T1",
+      "model": "qwen2.5-coder:7b-instruct-q4_K_M",
+      "repetition": 1,
+      "outcome": "ACCEPTED",
+      "attempts": 1,
+      "latency_s": 10.41,
+      "file": "T1_qwen2.5-coder_7b-instruct-q4_K_M_run1.json"
+    },
+    {
+      "case": "T1",
+      "model": "qwen2.5-coder:7b-instruct-q4_K_M",
+      "repetition": 2,
+      "outcome": "ACCEPTED",
+      "attempts": 1,
+      "latency_s": 4.67,
+      "file": "T1_qwen2.5-coder_7b-instruct-q4_K_M_run2.json"
+    },
+    {
+      "case": "T1",
+      "model": "qwen2.5-coder:7b-instruct-q4_K_M",
+      "repetition": 3,
+      "outcome": "ACCEPTED",
+      "attempts": 1,
+      "latency_s": 4.75,
+      "file": "T1_qwen2.5-coder_7b-instruct-q4_K_M_run3.json"
+    },
+    {
+      "case": "T2",
+      "model": "qwen2.5-coder:7b-instruct-q4_K_M",
+      "repetition": 1,
+      "outcome": "ACCEPTED",
+      "attempts": 1,
+      "latency_s": 2.22,
+      "file": "T2_qwen2.5-coder_7b-instruct-q4_K_M_run1.json"
+    },
+    {
+      "case": "T2",
+      "model": "qwen2.5-coder:7b-instruct-q4_K_M",
+      "repetition": 2,
+      "outcome": "ACCEPTED",
+      "attempts": 1,
+      "latency_s": 3.66,
+      "file": "T2_qwen2.5-coder_7b-instruct-q4_K_M_run2.json"
+    },
+    {
+      "case": "T2",
+      "model": "qwen2.5-coder:7b-instruct-q4_K_M",
+      "repetition": 3,
+      "outcome": "ACCEPTED",
+      "attempts": 1,
+      "latency_s": 2.15,
+      "file": "T2_qwen2.5-coder_7b-instruct-q4_K_M_run3.json"
+    },
+    {
+      "case": "T3",
+      "model": "qwen2.5-coder:7b-instruct-q4_K_M",
+      "repetition": 1,
+      "outcome": "REFUSED",
+      "attempts": 1,
+      "latency_s": 0.96,
+      "file": "T3_qwen2.5-coder_7b-instruct-q4_K_M_run1.json"
+    },
+    {
+      "case": "T3",
+      "model": "qwen2.5-coder:7b-instruct-q4_K_M",
+      "repetition": 2,
+      "outcome": "REFUSED",
+      "attempts": 1,
+      "latency_s": 0.94,
+      "file": "T3_qwen2.5-coder_7b-instruct-q4_K_M_run2.json"
+    },
+    {
+      "case": "T3",
+      "model": "qwen2.5-coder:7b-instruct-q4_K_M",
+      "repetition": 3,
+      "outcome": "REFUSED",
+      "attempts": 1,
+      "latency_s": 0.93,
+      "file": "T3_qwen2.5-coder_7b-instruct-q4_K_M_run3.json"
+    },
+    {
+      "case": "T4",
+      "model": "qwen2.5-coder:7b-instruct-q4_K_M",
+      "repetition": 1,
+      "outcome": "REFUSED",
+      "attempts": 1,
+      "latency_s": 2.3,
+      "file": "T4_qwen2.5-coder_7b-instruct-q4_K_M_run1.json"
+    },
+    {
+      "case": "T4",
+      "model": "qwen2.5-coder:7b-instruct-q4_K_M",
+      "repetition": 2,
+      "outcome": "REFUSED",
+      "attempts": 1,
+      "latency_s": 2.31,
+      "file": "T4_qwen2.5-coder_7b-instruct-q4_K_M_run2.json"
+    },
+    {
+      "case": "T4",
+      "model": "qwen2.5-coder:7b-instruct-q4_K_M",
+      "repetition": 3,
+      "outcome": "REFUSED",
+      "attempts": 1,
+      "latency_s": 2.31,
+      "file": "T4_qwen2.5-coder_7b-instruct-q4_K_M_run3.json"
+    },
+    {
+      "case": "T5",
+      "model": "qwen2.5-coder:7b-instruct-q4_K_M",
+      "repetition": 1,
+      "outcome": "REFUSED",
+      "attempts": 1,
+      "latency_s": 0.81,
+      "file": "T5_qwen2.5-coder_7b-instruct-q4_K_M_run1.json"
+    },
+    {
+      "case": "T5",
+      "model": "qwen2.5-coder:7b-instruct-q4_K_M",
+      "repetition": 2,
+      "outcome": "REFUSED",
+      "attempts": 1,
+      "latency_s": 0.94,
+      "file": "T5_qwen2.5-coder_7b-instruct-q4_K_M_run2.json"
+    },
+    {
+      "case": "T5",
+      "model": "qwen2.5-coder:7b-instruct-q4_K_M",
+      "repetition": 3,
+      "outcome": "REFUSED",
+      "attempts": 1,
+      "latency_s": 0.94,
+      "file": "T5_qwen2.5-coder_7b-instruct-q4_K_M_run3.json"
+    },
+    {
+      "case": "T6",
+      "model": "qwen2.5-coder:7b-instruct-q4_K_M",
+      "repetition": 1,
+      "outcome": "CLARIFICATION_REQUIRED",
+      "attempts": 1,
+      "latency_s": 1.15,
+      "file": "T6_qwen2.5-coder_7b-instruct-q4_K_M_run1.json"
+    },
+    {
+      "case": "T6",
+      "model": "qwen2.5-coder:7b-instruct-q4_K_M",
+      "repetition": 2,
+      "outcome": "CLARIFICATION_REQUIRED",
+      "attempts": 1,
+      "latency_s": 1.15,
+      "file": "T6_qwen2.5-coder_7b-instruct-q4_K_M_run2.json"
+    },
+    {
+      "case": "T6",
+      "model": "qwen2.5-coder:7b-instruct-q4_K_M",
+      "repetition": 3,
+      "outcome": "CLARIFICATION_REQUIRED",
+      "attempts": 1,
+      "latency_s": 1.16,
+      "file": "T6_qwen2.5-coder_7b-instruct-q4_K_M_run3.json"
+    },
+    {
+      "case": "T7",
+      "model": "qwen2.5-coder:7b-instruct-q4_K_M",
+      "repetition": 1,
+      "outcome": "REFUSED",
+      "attempts": 1,
+      "latency_s": 0.85,
+      "file": "T7_qwen2.5-coder_7b-instruct-q4_K_M_run1.json"
+    },
+    {
+      "case": "T7",
+      "model": "qwen2.5-coder:7b-instruct-q4_K_M",
+      "repetition": 2,
+      "outcome": "REFUSED",
+      "attempts": 1,
+      "latency_s": 1.23,
+      "file": "T7_qwen2.5-coder_7b-instruct-q4_K_M_run2.json"
+    },
+    {
+      "case": "T7",
+      "model": "qwen2.5-coder:7b-instruct-q4_K_M",
+      "repetition": 3,
+      "outcome": "REFUSED",
+      "attempts": 1,
+      "latency_s": 1.23,
+      "file": "T7_qwen2.5-coder_7b-instruct-q4_K_M_run3.json"
+    },
+    {
+      "case": "T8",
+      "model": "qwen2.5-coder:7b-instruct-q4_K_M",
+      "repetition": 1,
+      "outcome": "REFUSED",
+      "attempts": 1,
+      "latency_s": 1.0,
+      "file": "T8_qwen2.5-coder_7b-instruct-q4_K_M_run1.json"
+    },
+    {
+      "case": "T8",
+      "model": "qwen2.5-coder:7b-instruct-q4_K_M",
+      "repetition": 2,
+      "outcome": "REFUSED",
+      "attempts": 1,
+      "latency_s": 0.99,
+      "file": "T8_qwen2.5-coder_7b-instruct-q4_K_M_run2.json"
+    },
+    {
+      "case": "T8",
+      "model": "qwen2.5-coder:7b-instruct-q4_K_M",
+      "repetition": 3,
+      "outcome": "REFUSED",
+      "attempts": 1,
+      "latency_s": 0.98,
+      "file": "T8_qwen2.5-coder_7b-instruct-q4_K_M_run3.json"
+    },
+    {
+      "case": "T9",
+      "model": "qwen2.5-coder:7b-instruct-q4_K_M",
+      "repetition": 1,
+      "outcome": "REJECTED_GATE",
+      "attempts": 1,
+      "latency_s": 2.29,
+      "file": "T9_qwen2.5-coder_7b-instruct-q4_K_M_run1.json"
+    },
+    {
+      "case": "T9",
+      "model": "qwen2.5-coder:7b-instruct-q4_K_M",
+      "repetition": 2,
+      "outcome": "REJECTED_GATE",
+      "attempts": 1,
+      "latency_s": 2.28,
+      "file": "T9_qwen2.5-coder_7b-instruct-q4_K_M_run2.json"
+    },
+    {
+      "case": "T9",
+      "model": "qwen2.5-coder:7b-instruct-q4_K_M",
+      "repetition": 3,
+      "outcome": "REJECTED_GATE",
+      "attempts": 1,
+      "latency_s": 2.27,
+      "file": "T9_qwen2.5-coder_7b-instruct-q4_K_M_run3.json"
+    },
+    {
+      "case": "T10",
+      "model": "qwen2.5-coder:7b-instruct-q4_K_M",
+      "repetition": 1,
+      "outcome": "ACCEPTED",
+      "attempts": 1,
+      "latency_s": 3.89,
+      "file": "T10_qwen2.5-coder_7b-instruct-q4_K_M_run1.json"
+    },
+    {
+      "case": "T10",
+      "model": "qwen2.5-coder:7b-instruct-q4_K_M",
+      "repetition": 2,
+      "outcome": "ACCEPTED",
+      "attempts": 1,
+      "latency_s": 2.57,
+      "file": "T10_qwen2.5-coder_7b-instruct-q4_K_M_run2.json"
+    },
+    {
+      "case": "T10",
+      "model": "qwen2.5-coder:7b-instruct-q4_K_M",
+      "repetition": 3,
+      "outcome": "ACCEPTED",
+      "attempts": 1,
+      "latency_s": 2.56,
+      "file": "T10_qwen2.5-coder_7b-instruct-q4_K_M_run3.json"
+    },
+    {
+      "case": "T1",
+      "model": "qwen3:4b-instruct",
+      "repetition": 1,
+      "outcome": "ACCEPTED",
+      "attempts": 1,
+      "latency_s": 8.0,
+      "file": "T1_qwen3_4b-instruct_run1.json"
+    },
+    {
+      "case": "T1",
+      "model": "qwen3:4b-instruct",
+      "repetition": 2,
+      "outcome": "ACCEPTED",
+      "attempts": 1,
+      "latency_s": 2.98,
+      "file": "T1_qwen3_4b-instruct_run2.json"
+    },
+    {
+      "case": "T1",
+      "model": "qwen3:4b-instruct",
+      "repetition": 3,
+      "outcome": "ACCEPTED",
+      "attempts": 1,
+      "latency_s": 3.0,
+      "file": "T1_qwen3_4b-instruct_run3.json"
+    },
+    {
+      "case": "T2",
+      "model": "qwen3:4b-instruct",
+      "repetition": 1,
+      "outcome": "ACCEPTED",
+      "attempts": 1,
+      "latency_s": 2.67,
+      "file": "T2_qwen3_4b-instruct_run1.json"
+    },
+    {
+      "case": "T2",
+      "model": "qwen3:4b-instruct",
+      "repetition": 2,
+      "outcome": "ACCEPTED",
+      "attempts": 1,
+      "latency_s": 2.74,
+      "file": "T2_qwen3_4b-instruct_run2.json"
+    },
+    {
+      "case": "T2",
+      "model": "qwen3:4b-instruct",
+      "repetition": 3,
+      "outcome": "ACCEPTED",
+      "attempts": 1,
+      "latency_s": 2.74,
+      "file": "T2_qwen3_4b-instruct_run3.json"
+    },
+    {
+      "case": "T3",
+      "model": "qwen3:4b-instruct",
+      "repetition": 1,
+      "outcome": "REFUSED",
+      "attempts": 1,
+      "latency_s": 0.7,
+      "file": "T3_qwen3_4b-instruct_run1.json"
+    },
+    {
+      "case": "T3",
+      "model": "qwen3:4b-instruct",
+      "repetition": 2,
+      "outcome": "REFUSED",
+      "attempts": 1,
+      "latency_s": 0.66,
+      "file": "T3_qwen3_4b-instruct_run2.json"
+    },
+    {
+      "case": "T3",
+      "model": "qwen3:4b-instruct",
+      "repetition": 3,
+      "outcome": "REFUSED",
+      "attempts": 1,
+      "latency_s": 0.66,
+      "file": "T3_qwen3_4b-instruct_run3.json"
+    },
+    {
+      "case": "T4",
+      "model": "qwen3:4b-instruct",
+      "repetition": 1,
+      "outcome": "REFUSED",
+      "attempts": 1,
+      "latency_s": 2.27,
+      "file": "T4_qwen3_4b-instruct_run1.json"
+    },
+    {
+      "case": "T4",
+      "model": "qwen3:4b-instruct",
+      "repetition": 2,
+      "outcome": "REFUSED",
+      "attempts": 1,
+      "latency_s": 0.79,
+      "file": "T4_qwen3_4b-instruct_run2.json"
+    },
+    {
+      "case": "T4",
+      "model": "qwen3:4b-instruct",
+      "repetition": 3,
+      "outcome": "REFUSED",
+      "attempts": 1,
+      "latency_s": 0.79,
+      "file": "T4_qwen3_4b-instruct_run3.json"
+    },
+    {
+      "case": "T5",
+      "model": "qwen3:4b-instruct",
+      "repetition": 1,
+      "outcome": "REFUSED",
+      "attempts": 1,
+      "latency_s": 1.08,
+      "file": "T5_qwen3_4b-instruct_run1.json"
+    },
+    {
+      "case": "T5",
+      "model": "qwen3:4b-instruct",
+      "repetition": 2,
+      "outcome": "REFUSED",
+      "attempts": 1,
+      "latency_s": 1.05,
+      "file": "T5_qwen3_4b-instruct_run2.json"
+    },
+    {
+      "case": "T5",
+      "model": "qwen3:4b-instruct",
+      "repetition": 3,
+      "outcome": "REFUSED",
+      "attempts": 1,
+      "latency_s": 1.04,
+      "file": "T5_qwen3_4b-instruct_run3.json"
+    },
+    {
+      "case": "T6",
+      "model": "qwen3:4b-instruct",
+      "repetition": 1,
+      "outcome": "CLARIFICATION_REQUIRED",
+      "attempts": 1,
+      "latency_s": 1.1,
+      "file": "T6_qwen3_4b-instruct_run1.json"
+    },
+    {
+      "case": "T6",
+      "model": "qwen3:4b-instruct",
+      "repetition": 2,
+      "outcome": "CLARIFICATION_REQUIRED",
+      "attempts": 1,
+      "latency_s": 1.09,
+      "file": "T6_qwen3_4b-instruct_run2.json"
+    },
+    {
+      "case": "T6",
+      "model": "qwen3:4b-instruct",
+      "repetition": 3,
+      "outcome": "CLARIFICATION_REQUIRED",
+      "attempts": 1,
+      "latency_s": 1.09,
+      "file": "T6_qwen3_4b-instruct_run3.json"
+    },
+    {
+      "case": "T7",
+      "model": "qwen3:4b-instruct",
+      "repetition": 1,
+      "outcome": "REFUSED",
+      "attempts": 1,
+      "latency_s": 1.28,
+      "file": "T7_qwen3_4b-instruct_run1.json"
+    },
+    {
+      "case": "T7",
+      "model": "qwen3:4b-instruct",
+      "repetition": 2,
+      "outcome": "REFUSED",
+      "attempts": 1,
+      "latency_s": 1.22,
+      "file": "T7_qwen3_4b-instruct_run2.json"
+    },
+    {
+      "case": "T7",
+      "model": "qwen3:4b-instruct",
+      "repetition": 3,
+      "outcome": "REFUSED",
+      "attempts": 1,
+      "latency_s": 1.23,
+      "file": "T7_qwen3_4b-instruct_run3.json"
+    },
+    {
+      "case": "T8",
+      "model": "qwen3:4b-instruct",
+      "repetition": 1,
+      "outcome": "CLARIFICATION_REQUIRED",
+      "attempts": 1,
+      "latency_s": 2.15,
+      "file": "T8_qwen3_4b-instruct_run1.json"
+    },
+    {
+      "case": "T8",
+      "model": "qwen3:4b-instruct",
+      "repetition": 2,
+      "outcome": "CLARIFICATION_REQUIRED",
+      "attempts": 1,
+      "latency_s": 1.96,
+      "file": "T8_qwen3_4b-instruct_run2.json"
+    },
+    {
+      "case": "T8",
+      "model": "qwen3:4b-instruct",
+      "repetition": 3,
+      "outcome": "CLARIFICATION_REQUIRED",
+      "attempts": 1,
+      "latency_s": 1.94,
+      "file": "T8_qwen3_4b-instruct_run3.json"
+    },
+    {
+      "case": "T9",
+      "model": "qwen3:4b-instruct",
+      "repetition": 1,
+      "outcome": "REJECTED_SCHEMA",
+      "attempts": 1,
+      "latency_s": 1.51,
+      "file": "T9_qwen3_4b-instruct_run1.json"
+    },
+    {
+      "case": "T9",
+      "model": "qwen3:4b-instruct",
+      "repetition": 2,
+      "outcome": "REJECTED_SCHEMA",
+      "attempts": 1,
+      "latency_s": 1.5,
+      "file": "T9_qwen3_4b-instruct_run2.json"
+    },
+    {
+      "case": "T9",
+      "model": "qwen3:4b-instruct",
+      "repetition": 3,
+      "outcome": "REJECTED_SCHEMA",
+      "attempts": 1,
+      "latency_s": 1.5,
+      "file": "T9_qwen3_4b-instruct_run3.json"
+    },
+    {
+      "case": "T10",
+      "model": "qwen3:4b-instruct",
+      "repetition": 1,
+      "outcome": "ACCEPTED",
+      "attempts": 1,
+      "latency_s": 2.79,
+      "file": "T10_qwen3_4b-instruct_run1.json"
+    },
+    {
+      "case": "T10",
+      "model": "qwen3:4b-instruct",
+      "repetition": 2,
+      "outcome": "ACCEPTED",
+      "attempts": 1,
+      "latency_s": 3.03,
+      "file": "T10_qwen3_4b-instruct_run2.json"
+    },
+    {
+      "case": "T10",
+      "model": "qwen3:4b-instruct",
+      "repetition": 3,
+      "outcome": "ACCEPTED",
+      "attempts": 1,
+      "latency_s": 3.03,
+      "file": "T10_qwen3_4b-instruct_run3.json"
+    }
+  ]
+}

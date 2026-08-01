@@ -1,0 +1,13 @@
+{
+  "timestamp": "2026-07-24T19:40:53",
+  "decision": "APPROVED",
+  "approval_scope": {
+    "node": "r1",
+    "prefix": "10.0.2.0/24",
+    "next_hop": "10.0.12.2"
+  },
+  "proposal_file": "docs/evidence/week5-v2/e2e-live/34-ollama-repair-proposal.json",
+  "proposal_sha256": "02ab279399ee43f83693f6cd549927611ce809cf88fb4bbf099943e8165e550b",
+  "source_commit": "64fdc52e7c16c016ad19036b3b848c1bf2da2900",
+  "automatic_deployment_by_llm": false
+}

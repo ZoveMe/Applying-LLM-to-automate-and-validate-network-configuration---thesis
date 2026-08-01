@@ -1,9 +1,10 @@
 # Generated Containerlab directory
-/clab-*/
+clab-*/
 
 # Secrets and environments
 .env
 .venv/
+.venv-ansible/
 __pycache__/
 *.pyc
 

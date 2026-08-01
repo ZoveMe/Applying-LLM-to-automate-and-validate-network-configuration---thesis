@@ -1,0 +1,148 @@
+---
+- name: Validate larger-topology control-plane and policy state
+  hosts: topology_l_routers
+  gather_facts: false
+  any_errors_fatal: true
+
+  vars:
+    bundle_path: >-
+      {{ playbook_dir }}/../examples/topology_l_intent_bundle.json
+    intent_bundle: >-
+      {{
+        lookup('ansible.builtin.file', bundle_path, rstrip=false)
+        | from_json
+      }}
+    node_routes: >-
+      {{
+        intent_bundle.routes
+        | selectattr('node', 'equalto', inventory_hostname)
+        | list
+      }}
+    node_policies: >-
+      {{
+        intent_bundle.policies
+        | selectattr('node', 'equalto', inventory_hostname)
+        | list
+      }}
+
+  tasks:
+    - name: Read expected routes
+      ansible.builtin.raw: >-
+        vtysh -c 'show ip route {{ item.prefix }}'
+      loop: "{{ node_routes }}"
+      loop_control:
+        label: "{{ item.node }} {{ item.prefix }}"
+      register: route_checks
+      changed_when: false
+
+    - name: Assert every expected route uses the intended next hop
+      ansible.builtin.assert:
+        that:
+          - item.item.next_hop in item.stdout
+          - >-
+            item.item.remove_next_hops
+            | select('in', item.stdout)
+            | list
+            | length == 0
+        success_msg: >-
+          PASS: {{ item.item.node }} {{ item.item.prefix }}
+          uses only the intended next hop
+        fail_msg: >-
+          FAIL: {{ item.item.node }} {{ item.item.prefix }}
+          is missing or uses a known wrong next hop
+      loop: "{{ route_checks.results }}"
+      loop_control:
+        label: "{{ item.item.node }} {{ item.item.prefix }}"
+
+    - name: Read expected security policies
+      ansible.builtin.raw: >-
+        iptables -C FORWARD
+        -s {{ item.src }}
+        -d {{ item.dst }}
+        -j {{ item.action }}
+      loop: "{{ node_policies }}"
+      loop_control:
+        label: "{{ item.node }} {{ item.src }} -> {{ item.dst }}"
+      register: policy_checks
+      changed_when: false
+      failed_when: false
+
+    - name: Assert every intended deny policy is installed
+      ansible.builtin.assert:
+        that:
+          - item.rc == 0
+        success_msg: >-
+          PASS: {{ item.item.node }} deny policy is installed
+        fail_msg: >-
+          FAIL: {{ item.item.node }} deny policy is absent
+      loop: "{{ policy_checks.results }}"
+      loop_control:
+        label: "{{ item.item.node }} {{ item.item.src }} -> {{ item.item.dst }}"
+
+- name: Validate larger-topology client behavior
+  hosts: h-client
+  gather_facts: false
+
+  tasks:
+    - name: Test client reachability to required segments
+      ansible.builtin.raw: ping -c 1 -W 2 {{ item }}
+      loop:
+        - "{{ topology_l_server_ip }}"
+        - "{{ topology_l_dmz_ip }}"
+      register: client_allowed
+      changed_when: false
+      failed_when: false
+
+    - name: Assert client reaches server and DMZ
+      ansible.builtin.assert:
+        that:
+          - item.rc == 0
+        success_msg: "PASS: client reaches {{ item.item }}"
+        fail_msg: "FAIL: client cannot reach {{ item.item }}"
+      loop: "{{ client_allowed.results }}"
+      loop_control:
+        label: "{{ item.item }}"
+
+    - name: Test client isolation from management
+      ansible.builtin.raw: ping -c 1 -W 2 {{ topology_l_management_ip }}
+      register: client_to_management
+      changed_when: false
+      failed_when: false
+
+    - name: Assert client cannot reach management
+      ansible.builtin.assert:
+        that:
+          - client_to_management.rc != 0
+        success_msg: "PASS: client is isolated from management"
+        fail_msg: "FAIL: client can unexpectedly reach management"
+
+- name: Validate larger-topology sensor isolation
+  hosts: h-sensors
+  gather_facts: false
+
+  tasks:
+    - name: Test sensors-to-client isolation
+      ansible.builtin.raw: ping -c 1 -W 2 {{ topology_l_client_ip }}
+      register: sensors_to_client
+      changed_when: false
+      failed_when: false
+
+    - name: Assert sensors cannot reach the client segment
+      ansible.builtin.assert:
+        that:
+          - sensors_to_client.rc != 0
+        success_msg: "PASS: sensors are isolated from the client segment"
+        fail_msg: "FAIL: sensors can unexpectedly reach the client segment"
+
+    - name: Test sensors-to-server allowed reachability
+      ansible.builtin.raw: ping -c 1 -W 2 {{ topology_l_server_ip }}
+      register: sensors_to_server
+      changed_when: false
+      failed_when: false
+
+    - name: Assert sensors can reach the server segment
+      ansible.builtin.assert:
+        that:
+          - sensors_to_server.rc == 0
+        success_msg: "PASS: sensors reach the server segment"
+        fail_msg: "FAIL: sensors cannot reach the server segment"

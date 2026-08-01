@@ -1,0 +1,86 @@
+{
+  "profile": "topology_l_intent_v1",
+  "lab": "thesis-net-l",
+  "routes": [
+    {
+      "node": "r1",
+      "prefix": "10.0.2.0/24",
+      "next_hop": "10.0.12.2",
+      "remove_next_hops": []
+    },
+    {
+      "node": "r1",
+      "prefix": "10.0.99.0/24",
+      "next_hop": "10.0.12.2",
+      "remove_next_hops": []
+    },
+    {
+      "node": "r1",
+      "prefix": "10.0.3.0/24",
+      "next_hop": "10.0.12.2",
+      "remove_next_hops": []
+    },
+    {
+      "node": "r1",
+      "prefix": "10.0.4.0/24",
+      "next_hop": "10.0.12.2",
+      "remove_next_hops": []
+    },
+    {
+      "node": "r2",
+      "prefix": "10.0.1.0/24",
+      "next_hop": "10.0.12.1",
+      "remove_next_hops": [
+        "10.0.23.2"
+      ]
+    },
+    {
+      "node": "r2",
+      "prefix": "10.0.3.0/24",
+      "next_hop": "10.0.23.2",
+      "remove_next_hops": [
+        "10.0.12.1"
+      ]
+    },
+    {
+      "node": "r2",
+      "prefix": "10.0.4.0/24",
+      "next_hop": "10.0.23.2",
+      "remove_next_hops": [
+        "10.0.12.1"
+      ]
+    },
+    {
+      "node": "r3",
+      "prefix": "10.0.1.0/24",
+      "next_hop": "10.0.23.1",
+      "remove_next_hops": []
+    },
+    {
+      "node": "r3",
+      "prefix": "10.0.2.0/24",
+      "next_hop": "10.0.23.1",
+      "remove_next_hops": []
+    },
+    {
+      "node": "r3",
+      "prefix": "10.0.99.0/24",
+      "next_hop": "10.0.23.1",
+      "remove_next_hops": []
+    }
+  ],
+  "policies": [
+    {
+      "node": "r1",
+      "src": "10.0.1.0/24",
+      "dst": "10.0.99.0/24",
+      "action": "DROP"
+    },
+    {
+      "node": "r3",
+      "src": "10.0.4.0/24",
+      "dst": "10.0.1.0/24",
+      "action": "DROP"
+    }
+  ]
+}

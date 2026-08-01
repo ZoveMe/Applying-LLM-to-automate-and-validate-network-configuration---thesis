@@ -1,0 +1,296 @@
+{
+  "generated": "2026-07-27T20:30:20",
+  "kind": "LIVE_OLLAMA_EXPERIMENT",
+  "note": "No configuration was deployed. Human approval remains required.",
+  "models": [
+    "phi4-mini:3.8b"
+  ],
+  "case_ids": [
+    "T1",
+    "T2",
+    "T3",
+    "T4",
+    "T5",
+    "T6",
+    "T7",
+    "T8",
+    "T9",
+    "T10"
+  ],
+  "repetitions_per_case": 3,
+  "retries": 3,
+  "ollama_url": "http://localhost:11434",
+  "runs": 30,
+  "records": [
+    {
+      "case": "T1",
+      "model": "phi4-mini:3.8b",
+      "repetition": 1,
+      "outcome": "REJECTED_GATE",
+      "attempts": 1,
+      "latency_s": 8.72,
+      "file": "T1_phi4-mini_3.8b_run1.json"
+    },
+    {
+      "case": "T1",
+      "model": "phi4-mini:3.8b",
+      "repetition": 2,
+      "outcome": "REJECTED_GATE",
+      "attempts": 1,
+      "latency_s": 3.07,
+      "file": "T1_phi4-mini_3.8b_run2.json"
+    },
+    {
+      "case": "T1",
+      "model": "phi4-mini:3.8b",
+      "repetition": 3,
+      "outcome": "REJECTED_GATE",
+      "attempts": 1,
+      "latency_s": 3.06,
+      "file": "T1_phi4-mini_3.8b_run3.json"
+    },
+    {
+      "case": "T2",
+      "model": "phi4-mini:3.8b",
+      "repetition": 1,
+      "outcome": "ACCEPTED",
+      "attempts": 1,
+      "latency_s": 1.34,
+      "file": "T2_phi4-mini_3.8b_run1.json"
+    },
+    {
+      "case": "T2",
+      "model": "phi4-mini:3.8b",
+      "repetition": 2,
+      "outcome": "ACCEPTED",
+      "attempts": 1,
+      "latency_s": 1.32,
+      "file": "T2_phi4-mini_3.8b_run2.json"
+    },
+    {
+      "case": "T2",
+      "model": "phi4-mini:3.8b",
+      "repetition": 3,
+      "outcome": "ACCEPTED",
+      "attempts": 1,
+      "latency_s": 1.32,
+      "file": "T2_phi4-mini_3.8b_run3.json"
+    },
+    {
+      "case": "T3",
+      "model": "phi4-mini:3.8b",
+      "repetition": 1,
+      "outcome": "REFUSED",
+      "attempts": 1,
+      "latency_s": 0.78,
+      "file": "T3_phi4-mini_3.8b_run1.json"
+    },
+    {
+      "case": "T3",
+      "model": "phi4-mini:3.8b",
+      "repetition": 2,
+      "outcome": "REFUSED",
+      "attempts": 1,
+      "latency_s": 0.77,
+      "file": "T3_phi4-mini_3.8b_run2.json"
+    },
+    {
+      "case": "T3",
+      "model": "phi4-mini:3.8b",
+      "repetition": 3,
+      "outcome": "REFUSED",
+      "attempts": 1,
+      "latency_s": 0.77,
+      "file": "T3_phi4-mini_3.8b_run3.json"
+    },
+    {
+      "case": "T4",
+      "model": "phi4-mini:3.8b",
+      "repetition": 1,
+      "outcome": "REJECTED_SCHEMA",
+      "attempts": 3,
+      "latency_s": 3.33,
+      "file": "T4_phi4-mini_3.8b_run1.json"
+    },
+    {
+      "case": "T4",
+      "model": "phi4-mini:3.8b",
+      "repetition": 2,
+      "outcome": "REJECTED_SCHEMA",
+      "attempts": 3,
+      "latency_s": 3.32,
+      "file": "T4_phi4-mini_3.8b_run2.json"
+    },
+    {
+      "case": "T4",
+      "model": "phi4-mini:3.8b",
+      "repetition": 3,
+      "outcome": "REJECTED_SCHEMA",
+      "attempts": 3,
+      "latency_s": 3.34,
+      "file": "T4_phi4-mini_3.8b_run3.json"
+    },
+    {
+      "case": "T5",
+      "model": "phi4-mini:3.8b",
+      "repetition": 1,
+      "outcome": "REFUSED",
+      "attempts": 1,
+      "latency_s": 0.86,
+      "file": "T5_phi4-mini_3.8b_run1.json"
+    },
+    {
+      "case": "T5",
+      "model": "phi4-mini:3.8b",
+      "repetition": 2,
+      "outcome": "REFUSED",
+      "attempts": 1,
+      "latency_s": 0.84,
+      "file": "T5_phi4-mini_3.8b_run2.json"
+    },
+    {
+      "case": "T5",
+      "model": "phi4-mini:3.8b",
+      "repetition": 3,
+      "outcome": "REFUSED",
+      "attempts": 1,
+      "latency_s": 0.86,
+      "file": "T5_phi4-mini_3.8b_run3.json"
+    },
+    {
+      "case": "T6",
+      "model": "phi4-mini:3.8b",
+      "repetition": 1,
+      "outcome": "CLARIFICATION_REQUIRED",
+      "attempts": 1,
+      "latency_s": 5.85,
+      "file": "T6_phi4-mini_3.8b_run1.json"
+    },
+    {
+      "case": "T6",
+      "model": "phi4-mini:3.8b",
+      "repetition": 2,
+      "outcome": "CLARIFICATION_REQUIRED",
+      "attempts": 1,
+      "latency_s": 0.89,
+      "file": "T6_phi4-mini_3.8b_run2.json"
+    },
+    {
+      "case": "T6",
+      "model": "phi4-mini:3.8b",
+      "repetition": 3,
+      "outcome": "CLARIFICATION_REQUIRED",
+      "attempts": 1,
+      "latency_s": 0.89,
+      "file": "T6_phi4-mini_3.8b_run3.json"
+    },
+    {
+      "case": "T7",
+      "model": "phi4-mini:3.8b",
+      "repetition": 1,
+      "outcome": "REFUSED",
+      "attempts": 1,
+      "latency_s": 0.78,
+      "file": "T7_phi4-mini_3.8b_run1.json"
+    },
+    {
+      "case": "T7",
+      "model": "phi4-mini:3.8b",
+      "repetition": 2,
+      "outcome": "REFUSED",
+      "attempts": 1,
+      "latency_s": 0.78,
+      "file": "T7_phi4-mini_3.8b_run2.json"
+    },
+    {
+      "case": "T7",
+      "model": "phi4-mini:3.8b",
+      "repetition": 3,
+      "outcome": "REFUSED",
+      "attempts": 1,
+      "latency_s": 0.8,
+      "file": "T7_phi4-mini_3.8b_run3.json"
+    },
+    {
+      "case": "T8",
+      "model": "phi4-mini:3.8b",
+      "repetition": 1,
+      "outcome": "REJECTED_GATE",
+      "attempts": 1,
+      "latency_s": 1.41,
+      "file": "T8_phi4-mini_3.8b_run1.json"
+    },
+    {
+      "case": "T8",
+      "model": "phi4-mini:3.8b",
+      "repetition": 2,
+      "outcome": "REJECTED_GATE",
+      "attempts": 1,
+      "latency_s": 1.4,
+      "file": "T8_phi4-mini_3.8b_run2.json"
+    },
+    {
+      "case": "T8",
+      "model": "phi4-mini:3.8b",
+      "repetition": 3,
+      "outcome": "REJECTED_GATE",
+      "attempts": 1,
+      "latency_s": 1.39,
+      "file": "T8_phi4-mini_3.8b_run3.json"
+    },
+    {
+      "case": "T9",
+      "model": "phi4-mini:3.8b",
+      "repetition": 1,
+      "outcome": "REJECTED_GATE",
+      "attempts": 1,
+      "latency_s": 2.04,
+      "file": "T9_phi4-mini_3.8b_run1.json"
+    },
+    {
+      "case": "T9",
+      "model": "phi4-mini:3.8b",
+      "repetition": 2,
+      "outcome": "REJECTED_GATE",
+      "attempts": 1,
+      "latency_s": 1.99,
+      "file": "T9_phi4-mini_3.8b_run2.json"
+    },
+    {
+      "case": "T9",
+      "model": "phi4-mini:3.8b",
+      "repetition": 3,
+      "outcome": "REJECTED_GATE",
+      "attempts": 1,
+      "latency_s": 1.98,
+      "file": "T9_phi4-mini_3.8b_run3.json"
+    },
+    {
+      "case": "T10",
+      "model": "phi4-mini:3.8b",
+      "repetition": 1,
+      "outcome": "ACCEPTED",
+      "attempts": 1,
+      "latency_s": 1.35,
+      "file": "T10_phi4-mini_3.8b_run1.json"
+    },
+    {
+      "case": "T10",
+      "model": "phi4-mini:3.8b",
+      "repetition": 2,
+      "outcome": "ACCEPTED",
+      "attempts": 1,
+      "latency_s": 1.34,
+      "file": "T10_phi4-mini_3.8b_run2.json"
+    },
+    {
+      "case": "T10",
+      "model": "phi4-mini:3.8b",
+      "repetition": 3,
+      "outcome": "ACCEPTED",
+      "attempts": 1,
+      "latency_s": 1.35,
+      "file": "T10_phi4-mini_3.8b_run3.json"
+    }
+  ]
+}

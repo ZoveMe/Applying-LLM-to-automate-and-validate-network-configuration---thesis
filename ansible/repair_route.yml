@@ -1,0 +1,65 @@
+---
+- name: Apply the approved allow-listed route repair
+  hosts: r1
+  gather_facts: false
+
+  vars:
+    allowed_repair:
+      node: r1
+      prefix: 10.0.2.0/24
+      next_hop: 10.0.12.2
+
+  pre_tasks:
+    - name: Fail closed unless the approved scope is exact
+      ansible.builtin.assert:
+        that:
+          - repair_node is defined
+          - repair_prefix is defined
+          - repair_next_hop is defined
+          - repair_node == allowed_repair.node
+          - repair_prefix == allowed_repair.prefix
+          - repair_next_hop == allowed_repair.next_hop
+          - inventory_hostname == allowed_repair.node
+        fail_msg: >-
+          Refusing deployment: the requested repair is outside the
+          allow-listed thesis demonstration scope.
+        success_msg: "PASS: approved repair matches the allow-list"
+
+  tasks:
+    - name: Ensure vtysh can run without a missing-file warning
+      ansible.builtin.raw: |
+        mkdir -p /etc/frr
+        touch /etc/frr/vtysh.conf
+        chmod 0644 /etc/frr/vtysh.conf
+      changed_when: false
+
+    - name: Apply the approved route idempotently
+      ansible.builtin.raw: |
+        set -eu
+        current_route="$(vtysh -c 'show ip route {{ repair_prefix }}')"
+        if printf '%s\n' "$current_route" |
+             grep -Fq '{{ repair_next_hop }}'; then
+          echo REPAIR_PRESENT
+        else
+          vtysh \
+            -c 'configure terminal' \
+            -c 'no ip route {{ repair_prefix }} blackhole' \
+            -c 'no ip route {{ repair_prefix }} {{ repair_next_hop }}' \
+            -c 'ip route {{ repair_prefix }} {{ repair_next_hop }}'
+          echo REPAIR_ADDED
+        fi
+      register: route_repair
+      changed_when: "'REPAIR_ADDED' in route_repair.stdout"
+
+    - name: Read the repaired route
+      ansible.builtin.raw: >-
+        vtysh -c 'show ip route {{ repair_prefix }}'
+      register: repaired_route
+      changed_when: false
+
+    - name: Prove the approved next hop is installed
+      ansible.builtin.assert:
+        that:
+          - repair_next_hop in repaired_route.stdout
+        success_msg: "PASS: approved route is installed"
+        fail_msg: "FAIL: approved route is not installed"

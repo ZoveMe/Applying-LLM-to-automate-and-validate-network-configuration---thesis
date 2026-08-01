@@ -1,0 +1,33 @@
+{
+  "timestamp": "2026-07-24T18:48:09",
+  "model": "qwen3:4b-instruct",
+  "ollama_url": "http://localhost:11434",
+  "generation_options": {
+    "temperature": 0,
+    "seed": 42,
+    "num_ctx": 8192,
+    "num_predict": 1024
+  },
+  "requirement": "Make the network faster.",
+  "attempts": [
+    {
+      "n": 1,
+      "raw": "{\n  \"decision\": \"CLARIFY\",\n  \"rationale\": \"The requirement 'Make the network faster' is ambiguous and lacks technical detail about specific networks, devices, or performance metrics. It cannot be represented as static routes or access-policy rules and does not specify actionable network configuration changes.\",\n  \"reason_code\": \"AMBIGUOUS_REQUIREMENT\",\n  \"static_routes\": []\n}",
+      "schema_valid": true,
+      "error": null,
+      "latency_s": 1.1
+    }
+  ],
+  "proposal": {
+    "rationale": "The requirement 'Make the network faster' is ambiguous and lacks technical detail about specific networks, devices, or performance metrics. It cannot be represented as static routes or access-policy rules and does not specify actionable network configuration changes.",
+    "decision": "CLARIFY",
+    "reason_code": "AMBIGUOUS_REQUIREMENT",
+    "static_routes": [],
+    "access_policy": []
+  },
+  "gate_report": null,
+  "outcome": "CLARIFICATION_REQUIRED",
+  "total_latency_s": 1.1,
+  "benchmark_case_id": "T6",
+  "repetition": 1
+}

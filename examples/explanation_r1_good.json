@@ -1,0 +1,36 @@
+{
+  "device": "r1",
+  "summary": "r1 is the client-side router. It connects the client segment to the transit link toward r2 and enforces the access policy that blocks clients from reaching the management network.",
+  "interfaces": [
+    {
+      "name": "eth1",
+      "ip_address": "10.0.1.1/24",
+      "role": "gateway for the client segment"
+    },
+    {
+      "name": "eth2",
+      "ip_address": "10.0.12.1/30",
+      "role": "transit link to r2"
+    }
+  ],
+  "static_routes": [
+    {
+      "prefix": "10.0.2.0/24",
+      "next_hop": "10.0.12.2",
+      "purpose": "reach the server segment via r2"
+    },
+    {
+      "prefix": "10.0.99.0/24",
+      "next_hop": "10.0.12.2",
+      "purpose": "reach the management segment via r2"
+    }
+  ],
+  "access_rules": [
+    {
+      "src": "10.0.1.0/24",
+      "dst": "10.0.99.0/24",
+      "action": "deny",
+      "purpose": "clients must not reach the management network"
+    }
+  ]
+}

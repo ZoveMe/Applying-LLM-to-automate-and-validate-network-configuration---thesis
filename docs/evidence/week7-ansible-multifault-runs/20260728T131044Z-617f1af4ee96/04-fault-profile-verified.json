@@ -1,0 +1,16 @@
+{
+  "stage": "fault_profile_verification",
+  "timestamp": "2026-07-28T15:12:16.222419",
+  "started_at": "2026-07-28T15:12:08.898381",
+  "completed_at": "2026-07-28T15:12:16.222419",
+  "duration_seconds": 7.324026,
+  "command": [
+    "ansible-playbook",
+    "-i",
+    "/mnt/c/Users/Damjan/Desktop/Thesis/thesis-net/ansible/inventory_topology_l.yml",
+    "/mnt/c/Users/Damjan/Desktop/Thesis/thesis-net/ansible/verify_topology_l_faults.yml"
+  ],
+  "returncode": 0,
+  "stdout": "\nPLAY [Prove the exact three-fault profile is active] ***************************\n\nTASK [Read the r1 DMZ route after F1] ******************************************\nskipping: [r2]\nskipping: [r3]\nok: [r1]\n\nTASK [Prove F1 removed the expected r1 next hop] *******************************\nskipping: [r2]\nskipping: [r3]\nok: [r1] => {\n    \"changed\": false,\n    \"msg\": \"PASS: F1 missing-route fault is active\"\n}\n\nTASK [Read the r2 DMZ route after F2] ******************************************\nskipping: [r1]\nskipping: [r3]\nok: [r2]\n\nTASK [Prove F2 installed only the wrong r2 next hop] ***************************\nskipping: [r1]\nskipping: [r3]\nok: [r2] => {\n    \"changed\": false,\n    \"msg\": \"PASS: F2 wrong-next-hop fault is active\"\n}\n\nTASK [Read the r3 sensors-to-client deny rule after F3] ************************\nskipping: [r1]\nskipping: [r2]\nok: [r3]\n\nTASK [Prove F3 removed the r3 deny rule] ***************************************\nskipping: [r1]\nskipping: [r2]\nok: [r3] => {\n    \"changed\": false,\n    \"msg\": \"PASS: F3 missing-policy fault is active\"\n}\n\nPLAY RECAP *********************************************************************\nr1                         : ok=2    changed=0    unreachable=0    failed=0    skipped=4    rescued=0    ignored=0   \nr2                         : ok=2    changed=0    unreachable=0    failed=0    skipped=4    rescued=0    ignored=0   \nr3                         : ok=2    changed=0    unreachable=0    failed=0    skipped=4    rescued=0    ignored=0   \n\n",
+  "stderr": ""
+}

@@ -1,0 +1,275 @@
+{
+  "stage": "preflight",
+  "timestamp": "2026-07-28T16:27:33",
+  "source_commit": "6f54385caf165506d3ce776215b6db28426d15f7",
+  "lab_nodes": [
+    "clab-thesis-net-l-r1",
+    "clab-thesis-net-l-r2",
+    "clab-thesis-net-l-r3",
+    "clab-thesis-net-l-h-client",
+    "clab-thesis-net-l-h-server",
+    "clab-thesis-net-l-h-mgmt",
+    "clab-thesis-net-l-h-dmz",
+    "clab-thesis-net-l-h-sensors"
+  ],
+  "container_images": {
+    "clab-thesis-net-l-r1": {
+      "configured_image": "quay.io/frrouting/frr:9.1.1",
+      "image_id": "sha256:0634cca8750c3ed2122a4bc79d65c932b091d1afba19dd617cd66a4adf923db3"
+    },
+    "clab-thesis-net-l-r2": {
+      "configured_image": "quay.io/frrouting/frr:9.1.1",
+      "image_id": "sha256:0634cca8750c3ed2122a4bc79d65c932b091d1afba19dd617cd66a4adf923db3"
+    },
+    "clab-thesis-net-l-r3": {
+      "configured_image": "quay.io/frrouting/frr:9.1.1",
+      "image_id": "sha256:0634cca8750c3ed2122a4bc79d65c932b091d1afba19dd617cd66a4adf923db3"
+    },
+    "clab-thesis-net-l-h-client": {
+      "configured_image": "alpine:3.20.10",
+      "image_id": "sha256:d9e853e87e55526f6b2917df91a2115c36dd7c696a35be12163d44e6e2a4b6bc"
+    },
+    "clab-thesis-net-l-h-server": {
+      "configured_image": "alpine:3.20.10",
+      "image_id": "sha256:d9e853e87e55526f6b2917df91a2115c36dd7c696a35be12163d44e6e2a4b6bc"
+    },
+    "clab-thesis-net-l-h-mgmt": {
+      "configured_image": "alpine:3.20.10",
+      "image_id": "sha256:d9e853e87e55526f6b2917df91a2115c36dd7c696a35be12163d44e6e2a4b6bc"
+    },
+    "clab-thesis-net-l-h-dmz": {
+      "configured_image": "alpine:3.20.10",
+      "image_id": "sha256:d9e853e87e55526f6b2917df91a2115c36dd7c696a35be12163d44e6e2a4b6bc"
+    },
+    "clab-thesis-net-l-h-sensors": {
+      "configured_image": "alpine:3.20.10",
+      "image_id": "sha256:d9e853e87e55526f6b2917df91a2115c36dd7c696a35be12163d44e6e2a4b6bc"
+    }
+  },
+  "checks": [
+    {
+      "stage": "preflight",
+      "timestamp": "2026-07-28T16:27:28.458623",
+      "started_at": "2026-07-28T16:27:28.435398",
+      "completed_at": "2026-07-28T16:27:28.458623",
+      "duration_seconds": 0.02322,
+      "command": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "returncode": 0,
+      "stdout": "6f54385caf165506d3ce776215b6db28426d15f7\n",
+      "stderr": ""
+    },
+    {
+      "stage": "preflight",
+      "timestamp": "2026-07-28T16:27:29.391922",
+      "started_at": "2026-07-28T16:27:28.458649",
+      "completed_at": "2026-07-28T16:27:29.391922",
+      "duration_seconds": 0.93327,
+      "command": [
+        "git",
+        "status",
+        "--porcelain"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "stage": "preflight",
+      "timestamp": "2026-07-28T16:27:31.036150",
+      "started_at": "2026-07-28T16:27:29.391947",
+      "completed_at": "2026-07-28T16:27:31.036150",
+      "duration_seconds": 1.6442,
+      "command": [
+        "ansible-playbook",
+        "--version"
+      ],
+      "returncode": 0,
+      "stdout": "ansible-playbook [core 2.17.14]\n  config file = None\n  configured module search path = ['/home/damjan/.ansible/plugins/modules', '/usr/share/ansible/plugins/modules']\n  ansible python module location = /mnt/c/Users/Damjan/Desktop/Thesis/thesis-net/.venv-ansible/lib/python3.10/site-packages/ansible\n  ansible collection location = /mnt/c/Users/Damjan/Desktop/Thesis/thesis-net/.venv-ansible/collections\n  executable location = /mnt/c/Users/Damjan/Desktop/Thesis/thesis-net/.venv-ansible/bin/ansible-playbook\n  python version = 3.10.12 (main, Jun 22 2026, 18:55:27) [GCC 11.4.0] (/mnt/c/Users/Damjan/Desktop/Thesis/thesis-net/.venv-ansible/bin/python)\n  jinja version = 3.1.6\n  libyaml = True\n",
+      "stderr": ""
+    },
+    {
+      "stage": "preflight",
+      "timestamp": "2026-07-28T16:27:32.928295",
+      "started_at": "2026-07-28T16:27:31.036312",
+      "completed_at": "2026-07-28T16:27:32.928295",
+      "duration_seconds": 1.891979,
+      "command": [
+        "ansible-galaxy",
+        "collection",
+        "list",
+        "community.docker"
+      ],
+      "returncode": 0,
+      "stdout": "\n# /mnt/c/Users/Damjan/Desktop/Thesis/thesis-net/.venv-ansible/collections/ansible_collections\nCollection       Version\n---------------- -------\ncommunity.docker 5.2.1  \n",
+      "stderr": ""
+    },
+    {
+      "stage": "preflight",
+      "timestamp": "2026-07-28T16:27:32.940992",
+      "started_at": "2026-07-28T16:27:32.928478",
+      "completed_at": "2026-07-28T16:27:32.940992",
+      "duration_seconds": 0.012511,
+      "command": [
+        "clab",
+        "version"
+      ],
+      "returncode": 0,
+      "stdout": "\n \u28f4\u287e\u281b\u281b\u2816 \u28a0\u28f6\u281f\u281b\u28b7\u28e6 \u28b8\u28ff\u28e7  \u28ff \u2818\u281b\u28bb\u285f\u281b\u281b  \u28fe\u28ff\u2840  \u28ff\u2847 \u28ff\u28ff\u2844 \u28b8\u2847 \u28ff\u285f\u281b\u281b\u2803\u28b8\u28ff\u281b\u281b\u28f7\u2844 \u001b[38;2;0;201;255m\u28ff\u2847\u001b[0m      \u001b[38;2;0;201;255m\u28ff\u2847\u001b[0m    \n\u28b8\u28ff     \u28ff\u2847   \u28ff\u2847\u28b8\u28ff\u2839\u28e7\u2840\u28ff   \u28b8\u2847   \u28f8\u284f\u28b9\u28e7  \u28ff\u2847 \u28ff\u284f\u28bf\u28c4\u28b8\u2847 \u28ff\u28e7\u28e4\u28e4 \u28b8\u28ff\u28c0\u28c0\u28fe\u2807 \u001b[38;2;0;201;255m\u28ff\u2847\u2810\u281f\u281b\u28bf\u2846\u001b[0m \u001b[38;2;0;201;255m\u28ff\u2877\u281b\u28bf\u28c6\u001b[0m \n\u2818\u28ff\u28c4  \u2840 \u28bb\u28e7\u2840 \u28e0\u28ff\u2803\u28b8\u28ff \u2818\u28f7\u28ff   \u28b8\u2847  \u28a0\u28ff\u2837\u2836\u28bf\u2846 \u28ff\u2847 \u28ff\u2847 \u28bb\u28fe\u2847 \u28ff\u2847   \u28b8\u28ff\u2809\u28bb\u28e7\u2840 \u001b[38;2;0;201;255m\u28ff\u2847\u28b0\u285f\u281b\u28fb\u2847\u001b[0m \u001b[38;2;0;201;255m\u28ff\u2847\u001b[0m \u001b[38;2;0;201;255m\u28f8\u287f\u001b[0m \n \u2808\u2819\u281b\u281b\u2809  \u2809\u281b\u281b\u280b\u2801 \u2818\u281b  \u2808\u281b   \u2818\u2803  \u281a\u2803  \u2818\u281b \u281b\u2803 \u281b\u2803  \u2819\u2803 \u281b\u281b\u281b\u281b\u2803\u2818\u281b  \u2819\u2813 \u001b[38;2;0;201;255m\u281b\u2803\u2808\u281b\u281b\u2819\u2803\u001b[0m \u001b[38;2;0;201;255m\u281b\u281b\u281b\u281b\u2801\u001b[0m \n\n    version: 0.77.0\n     commit: 05c2006e3\n       date: 2026-06-28T08:07:27Z\n     source: https://github.com/srl-labs/containerlab\n rel. notes: https://containerlab.dev/rn/0.77/\n",
+      "stderr": ""
+    },
+    {
+      "stage": "preflight",
+      "timestamp": "2026-07-28T16:27:32.984610",
+      "started_at": "2026-07-28T16:27:32.941012",
+      "completed_at": "2026-07-28T16:27:32.984610",
+      "duration_seconds": 0.043595,
+      "command": [
+        "docker",
+        "info"
+      ],
+      "returncode": 0,
+      "stdout": "Client: Docker Engine - Community\n Version:    29.6.2\n Context:    default\n Debug Mode: false\n Plugins:\n  buildx: Docker Buildx (Docker Inc.)\n    Version:  v0.35.0\n    Path:     /usr/libexec/docker/cli-plugins/docker-buildx\n  compose: Docker Compose (Docker Inc.)\n    Version:  v5.3.1\n    Path:     /usr/libexec/docker/cli-plugins/docker-compose\n  model: Docker Model Runner (Docker Inc.)\n    Version:  v1.2.6\n    Path:     /usr/libexec/docker/cli-plugins/docker-model\n\nServer:\n Containers: 8\n  Running: 8\n  Paused: 0\n  Stopped: 0\n Images: 4\n Server Version: 29.6.2\n Storage Driver: overlayfs\n  driver-type: io.containerd.snapshotter.v1\n Logging Driver: json-file\n Cgroup Driver: systemd\n Cgroup Version: 2\n Plugins:\n  Volume: local\n  Network: bridge host ipvlan macvlan null overlay\n  Log: awslogs fluentd gcplogs gelf journald json-file local splunk syslog\n CDI spec directories:\n  /etc/cdi\n  /var/run/cdi\n Swarm: inactive\n Runtimes: io.containerd.runc.v2 runc\n Default Runtime: runc\n Init Binary: docker-init\n containerd version: 11ce9d5f3c68c941867e82890e93e815c1304f1b\n runc version: v1.3.6-0-g491b69ba\n init version: de40ad0\n Security Options:\n  seccomp\n   Profile: builtin\n  cgroupns\n Kernel Version: 6.6.87.2-microsoft-standard-WSL2\n Operating System: Ubuntu 22.04.5 LTS\n OSType: linux\n Architecture: x86_64\n CPUs: 12\n Total Memory: 15.48GiB\n Name: ArmaniJunior\n ID: 1ad35ac4-bb4f-49d0-881f-6568bb2af184\n Docker Root Dir: /var/lib/docker\n Debug Mode: false\n Experimental: false\n Insecure Registries:\n  ::1/128\n  127.0.0.0/8\n Live Restore Enabled: false\n Firewall Backend: iptables\n  EnableUserlandProxy: true\n  UserlandProxyPath: /usr/bin/docker-proxy\n\n",
+      "stderr": ""
+    },
+    {
+      "stage": "preflight",
+      "timestamp": "2026-07-28T16:27:32.997870",
+      "started_at": "2026-07-28T16:27:32.984631",
+      "completed_at": "2026-07-28T16:27:32.997870",
+      "duration_seconds": 0.013236,
+      "command": [
+        "docker",
+        "inspect",
+        "-f",
+        "{{.State.Running}}|{{.Image}}|{{.Config.Image}}",
+        "clab-thesis-net-l-r1"
+      ],
+      "returncode": 0,
+      "stdout": "true|sha256:0634cca8750c3ed2122a4bc79d65c932b091d1afba19dd617cd66a4adf923db3|quay.io/frrouting/frr:9.1.1\n",
+      "stderr": ""
+    },
+    {
+      "stage": "preflight",
+      "timestamp": "2026-07-28T16:27:33.010665",
+      "started_at": "2026-07-28T16:27:32.997986",
+      "completed_at": "2026-07-28T16:27:33.010665",
+      "duration_seconds": 0.012675,
+      "command": [
+        "docker",
+        "inspect",
+        "-f",
+        "{{.State.Running}}|{{.Image}}|{{.Config.Image}}",
+        "clab-thesis-net-l-r2"
+      ],
+      "returncode": 0,
+      "stdout": "true|sha256:0634cca8750c3ed2122a4bc79d65c932b091d1afba19dd617cd66a4adf923db3|quay.io/frrouting/frr:9.1.1\n",
+      "stderr": ""
+    },
+    {
+      "stage": "preflight",
+      "timestamp": "2026-07-28T16:27:33.022376",
+      "started_at": "2026-07-28T16:27:33.010699",
+      "completed_at": "2026-07-28T16:27:33.022376",
+      "duration_seconds": 0.011674,
+      "command": [
+        "docker",
+        "inspect",
+        "-f",
+        "{{.State.Running}}|{{.Image}}|{{.Config.Image}}",
+        "clab-thesis-net-l-r3"
+      ],
+      "returncode": 0,
+      "stdout": "true|sha256:0634cca8750c3ed2122a4bc79d65c932b091d1afba19dd617cd66a4adf923db3|quay.io/frrouting/frr:9.1.1\n",
+      "stderr": ""
+    },
+    {
+      "stage": "preflight",
+      "timestamp": "2026-07-28T16:27:33.034754",
+      "started_at": "2026-07-28T16:27:33.022410",
+      "completed_at": "2026-07-28T16:27:33.034754",
+      "duration_seconds": 0.012341,
+      "command": [
+        "docker",
+        "inspect",
+        "-f",
+        "{{.State.Running}}|{{.Image}}|{{.Config.Image}}",
+        "clab-thesis-net-l-h-client"
+      ],
+      "returncode": 0,
+      "stdout": "true|sha256:d9e853e87e55526f6b2917df91a2115c36dd7c696a35be12163d44e6e2a4b6bc|alpine:3.20.10\n",
+      "stderr": ""
+    },
+    {
+      "stage": "preflight",
+      "timestamp": "2026-07-28T16:27:33.047798",
+      "started_at": "2026-07-28T16:27:33.034787",
+      "completed_at": "2026-07-28T16:27:33.047798",
+      "duration_seconds": 0.013008,
+      "command": [
+        "docker",
+        "inspect",
+        "-f",
+        "{{.State.Running}}|{{.Image}}|{{.Config.Image}}",
+        "clab-thesis-net-l-h-server"
+      ],
+      "returncode": 0,
+      "stdout": "true|sha256:d9e853e87e55526f6b2917df91a2115c36dd7c696a35be12163d44e6e2a4b6bc|alpine:3.20.10\n",
+      "stderr": ""
+    },
+    {
+      "stage": "preflight",
+      "timestamp": "2026-07-28T16:27:33.060128",
+      "started_at": "2026-07-28T16:27:33.047834",
+      "completed_at": "2026-07-28T16:27:33.060128",
+      "duration_seconds": 0.012291,
+      "command": [
+        "docker",
+        "inspect",
+        "-f",
+        "{{.State.Running}}|{{.Image}}|{{.Config.Image}}",
+        "clab-thesis-net-l-h-mgmt"
+      ],
+      "returncode": 0,
+      "stdout": "true|sha256:d9e853e87e55526f6b2917df91a2115c36dd7c696a35be12163d44e6e2a4b6bc|alpine:3.20.10\n",
+      "stderr": ""
+    },
+    {
+      "stage": "preflight",
+      "timestamp": "2026-07-28T16:27:33.071970",
+      "started_at": "2026-07-28T16:27:33.060161",
+      "completed_at": "2026-07-28T16:27:33.071970",
+      "duration_seconds": 0.011806,
+      "command": [
+        "docker",
+        "inspect",
+        "-f",
+        "{{.State.Running}}|{{.Image}}|{{.Config.Image}}",
+        "clab-thesis-net-l-h-dmz"
+      ],
+      "returncode": 0,
+      "stdout": "true|sha256:d9e853e87e55526f6b2917df91a2115c36dd7c696a35be12163d44e6e2a4b6bc|alpine:3.20.10\n",
+      "stderr": ""
+    },
+    {
+      "stage": "preflight",
+      "timestamp": "2026-07-28T16:27:33.083615",
+      "started_at": "2026-07-28T16:27:33.072005",
+      "completed_at": "2026-07-28T16:27:33.083615",
+      "duration_seconds": 0.011606,
+      "command": [
+        "docker",
+        "inspect",
+        "-f",
+        "{{.State.Running}}|{{.Image}}|{{.Config.Image}}",
+        "clab-thesis-net-l-h-sensors"
+      ],
+      "returncode": 0,
+      "stdout": "true|sha256:d9e853e87e55526f6b2917df91a2115c36dd7c696a35be12163d44e6e2a4b6bc|alpine:3.20.10\n",
+      "stderr": ""
+    }
+  ]
+}

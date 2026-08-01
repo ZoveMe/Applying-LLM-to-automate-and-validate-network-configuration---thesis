@@ -1,0 +1,33 @@
+{
+  "timestamp": "2026-07-27T20:22:52",
+  "model": "llama3.2:3b-instruct-q4_K_M",
+  "ollama_url": "http://localhost:11434",
+  "generation_options": {
+    "temperature": 0,
+    "seed": 42,
+    "num_ctx": 8192,
+    "num_predict": 1024
+  },
+  "requirement": "Add a static route on router r9 so that the network 10.0.50.0/24 is reachable via 192.168.1.1.",
+  "attempts": [
+    {
+      "n": 1,
+      "raw": "{\n  \"rationale\": \"The requirement cannot be represented as static_routes or access-policy rules, and it references an unknown device (r9) and address (192.168.1.1), which are not part of the declared inventory.\",\n  \"decision\": \"REFUSE\",\n  \"reason_code\": \"OUT_OF_SCOPE\",\n  \"static_routes\": [],\n  \"access_policy\": []\n}",
+      "schema_valid": true,
+      "error": null,
+      "latency_s": 0.94
+    }
+  ],
+  "proposal": {
+    "rationale": "The requirement cannot be represented as static_routes or access-policy rules, and it references an unknown device (r9) and address (192.168.1.1), which are not part of the declared inventory.",
+    "decision": "REFUSE",
+    "reason_code": "OUT_OF_SCOPE",
+    "static_routes": [],
+    "access_policy": []
+  },
+  "gate_report": null,
+  "outcome": "REFUSED",
+  "total_latency_s": 0.94,
+  "benchmark_case_id": "T4",
+  "repetition": 3
+}

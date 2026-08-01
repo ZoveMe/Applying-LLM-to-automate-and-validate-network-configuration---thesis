@@ -1,0 +1,33 @@
+{
+  "timestamp": "2026-07-27T20:30:41",
+  "model": "granite3.3:8b",
+  "ollama_url": "http://localhost:11434",
+  "generation_options": {
+    "temperature": 0,
+    "seed": 42,
+    "num_ctx": 8192,
+    "num_predict": 1024
+  },
+  "requirement": "The route from router r1 to the server network 10.0.2.0/24 is missing. Restore it using the transit link.",
+  "attempts": [
+    {
+      "n": 1,
+      "raw": "{\n  \"rationale\": \"r1 directly connects to the server network via the transit link, so a static route is not needed.\",\n  \"decision\": \"REFUSE\",\n  \"reason_code\": \"OUT_OF_SCOPE\"\n}",
+      "schema_valid": true,
+      "error": null,
+      "latency_s": 1.28
+    }
+  ],
+  "proposal": {
+    "rationale": "r1 directly connects to the server network via the transit link, so a static route is not needed.",
+    "decision": "REFUSE",
+    "reason_code": "OUT_OF_SCOPE",
+    "static_routes": [],
+    "access_policy": []
+  },
+  "gate_report": null,
+  "outcome": "REFUSED",
+  "total_latency_s": 1.28,
+  "benchmark_case_id": "T2",
+  "repetition": 1
+}

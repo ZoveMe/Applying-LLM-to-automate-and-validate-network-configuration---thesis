@@ -9,14 +9,17 @@ lab: thesis-net
 segments:
   client:
     subnet: 10.0.1.0/24
+    connected_to: r1
     gateway: 10.0.1.1
     host: 10.0.1.10
   server:
     subnet: 10.0.2.0/24
+    connected_to: r2
     gateway: 10.0.2.1
     host: 10.0.2.10
   management:
     subnet: 10.0.99.0/24
+    connected_to: r2
     gateway: 10.0.99.1
     host: 10.0.99.10
 

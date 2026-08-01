@@ -1,0 +1,83 @@
+{
+  "verification_status": "PASS",
+  "experiment": "week7-ansible-multifault",
+  "evidence_directory": "/mnt/c/Users/Damjan/Desktop/Thesis/thesis-net/docs/evidence/week7-ansible-multifault-runs/20260728T142716Z-6f54385caf16",
+  "evidence_set_sha256": "1a495cfc61192da1508155a4b2680d6bfd6475d2d0910c6ca070fb3542993e6d",
+  "source_commit": "6f54385caf165506d3ce776215b6db28426d15f7",
+  "ansible_core_version": "2.17.14",
+  "community_docker_version": "5.2.1",
+  "containerlab_version": "⣴⡾⠛⠛⠖ ⢠⣶⠟⠛⢷⣦ ⢸⣿⣧ ⣿ ⠘⠛⢻⡟⠛⠛ ⣾⣿⡀ ⣿⡇ ⣿⣿⡄ ⢸⡇ ⣿⡟⠛⠛⠃⢸⣿⠛⠛⣷⡄ \u001b[38;2;0;201;255m⣿⡇\u001b[0m \u001b[38;2;0;201;255m⣿⡇\u001b[0m ⢸⣿ ⣿⡇ ⣿⡇⢸⣿⠹⣧⡀⣿ ⢸⡇ ⣸⡏⢹⣧ ⣿⡇ ⣿⡏⢿⣄⢸⡇ ⣿⣧⣤⣤ ⢸⣿⣀⣀⣾⠇ \u001b[38;2;0;201;255m⣿⡇⠐⠟⠛⢿⡆\u001b[0m \u001b[38;2;0;201;255m⣿⡷⠛⢿⣆\u001b[0m ⠘⣿⣄ ⡀ ⢻⣧⡀ ⣠⣿⠃⢸⣿ ⠘⣷⣿ ⢸⡇ ⢠⣿⠷⠶⢿⡆ ⣿⡇ ⣿⡇ ⢻⣾⡇ ⣿⡇ ⢸⣿⠉⢻⣧⡀ \u001b[38;2;0;201;255m⣿⡇⢰⡟⠛⣻⡇\u001b[0m \u001b[38;2;0;201;255m⣿⡇\u001b[0m \u001b[38;2;0;201;255m⣸⡿\u001b[0m ⠈⠙⠛⠛⠉ ⠉⠛⠛⠋⠁ ⠘⠛ ⠈⠛ ⠘⠃ ⠚⠃ ⠘⠛ ⠛⠃ ⠛⠃ ⠙⠃ ⠛⠛⠛⠛⠃⠘⠛ ⠙⠓ \u001b[38;2;0;201;255m⠛⠃⠈⠛⠛⠙⠃\u001b[0m \u001b[38;2;0;201;255m⠛⠛⠛⠛⠁\u001b[0m version: 0.77.0 commit: 05c2006e3 date: 2026-06-28T08:07:27Z source: https://github.com/srl-labs/containerlab rel. notes: https://containerlab.dev/rn/0.77/",
+  "router_image": "quay.io/frrouting/frr:9.1.1",
+  "host_image": "alpine:3.20.10",
+  "container_images": {
+    "clab-thesis-net-l-r1": {
+      "configured_image": "quay.io/frrouting/frr:9.1.1",
+      "image_id": "sha256:0634cca8750c3ed2122a4bc79d65c932b091d1afba19dd617cd66a4adf923db3"
+    },
+    "clab-thesis-net-l-r2": {
+      "configured_image": "quay.io/frrouting/frr:9.1.1",
+      "image_id": "sha256:0634cca8750c3ed2122a4bc79d65c932b091d1afba19dd617cd66a4adf923db3"
+    },
+    "clab-thesis-net-l-r3": {
+      "configured_image": "quay.io/frrouting/frr:9.1.1",
+      "image_id": "sha256:0634cca8750c3ed2122a4bc79d65c932b091d1afba19dd617cd66a4adf923db3"
+    },
+    "clab-thesis-net-l-h-client": {
+      "configured_image": "alpine:3.20.10",
+      "image_id": "sha256:d9e853e87e55526f6b2917df91a2115c36dd7c696a35be12163d44e6e2a4b6bc"
+    },
+    "clab-thesis-net-l-h-server": {
+      "configured_image": "alpine:3.20.10",
+      "image_id": "sha256:d9e853e87e55526f6b2917df91a2115c36dd7c696a35be12163d44e6e2a4b6bc"
+    },
+    "clab-thesis-net-l-h-mgmt": {
+      "configured_image": "alpine:3.20.10",
+      "image_id": "sha256:d9e853e87e55526f6b2917df91a2115c36dd7c696a35be12163d44e6e2a4b6bc"
+    },
+    "clab-thesis-net-l-h-dmz": {
+      "configured_image": "alpine:3.20.10",
+      "image_id": "sha256:d9e853e87e55526f6b2917df91a2115c36dd7c696a35be12163d44e6e2a4b6bc"
+    },
+    "clab-thesis-net-l-h-sensors": {
+      "configured_image": "alpine:3.20.10",
+      "image_id": "sha256:d9e853e87e55526f6b2917df91a2115c36dd7c696a35be12163d44e6e2a4b6bc"
+    }
+  },
+  "intent_bundle": "examples/topology_l_intent_bundle.json",
+  "intent_bundle_sha256": "5cb0982cac13a78e139e29e1c02529cf8c849e6cc9c2bf86693cd0b2b3572e90",
+  "faults_verified": [
+    "F1",
+    "F2",
+    "F3"
+  ],
+  "fault_validation_returncode": 2,
+  "baseline_validation": "PASS",
+  "human_approval": "APPROVED",
+  "approved_action_count": 12,
+  "automatic_deployment_by_llm": false,
+  "approved_reconciliation": "PASS",
+  "approved_reconciliation_duration_seconds": 29.997478,
+  "post_repair_validation": "PASS",
+  "post_repair_validation_duration_seconds": 13.462439,
+  "idempotency_changed": {
+    "r1": 0,
+    "r2": 0,
+    "r3": 0
+  },
+  "idempotency_duration_seconds": 23.725993,
+  "recorded_automation_duration_seconds": 116.27459,
+  "stage_durations_seconds": {
+    "baseline_reconciliation": 17.486313,
+    "baseline_validation": 10.646822,
+    "fault_injection": 5.214594,
+    "fault_profile_verification": 7.122104,
+    "fault_detection": 8.618847,
+    "approved_reconciliation": 29.997478,
+    "post_repair_validation": 13.462439,
+    "idempotency": 23.725993
+  },
+  "emergency_recovery_present": false,
+  "started_at": "2026-07-28T16:27:33",
+  "approved_at": "2026-07-28T16:28:35",
+  "completed_at": "2026-07-28T16:29:42.924314"
+}

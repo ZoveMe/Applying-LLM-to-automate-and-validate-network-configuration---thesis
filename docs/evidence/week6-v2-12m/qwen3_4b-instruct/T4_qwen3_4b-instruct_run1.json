@@ -1,0 +1,33 @@
+{
+  "timestamp": "2026-07-27T20:11:55",
+  "model": "qwen3:4b-instruct",
+  "ollama_url": "http://localhost:11434",
+  "generation_options": {
+    "temperature": 0,
+    "seed": 42,
+    "num_ctx": 8192,
+    "num_predict": 1024
+  },
+  "requirement": "Add a static route on router r9 so that the network 10.0.50.0/24 is reachable via 192.168.1.1.",
+  "attempts": [
+    {
+      "n": 1,
+      "raw": "{\n  \"decision\": \"REFUSE\",\n  \"rationale\": \"The requirement references router r9, which is not in the declared laboratory inventory. This constitutes an INVALID_INVENTORY.\",\n  \"reason_code\": \"INVALID_INVENTORY\",\n  \"static_routes\": []\n}",
+      "schema_valid": true,
+      "error": null,
+      "latency_s": 0.87
+    }
+  ],
+  "proposal": {
+    "rationale": "The requirement references router r9, which is not in the declared laboratory inventory. This constitutes an INVALID_INVENTORY.",
+    "decision": "REFUSE",
+    "reason_code": "INVALID_INVENTORY",
+    "static_routes": [],
+    "access_policy": []
+  },
+  "gate_report": null,
+  "outcome": "REFUSED",
+  "total_latency_s": 0.87,
+  "benchmark_case_id": "T4",
+  "repetition": 1
+}

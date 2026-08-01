@@ -1,0 +1,96 @@
+{
+  "timestamp": "2026-07-24T17:42:23",
+  "model": "MOCK(v2-instrument-selftest)",
+  "ollama_url": null,
+  "generation_options": {
+    "temperature": 0,
+    "seed": 42,
+    "num_ctx": 8192,
+    "num_predict": 1024
+  },
+  "requirement": "Starting from empty routing tables on both routers, configure connectivity so that clients in 10.0.1.0/24 can reach the web server network 10.0.2.0/24 and receive responses, and block client access to the management network 10.0.99.0/24 on r1.",
+  "attempts": [
+    {
+      "n": 1,
+      "raw": "{\"rationale\": \"Self-test fixture.\", \"decision\": \"PROPOSE\", \"reason_code\": \"ACTIONABLE_CHANGE\", \"static_routes\": [{\"node\": \"r1\", \"prefix\": \"10.0.2.0/24\", \"next_hop\": \"10.0.12.2\"}, {\"node\": \"r2\", \"prefix\": \"10.0.1.0/24\", \"next_hop\": \"10.0.12.1\"}], \"access_policy\": [{\"node\": \"r1\", \"src\": \"10.0.1.0/24\", \"dst\": \"10.0.99.0/24\", \"action\": \"deny\"}]}",
+      "schema_valid": true,
+      "error": null,
+      "latency_s": 0.0
+    }
+  ],
+  "proposal": {
+    "rationale": "Self-test fixture.",
+    "decision": "PROPOSE",
+    "reason_code": "ACTIONABLE_CHANGE",
+    "static_routes": [
+      {
+        "node": "r1",
+        "prefix": "10.0.2.0/24",
+        "next_hop": "10.0.12.2"
+      },
+      {
+        "node": "r2",
+        "prefix": "10.0.1.0/24",
+        "next_hop": "10.0.12.1"
+      }
+    ],
+    "access_policy": [
+      {
+        "node": "r1",
+        "src": "10.0.1.0/24",
+        "dst": "10.0.99.0/24",
+        "action": "deny"
+      }
+    ]
+  },
+  "gate_report": {
+    "gate": "static_pre_deployment",
+    "suggestion_file": "llm:MOCK(v2-instrument-selftest)",
+    "timestamp": "2026-07-24T17:42:23",
+    "verdict": "PASS_PENDING_HUMAN_APPROVAL",
+    "summary": {
+      "passed": 6,
+      "failed": 0
+    },
+    "checks": [
+      {
+        "category": "schema",
+        "description": "suggestion conforms to ConfigSuggestion schema",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "category": "topology",
+        "description": "route on r1: 10.0.2.0/24 via 10.0.12.2",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "category": "topology",
+        "description": "route on r2: 10.0.1.0/24 via 10.0.12.1",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "category": "topology",
+        "description": "acl on r1: deny 10.0.1.0/24 -> 10.0.99.0/24",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "category": "policy",
+        "description": "intent requires DENY 10.0.1.0/24 -> 10.0.99.0/24",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "category": "policy",
+        "description": "intent requires ALLOW 10.0.1.0/24 -> 10.0.2.0/24",
+        "result": "PASS",
+        "detail": ""
+      }
+    ]
+  },
+  "outcome": "ACCEPTED",
+  "total_latency_s": 0.0
+}

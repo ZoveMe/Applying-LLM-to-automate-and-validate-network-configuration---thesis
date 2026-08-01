@@ -1,0 +1,74 @@
+{
+  "timestamp": "2026-07-27T20:13:03",
+  "model": "qwen2.5:7b-instruct-q4_K_M",
+  "ollama_url": "http://localhost:11434",
+  "generation_options": {
+    "temperature": 0,
+    "seed": 42,
+    "num_ctx": 8192,
+    "num_predict": 1024
+  },
+  "requirement": "The route from router r1 to the server network 10.0.2.0/24 is missing. Restore it using the transit link.",
+  "attempts": [
+    {
+      "n": 1,
+      "raw": "{\n  \"rationale\": \"Restore static route from r1 to server network via transit link.\",\n  \"decision\": \"PROPOSE\",\n  \"reason_code\": \"ACTIONABLE_CHANGE\",\n  \"static_routes\": [\n    {\n      \"node\": \"r1\",\n      \"prefix\": \"10.0.2.0/24\",\n      \"next_hop\": \"10.0.12.2\"\n    }\n  ],\n  \"access_policy\": []\n}",
+      "schema_valid": true,
+      "error": null,
+      "latency_s": 1.85
+    }
+  ],
+  "proposal": {
+    "rationale": "Restore static route from r1 to server network via transit link.",
+    "decision": "PROPOSE",
+    "reason_code": "ACTIONABLE_CHANGE",
+    "static_routes": [
+      {
+        "node": "r1",
+        "prefix": "10.0.2.0/24",
+        "next_hop": "10.0.12.2"
+      }
+    ],
+    "access_policy": []
+  },
+  "gate_report": {
+    "gate": "static_pre_deployment",
+    "suggestion_file": "llm:qwen2.5:7b-instruct-q4_K_M",
+    "timestamp": "2026-07-27T20:13:05",
+    "verdict": "PASS_PENDING_HUMAN_APPROVAL",
+    "summary": {
+      "passed": 4,
+      "failed": 0
+    },
+    "checks": [
+      {
+        "category": "schema",
+        "description": "suggestion conforms to ConfigSuggestion schema",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "category": "topology",
+        "description": "route on r1: 10.0.2.0/24 via 10.0.12.2",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "category": "policy",
+        "description": "intent requires DENY 10.0.1.0/24 -> 10.0.99.0/24",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "category": "policy",
+        "description": "intent requires ALLOW 10.0.1.0/24 -> 10.0.2.0/24",
+        "result": "PASS",
+        "detail": ""
+      }
+    ]
+  },
+  "outcome": "ACCEPTED",
+  "total_latency_s": 1.85,
+  "benchmark_case_id": "T2",
+  "repetition": 2
+}

@@ -1,0 +1,33 @@
+{
+  "timestamp": "2026-07-27T20:22:58",
+  "model": "llama3.2:3b-instruct-q4_K_M",
+  "ollama_url": "http://localhost:11434",
+  "generation_options": {
+    "temperature": 0,
+    "seed": 42,
+    "num_ctx": 8192,
+    "num_predict": 1024
+  },
+  "requirement": "Make the network faster.",
+  "attempts": [
+    {
+      "n": 1,
+      "raw": "{\n  \"rationale\": \"The requirement is vague and does not specify how to make the network faster.\",\n  \"decision\": \"CLARIFY\",\n  \"reason_code\": \"AMBIGUOUS_REQUIREMENT\",\n  \"static_routes\": [],\n  \"access_policy\": []\n}",
+      "schema_valid": true,
+      "error": null,
+      "latency_s": 0.72
+    }
+  ],
+  "proposal": {
+    "rationale": "The requirement is vague and does not specify how to make the network faster.",
+    "decision": "CLARIFY",
+    "reason_code": "AMBIGUOUS_REQUIREMENT",
+    "static_routes": [],
+    "access_policy": []
+  },
+  "gate_report": null,
+  "outcome": "CLARIFICATION_REQUIRED",
+  "total_latency_s": 0.72,
+  "benchmark_case_id": "T6",
+  "repetition": 3
+}

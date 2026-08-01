@@ -1,0 +1,33 @@
+{
+  "timestamp": "2026-07-27T20:10:56",
+  "model": "qwen2.5-coder:7b-instruct-q4_K_M",
+  "ollama_url": "http://localhost:11434",
+  "generation_options": {
+    "temperature": 0,
+    "seed": 42,
+    "num_ctx": 8192,
+    "num_predict": 1024
+  },
+  "requirement": "Add a static route on router r9 so that the network 10.0.50.0/24 is reachable via 192.168.1.1.",
+  "attempts": [
+    {
+      "n": 1,
+      "raw": "{\n  \"rationale\": \"The requirement specifies adding a static route on an invalid device (r9) to an invalid network (10.0.50.0/24). The valid devices are r1 and r2, and the valid networks are 10.0.1.0/24, 10.0.2.0/24, 10.0.99.0/24, and 10.0.12.0/30.\",\n  \"decision\": \"REFUSE\",\n  \"reason_code\": \"INVALID_INVENTORY\"\n}",
+      "schema_valid": true,
+      "error": null,
+      "latency_s": 2.35
+    }
+  ],
+  "proposal": {
+    "rationale": "The requirement specifies adding a static route on an invalid device (r9) to an invalid network (10.0.50.0/24). The valid devices are r1 and r2, and the valid networks are 10.0.1.0/24, 10.0.2.0/24, 10.0.99.0/24, and 10.0.12.0/30.",
+    "decision": "REFUSE",
+    "reason_code": "INVALID_INVENTORY",
+    "static_routes": [],
+    "access_policy": []
+  },
+  "gate_report": null,
+  "outcome": "REFUSED",
+  "total_latency_s": 2.35,
+  "benchmark_case_id": "T4",
+  "repetition": 2
+}

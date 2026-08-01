@@ -1,0 +1,33 @@
+{
+  "timestamp": "2026-07-27T20:12:11",
+  "model": "qwen3:4b-instruct",
+  "ollama_url": "http://localhost:11434",
+  "generation_options": {
+    "temperature": 0,
+    "seed": 42,
+    "num_ctx": 8192,
+    "num_predict": 1024
+  },
+  "requirement": "Allow only the client workstation 10.0.1.10/32 to reach the management host 10.0.99.10/32 for troubleshooting.",
+  "attempts": [
+    {
+      "n": 1,
+      "raw": "{\n  \"decision\": \"CLARIFY\",\n  \"rationale\": \"The requirement specifies a single host-to-host rule (10.0.1.10/32 to 10.0.99.10/32) rather than a subnet-to-subnet rule. This level of granularity is not supported by the access policy model, which operates on subnets. Additionally, the requirement conflicts with the declared policy that client 10.0.1.0/24 to management 10.0.99.0/24 must be denied, making it ambiguous whether this exception is permitted or requires explicit policy override.\",\n  \"reason_code\": \"AMBIGUOUS_REQUIREMENT\",\n  \"static_routes\": []\n}",
+      "schema_valid": true,
+      "error": null,
+      "latency_s": 2.05
+    }
+  ],
+  "proposal": {
+    "rationale": "The requirement specifies a single host-to-host rule (10.0.1.10/32 to 10.0.99.10/32) rather than a subnet-to-subnet rule. This level of granularity is not supported by the access policy model, which operates on subnets. Additionally, the requirement conflicts with the declared policy that client 10.0.1.0/24 to management 10.0.99.0/24 must be denied, making it ambiguous whether this exception is permitted or requires explicit policy override.",
+    "decision": "CLARIFY",
+    "reason_code": "AMBIGUOUS_REQUIREMENT",
+    "static_routes": [],
+    "access_policy": []
+  },
+  "gate_report": null,
+  "outcome": "CLARIFICATION_REQUIRED",
+  "total_latency_s": 2.05,
+  "benchmark_case_id": "T8",
+  "repetition": 2
+}

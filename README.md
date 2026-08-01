@@ -44,7 +44,7 @@ Intended access policy:
 
 - Docker
 - Containerlab — install: `bash -c "$(curl -sL https://get.containerlab.dev)"`
-- (later) Ansible and Ollama — only needed from Week 3/4
+- Ansible and Ollama — only needed for their respective live experiments
 
 ## Run it
 
@@ -72,6 +72,121 @@ bash policies/apply-policy.sh    # restore it
 ```
 
 Tear down when done: `sudo clab destroy -t topology.clab.yml`
+
+## Guarded repair demonstration
+
+After the lab is deployed, the intended policy is applied, and the baseline
+validator passes, run the reusable end-to-end demonstration:
+
+```bash
+python3 experiments/guarded_repair_demo.py
+```
+
+The script removes the allow-listed `r1` route to `10.0.2.0/24`, proves that
+the runtime validator detects the fault, asks Ollama for a structured repair,
+and enforces the schema and deterministic policy gate. After the operator
+types `APPROVE`, the orchestrator passes only the exact route
+`10.0.2.0/24 via 10.0.12.2` to `ansible/repair_route.yml`. The playbook checks
+the allow-list again and applies the route idempotently. Failure, rejection,
+or interruption triggers an independent recovery path.
+
+The responsibility boundary is deliberate:
+
+- **Ollama/LLM:** proposes a structured repair and rationale; it cannot execute.
+- **Deterministic gate:** validates schema, topology, scope, and safety rules.
+- **Human operator:** approves the exact proposal and its recorded checksum.
+- **Ansible:** applies the approved change predictably and idempotently.
+- **Runtime validator:** independently proves whether all seven intent checks
+  pass after deployment.
+
+For a model-independent rehearsal, use the checked offline fixture. This still
+requires the live Containerlab, but it does not call Ollama:
+
+```bash
+python3 experiments/guarded_repair_demo.py \
+  --mock examples/suggestion_repair_route.json
+```
+
+Every run writes to a new timestamped directory under
+`docs/evidence/guarded-repair-runs/`; existing evidence is never overwritten.
+
+## Safety-layer ablation
+
+The deterministic ablation in
+`experiments/analyze_safety_ablation.py` reuses all 360 preserved live PROPOSE
+outputs and independently replays their schema, topology, and policy checks.
+It shows what would happen if each protection were removed: 80 of 156
+schema-valid actionable proposals would continue without the deterministic
+gate, 29 would still continue with policy checks alone, and none continue with
+the complete gate. Exact-byte SHA-256 approval also rejects all 76 one-byte
+tampering probes.
+
+Rebuild and verify the JSON, Macedonian report, and SVG with:
+
+```bash
+python3 experiments/analyze_safety_ablation.py --check
+```
+
+See `docs/derived/safety-ablation/week6-safety-ablation-mk.md` for the
+thesis-ready interpretation and its explicit claim boundary.
+
+## Larger-topology Ansible multi-fault experiment
+
+The Week 7 extension raises the configuration difficulty without changing the
+frozen LLM campaigns. It uses the optional three-router topology and injects
+three simultaneous faults: a missing route on `r1`, a wrong next hop on `r2`,
+and a missing deny policy on `r3`.
+
+The repair is limited to the fixed intent bundle in
+`examples/topology_l_intent_bundle.json`. Human approval is bound to that
+bundle's SHA-256, Ansible independently checks the same hash, routers are
+reconciled serially, runtime behavior is validated, and a second run must
+report `changed=0` on all three routers. A failure after fault injection
+activates an emergency deterministic reconciliation.
+
+Before the approval token is accepted, the runner prints all ten route actions
+and both deny-policy actions. The evidence record stores that exact reviewed
+list, its count, and the same bundle checksum.
+
+Each recorded command also includes monotonic duration in seconds plus
+microsecond-resolution start and completion timestamps. The independent
+verifier rejects invalid timing and exposes reconciliation, validation,
+idempotency, and total recorded automation time for Chapter 6.
+
+The live runner also refuses a dirty Git worktree. After a completed run,
+`experiments/verify_topology_l_ansible_evidence.py` independently checks the
+recorded commands, approval checksum, fault-time failure, post-repair success,
+and idempotency before producing any thesis-ready derived summary.
+
+The complete live protocol is available as one guarded command:
+
+```bash
+bash scripts/run_topology_l_live.sh --setup
+```
+
+It creates an isolated pinned Ansible environment, deploys Topology L, runs the
+interactive experiment, invokes the independent verifier, and destroys the lab
+even when a stage fails. Generated `clab-*` runtime directories are ignored at
+any repository depth so deployment cannot invalidate the clean-commit gate.
+
+For reproducibility on the existing Python 3.10 WSL controller, the experiment
+pins `ansible-core 2.17.14` in `requirements-ansible.txt` and
+`community.docker 5.2.1` in `ansible/requirements.yml`. The runner and
+independent verifier both reject a different version before accepting evidence.
+The topology also pins `quay.io/frrouting/frr:9.1.1` and `alpine:3.20.10`;
+preflight records and verifies the immutable Docker image ID of every node.
+
+See `docs/week7-ansible-multifault.md` for the hypotheses, acceptance criteria,
+and exact live protocol.
+
+The final clean live run, `20260728T142716Z-6f54385caf16`, passed the
+independent verifier: all three faults were detected, the approved
+reconciliation changed each affected router once, post-repair control-plane,
+policy, and data-plane validation passed, and the idempotency rerun reported
+`changed=0` for `r1`, `r2`, and `r3`. The verified evidence-set SHA-256 is
+`1a495cfc61192da1508155a4b2680d6bfd6475d2d0910c6ca070fb3542993e6d`.
+The reconciliation took 29.997 seconds, post-repair validation 13.462 seconds,
+and the complete set of recorded automated stages 116.275 seconds.
 
 ## First-deploy notes (read if something doesn't work)
 

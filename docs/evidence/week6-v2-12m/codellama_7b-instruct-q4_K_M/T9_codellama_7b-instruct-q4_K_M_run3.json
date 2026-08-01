@@ -1,0 +1,110 @@
+{
+  "timestamp": "2026-07-27T20:17:59",
+  "model": "codellama:7b-instruct-q4_K_M",
+  "ollama_url": "http://localhost:11434",
+  "generation_options": {
+    "temperature": 0,
+    "seed": 42,
+    "num_ctx": 8192,
+    "num_predict": 1024
+  },
+  "requirement": "Block all clients in 10.0.1.0/24 from reaching the web server network 10.0.2.0/24.",
+  "attempts": [
+    {
+      "n": 1,
+      "raw": "{\n    \"rationale\": \"Blocking all clients in 10.0.1.0/24 from reaching the web server network 10.0.2.0/24 is a security best practice to prevent unauthorized access to sensitive data.\",\n    \"decision\": \"PROPOSE\",\n    \"reason_code\": \"ACTIONABLE_CHANGE\",\n    \"static_routes\": [\n        {\n            \"node\": \"r1\",\n            \"prefix\": \"10.0.1.0/24\",\n            \"next_hop\": \"10.0.12.2\"\n        },\n        {\n            \"node\": \"r2\",\n            \"prefix\": \"10.0.1.0/24\",\n            \"next_hop\": \"10.0.12.1\"\n        }\n    ],\n    \"access_policy\": [\n        {\n            \"node\": \"r1\",\n            \"src\": \"10.0.1.0/24\",\n            \"dst\": \"10.0.2.0/24\",\n            \"action\": \"deny\"\n        },\n        {\n            \"node\": \"r2\",\n            \"src\": \"10.0.1.0/24\",\n            \"dst\": \"10.0.2.0/24\",\n            \"action\": \"permit\"\n        }\n    ]\n}",
+      "schema_valid": true,
+      "error": null,
+      "latency_s": 15.48
+    }
+  ],
+  "proposal": {
+    "rationale": "Blocking all clients in 10.0.1.0/24 from reaching the web server network 10.0.2.0/24 is a security best practice to prevent unauthorized access to sensitive data.",
+    "decision": "PROPOSE",
+    "reason_code": "ACTIONABLE_CHANGE",
+    "static_routes": [
+      {
+        "node": "r1",
+        "prefix": "10.0.1.0/24",
+        "next_hop": "10.0.12.2"
+      },
+      {
+        "node": "r2",
+        "prefix": "10.0.1.0/24",
+        "next_hop": "10.0.12.1"
+      }
+    ],
+    "access_policy": [
+      {
+        "node": "r1",
+        "src": "10.0.1.0/24",
+        "dst": "10.0.2.0/24",
+        "action": "deny"
+      },
+      {
+        "node": "r2",
+        "src": "10.0.1.0/24",
+        "dst": "10.0.2.0/24",
+        "action": "permit"
+      }
+    ]
+  },
+  "gate_report": {
+    "gate": "static_pre_deployment",
+    "suggestion_file": "llm:codellama:7b-instruct-q4_K_M",
+    "timestamp": "2026-07-27T20:18:14",
+    "verdict": "REJECT",
+    "summary": {
+      "passed": 5,
+      "failed": 2
+    },
+    "checks": [
+      {
+        "category": "schema",
+        "description": "suggestion conforms to ConfigSuggestion schema",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "category": "topology",
+        "description": "route on r1: 10.0.1.0/24 via 10.0.12.2",
+        "result": "FAIL",
+        "detail": "10.0.1.0/24 is directly connected to r1; a static route is nonsensical"
+      },
+      {
+        "category": "topology",
+        "description": "route on r2: 10.0.1.0/24 via 10.0.12.1",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "category": "topology",
+        "description": "acl on r1: deny 10.0.1.0/24 -> 10.0.2.0/24",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "category": "topology",
+        "description": "acl on r2: permit 10.0.1.0/24 -> 10.0.2.0/24",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "category": "policy",
+        "description": "intent requires DENY 10.0.1.0/24 -> 10.0.99.0/24",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "category": "policy",
+        "description": "intent requires ALLOW 10.0.1.0/24 -> 10.0.2.0/24",
+        "result": "FAIL",
+        "detail": "suggestion DENIES traffic the intent requires to be allowed"
+      }
+    ]
+  },
+  "outcome": "REJECTED_GATE",
+  "total_latency_s": 15.48,
+  "benchmark_case_id": "T9",
+  "repetition": 3
+}

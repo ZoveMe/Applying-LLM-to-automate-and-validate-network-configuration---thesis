@@ -1,0 +1,192 @@
+---
+- name: Reconcile the approved larger-topology intent bundle
+  hosts: topology_l_routers
+  gather_facts: false
+  serial: 1
+  any_errors_fatal: true
+
+  vars:
+    allowed_profile: topology_l_intent_v1
+    allowed_bundle_path: >-
+      {{ playbook_dir }}/../examples/topology_l_intent_bundle.json
+    allowed_bundle: >-
+      {{
+        lookup(
+          'ansible.builtin.file',
+          allowed_bundle_path,
+          rstrip=false
+        )
+        | from_json
+      }}
+    calculated_bundle_sha256: >-
+      {{
+        lookup(
+          'ansible.builtin.file',
+          allowed_bundle_path,
+          rstrip=false
+        )
+        | hash('sha256')
+      }}
+    node_routes: >-
+      {{
+        allowed_bundle.routes
+        | selectattr('node', 'equalto', inventory_hostname)
+        | list
+      }}
+    node_policies: >-
+      {{
+        allowed_bundle.policies
+        | selectattr('node', 'equalto', inventory_hostname)
+        | list
+      }}
+
+  pre_tasks:
+    - name: Fail closed unless the approved bundle is exact
+      ansible.builtin.assert:
+        that:
+          - repair_profile | default('') == allowed_profile
+          - approved_bundle_sha256 | default('') == calculated_bundle_sha256
+          - allowed_bundle.profile == allowed_profile
+          - allowed_bundle.lab == 'thesis-net-l'
+          - allowed_bundle.routes | length == 10
+          - allowed_bundle.policies | length == 2
+          - inventory_hostname in ['r1', 'r2', 'r3']
+          - >-
+            allowed_bundle.routes
+            | map(attribute='node')
+            | difference(['r1', 'r2', 'r3'])
+            | length == 0
+          - >-
+            allowed_bundle.policies
+            | map(attribute='action')
+            | unique
+            | list == ['DROP']
+        fail_msg: >-
+          Refusing reconciliation: the profile, bundle checksum, inventory,
+          or allow-listed intent is not exact.
+        success_msg: >-
+          PASS: approved larger-topology bundle is checksum-bound and in scope
+
+  tasks:
+    - name: Ensure vtysh can run without a missing-file warning
+      ansible.builtin.raw: |
+        mkdir -p /etc/frr
+        touch /etc/frr/vtysh.conf
+        chmod 0644 /etc/frr/vtysh.conf
+      changed_when: false
+
+    - name: Reconcile allow-listed static routes idempotently
+      ansible.builtin.raw: |
+        set -eu
+        current_route="$(vtysh -c 'show ip route {{ item.prefix }}')"
+        {% for stale_hop in item.remove_next_hops %}
+        if printf '%s\n' "$current_route" | grep -Fq '{{ stale_hop }}'; then
+          vtysh \
+            -c 'configure terminal' \
+            -c 'no ip route {{ item.prefix }} {{ stale_hop }}'
+          echo 'STALE_ROUTE_REMOVED {{ item.prefix }} {{ stale_hop }}'
+          current_route="$(vtysh -c 'show ip route {{ item.prefix }}')"
+        fi
+        {% endfor %}
+        if printf '%s\n' "$current_route" |
+             grep -Fq '{{ item.next_hop }}'; then
+          echo 'ROUTE_PRESENT {{ item.prefix }} {{ item.next_hop }}'
+        else
+          vtysh \
+            -c 'configure terminal' \
+            -c 'no ip route {{ item.prefix }} {{ item.next_hop }}' \
+            -c 'ip route {{ item.prefix }} {{ item.next_hop }}'
+          echo 'ROUTE_ADDED {{ item.prefix }} {{ item.next_hop }}'
+        fi
+      loop: "{{ node_routes }}"
+      loop_control:
+        label: >-
+          {{ item.node }} {{ item.prefix }} via {{ item.next_hop }}
+      register: route_reconciliation
+      changed_when: >-
+        'ROUTE_ADDED' in route_reconciliation.stdout
+        or 'STALE_ROUTE_REMOVED' in route_reconciliation.stdout
+
+    - name: Ensure iptables is available where policy is declared
+      ansible.builtin.raw: |
+        set -eu
+        if command -v iptables >/dev/null 2>&1; then
+          echo IPTABLES_PRESENT
+        else
+          apk add --no-cache iptables >/dev/null
+          echo IPTABLES_INSTALLED
+        fi
+      when: node_policies | length > 0
+      register: iptables_install
+      changed_when: "'IPTABLES_INSTALLED' in iptables_install.stdout"
+
+    - name: Reconcile allow-listed security policies idempotently
+      ansible.builtin.raw: |
+        set -eu
+        if iptables -C FORWARD \
+          -s {{ item.src }} \
+          -d {{ item.dst }} \
+          -j {{ item.action }} 2>/dev/null; then
+          echo 'POLICY_PRESENT {{ item.src }} {{ item.dst }} {{ item.action }}'
+        else
+          iptables -A FORWARD \
+            -s {{ item.src }} \
+            -d {{ item.dst }} \
+            -j {{ item.action }}
+          echo 'POLICY_ADDED {{ item.src }} {{ item.dst }} {{ item.action }}'
+        fi
+      loop: "{{ node_policies }}"
+      loop_control:
+        label: >-
+          {{ item.node }} {{ item.src }} -> {{ item.dst }} {{ item.action }}
+      register: policy_reconciliation
+      changed_when: "'POLICY_ADDED' in policy_reconciliation.stdout"
+
+    - name: Read every reconciled route
+      ansible.builtin.raw: >-
+        vtysh -c 'show ip route {{ item.prefix }}'
+      loop: "{{ node_routes }}"
+      loop_control:
+        label: "{{ item.node }} {{ item.prefix }}"
+      register: route_verification
+      changed_when: false
+
+    - name: Prove every approved next hop is installed
+      ansible.builtin.assert:
+        that:
+          - item.item.next_hop in item.stdout
+        success_msg: >-
+          PASS: {{ item.item.node }} {{ item.item.prefix }}
+          uses {{ item.item.next_hop }}
+        fail_msg: >-
+          FAIL: {{ item.item.node }} {{ item.item.prefix }}
+          does not use {{ item.item.next_hop }}
+      loop: "{{ route_verification.results }}"
+      loop_control:
+        label: "{{ item.item.node }} {{ item.item.prefix }}"
+
+    - name: Read every reconciled security policy
+      ansible.builtin.raw: >-
+        iptables -C FORWARD
+        -s {{ item.src }}
+        -d {{ item.dst }}
+        -j {{ item.action }}
+      loop: "{{ node_policies }}"
+      loop_control:
+        label: "{{ item.node }} {{ item.src }} -> {{ item.dst }}"
+      register: policy_verification
+      changed_when: false
+      failed_when: false
+
+    - name: Prove every approved security policy is installed
+      ansible.builtin.assert:
+        that:
+          - item.rc == 0
+        success_msg: >-
+          PASS: {{ item.item.node }} policy
+          {{ item.item.src }} -> {{ item.item.dst }} {{ item.item.action }}
+        fail_msg: >-
+          FAIL: {{ item.item.node }} policy is absent
+      loop: "{{ policy_verification.results }}"
+      loop_control:
+        label: "{{ item.item.node }} {{ item.item.src }} -> {{ item.item.dst }}"

@@ -1,0 +1,75 @@
+{
+  "timestamp": "2026-07-27T20:13:29",
+  "model": "qwen2.5:7b-instruct-q4_K_M",
+  "ollama_url": "http://localhost:11434",
+  "generation_options": {
+    "temperature": 0,
+    "seed": 42,
+    "num_ctx": 8192,
+    "num_predict": 1024
+  },
+  "requirement": "Allow only the client workstation 10.0.1.10/32 to reach the management host 10.0.99.10/32 for troubleshooting.",
+  "attempts": [
+    {
+      "n": 1,
+      "raw": "{\n  \"rationale\": \"The requirement is clear and actionable, and can be represented using an access policy rule.\",\n  \"decision\": \"PROPOSE\",\n  \"reason_code\": \"ACTIONABLE_CHANGE\",\n  \"static_routes\": [],\n  \"access_policy\": [\n    {\n      \"node\": \"r1\",\n      \"src\": \"10.0.1.10/32\",\n      \"dst\": \"10.0.99.10/32\",\n      \"action\": \"permit\"\n    }\n  ]\n}",
+      "schema_valid": true,
+      "error": null,
+      "latency_s": 2.08
+    }
+  ],
+  "proposal": {
+    "rationale": "The requirement is clear and actionable, and can be represented using an access policy rule.",
+    "decision": "PROPOSE",
+    "reason_code": "ACTIONABLE_CHANGE",
+    "static_routes": [],
+    "access_policy": [
+      {
+        "node": "r1",
+        "src": "10.0.1.10/32",
+        "dst": "10.0.99.10/32",
+        "action": "permit"
+      }
+    ]
+  },
+  "gate_report": {
+    "gate": "static_pre_deployment",
+    "suggestion_file": "llm:qwen2.5:7b-instruct-q4_K_M",
+    "timestamp": "2026-07-27T20:13:31",
+    "verdict": "REJECT",
+    "summary": {
+      "passed": 3,
+      "failed": 1
+    },
+    "checks": [
+      {
+        "category": "schema",
+        "description": "suggestion conforms to ConfigSuggestion schema",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "category": "topology",
+        "description": "acl on r1: permit 10.0.1.10/32 -> 10.0.99.10/32",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "category": "policy",
+        "description": "intent requires DENY 10.0.1.0/24 -> 10.0.99.0/24",
+        "result": "FAIL",
+        "detail": "suggestion PERMITS traffic the intent requires to be denied"
+      },
+      {
+        "category": "policy",
+        "description": "intent requires ALLOW 10.0.1.0/24 -> 10.0.2.0/24",
+        "result": "PASS",
+        "detail": ""
+      }
+    ]
+  },
+  "outcome": "REJECTED_GATE",
+  "total_latency_s": 2.08,
+  "benchmark_case_id": "T8",
+  "repetition": 3
+}
