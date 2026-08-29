@@ -17,6 +17,7 @@ Exit code: 0 = network MATCHES intent, 1 = does not match, 2 = lab not running.
 """
 import argparse
 import json
+import os
 import subprocess
 import sys
 from datetime import datetime
@@ -26,7 +27,12 @@ import yaml
 
 PKG_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_INTENT = PKG_ROOT / "intent" / "intended_state.yaml"
-PREFIX = "clab-thesis-net-"
+
+# Container name prefix of the lab under test. The experiment scripts already
+# honour CLAB_PREFIX, so the validator must too — otherwise pointing --intent at
+# another lab silently measures the wrong containers, or fails confusingly.
+# Overridden by --prefix.
+PREFIX = os.environ.get("CLAB_PREFIX", "clab-thesis-net-")
 
 
 
@@ -109,6 +115,111 @@ def iptables_rule_present(node: str, match: str) -> bool:
     )
 
 
+PROTOCOL_CODES = {
+    # Leading code in the routing table output of FRR, per protocol.
+    "ospf": "O",
+    "bgp": "B",
+    "rip": "R",
+    "isis": "I",
+    "static": "S",
+    "connected": "C",
+    "kernel": "K",
+}
+
+
+def protocol_route_lookup(node: str, prefix: str) -> str:
+    """The routing table entry as the routing daemon itself reports it.
+
+    `ip route` shows what ended up in the kernel and loses the origin, so the
+    daemon is asked directly — that is the only place the protocol is recorded.
+    """
+    result = sh([
+        "docker", "exec", PREFIX + node,
+        "vtysh", "-c", f"show ip route {prefix}"
+    ])
+    if result.returncode != 0:
+        raise InfrastructureError(
+            f"routing table inspection on {node} failed: "
+            f"{command_detail(result)}"
+        )
+    return result.stdout
+
+
+def route_learned_by(output: str, protocol: str) -> bool:
+    """True when the prefix is present, from `protocol`, and actually selected.
+
+    FRR prints two different shapes and both have to be handled:
+
+    Asking for one prefix gives the detailed entry, where the protocol is named
+    in words and the chosen entry is marked `best`::
+
+        Routing entry for 10.10.10.0/24
+          Known via "ospf", distance 110, metric 20, best
+          * 10.0.0.6, via eth2, weight 1
+
+    Asking for the whole table gives one line per route, where the protocol is a
+    letter code and selection is marked `>`::
+
+        O>* 10.10.10.0/24 [110/20] via 10.0.0.6, eth2, weight 1
+
+    Selection matters as much as origin: a route that is known but lost to
+    another protocol carries no traffic, so it must not satisfy the fact.
+    """
+    proto = protocol.lower()
+    code = PROTOCOL_CODES.get(proto)
+    if code is None:
+        raise ValueError(f"unknown routing protocol in intent: {protocol!r}")
+
+    for line in output.splitlines():
+        stripped = line.strip()
+        # detailed form
+        if stripped.startswith("Known via"):
+            named = f'known via "{proto}"' in stripped.lower()
+            if named and "best" in stripped.lower():
+                return True
+        # table form
+        elif stripped.startswith(f"{code}>"):
+            return True
+    return False
+
+
+def stopped_lab_containers() -> list[str]:
+    """Containers of this lab that exist but are not running."""
+    result = sh([
+        "docker", "ps", "-a", "--filter", f"name={PREFIX}",
+        "--format", "{{.Names}}\t{{.State}}"
+    ])
+    if result.returncode != 0:
+        raise InfrastructureError(
+            f"listing lab containers failed: {command_detail(result)}")
+    stopped = []
+    for line in result.stdout.splitlines():
+        if "\t" not in line:
+            continue
+        name, state = line.split("\t", 1)
+        if state.strip() != "running":
+            stopped.append(name.strip())
+    return sorted(stopped)
+
+
+def nodes_named_in(intent: dict) -> list[str]:
+    """Every container this intent will run a command inside.
+
+    Hosts appear as the source of a reachability check; routers appear as the
+    node of a config fact or as the gateway of a segment. Destinations are
+    addresses, not container names, so they are deliberately left out.
+    """
+    names: set[str] = set()
+    for item in intent.get("reachability", []):
+        names.add(item["src"])
+    for fact in intent.get("config_facts", []):
+        names.add(fact["node"])
+    for seg in (intent.get("segments") or {}).values():
+        if isinstance(seg, dict) and seg.get("connected_to"):
+            names.add(seg["connected_to"])
+    return sorted(names)
+
+
 def route_lookup(node: str, prefix: str) -> str:
     result = sh([
         "docker", "exec", PREFIX + node,
@@ -126,21 +237,45 @@ def route_lookup(node: str, prefix: str) -> str:
 
 
 def main() -> int:
+    global PREFIX                       # must precede any use of PREFIX below
+
     ap = argparse.ArgumentParser(description="Dynamic post-deployment validation")
     ap.add_argument("--intent", default=str(DEFAULT_INTENT))
     ap.add_argument("--out", help="write the JSON report to this path")
+    ap.add_argument(
+        "--prefix", default=PREFIX,
+        help="container name prefix of the lab (default: $CLAB_PREFIX or "
+             "clab-thesis-net-)",
+    )
     args = ap.parse_args()
+    PREFIX = args.prefix
 
     require_docker()
     intent = yaml.safe_load(Path(args.intent).read_text())
 
-    # guard: lab must be up
-    for node in ("r1", "r2", "h-client", "h-server", "h-mgmt"):
+    # Guard: the nodes this intent names must exist and run. The list comes from
+    # the intent, not from a fixed list, so another lab checks its own nodes.
+    for node in nodes_named_in(intent):
         if not container_running(node):
-            print(f"error: container {PREFIX}{node} is not running. "
-                  f"Deploy the lab first: sudo clab deploy -t topology.clab.yml",
+            print(f"error: container {PREFIX}{node} is not running.\n"
+                  f"       Deploy the lab that goes with {Path(args.intent).name}, "
+                  f"and check that --prefix matches it\n"
+                  f"       (currently {PREFIX!r}).",
                   file=sys.stderr)
             return 2
+
+    # Guard: every other container of the same lab must run too. A host that
+    # only ever appears as a destination is never exec'd into, so the loop above
+    # cannot see it — yet if it were down, a check expecting "unreachable" would
+    # pass for the wrong reason and hide a broken policy.
+    stopped = stopped_lab_containers()
+    if stopped:
+        print(f"error: these containers of the lab are not running: "
+              f"{', '.join(stopped)}.\n"
+              f"       A stopped host makes an 'unreachable' check pass without "
+              f"the policy doing anything.",
+              file=sys.stderr)
+        return 2
 
     checks = []
 
@@ -173,6 +308,28 @@ def main() -> int:
                     "expected": "present",
                     "actual": "present" if present else "absent",
                     "result": "PASS" if present else "FAIL",
+                }
+            )
+        elif fact["kind"] == "route" and "protocol" in fact:
+            # Dynamic routing: the next hop is not fixed, because more than one
+            # path may exist and the protocol chooses. What must hold is that
+            # the prefix is present AND was learned by the declared protocol —
+            # a static route left behind by hand would satisfy "reachable" while
+            # proving nothing about whether the protocol actually converged.
+            proto = fact["protocol"]
+            out = protocol_route_lookup(fact["node"], fact["prefix"])
+            ok = route_learned_by(out, proto)
+            checks.append(
+                {
+                    "id": fact["id"],
+                    "type": "config_fact",
+                    "description": (
+                        f"route on {fact['node']}: {fact['prefix']} learned via "
+                        f"{proto.upper()} ({fact['why']})"
+                    ),
+                    "expected": f"present, protocol {proto}",
+                    "actual": out.strip() or "route absent",
+                    "result": "PASS" if ok else "FAIL",
                 }
             )
         elif fact["kind"] == "route":

@@ -68,5 +68,5 @@ def test_dashboard_module_imports_guarded_pipeline():
 def test_page_exposes_both_modes():
     import live_llm_dashboard as dash
     for token in ("/api/ask_guarded", "/api/approve", "setMode",
-                  "APPROVE and deploy"):
+                  "ОДОБРИ и примени"):
         assert token in dash.PAGE, token

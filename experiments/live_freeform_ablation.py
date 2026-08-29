@@ -65,7 +65,9 @@ from pathlib import Path
 import yaml
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-PREFIX = "clab-thesis-net-"
+# Container name prefix. Override to work against a different lab, e.g.
+#   CLAB_PREFIX=clab-thesis-net-xl- python3 experiments/live_llm_dashboard.py
+PREFIX = os.environ.get("CLAB_PREFIX", "clab-thesis-net-")
 TEMPLATE = REPO_ROOT / "llm" / "freeform_template.txt"
 CASES = REPO_ROOT / "experiments" / "v2_benchmark_cases.yaml"
 MODELS_FILE = REPO_ROOT / "benchmarks" / "models_13.txt"
@@ -166,13 +168,16 @@ def load_intent(path: Path) -> dict:
 IFACE_RE = re.compile(r"^interface\s+(\S+)", re.MULTILINE)
 
 
-def intended_interfaces(device: str) -> list[tuple[str, str]]:
+def intended_interfaces(device: str,
+                       config_dir: Path | None = None) -> list[tuple[str, str]]:
     """(interface, address/prefixlen) pairs parsed from the device's frr.conf.
 
     A model can flush or re-address an interface, so reset must be able to
-    restore the addressing plan, not only routes and rules.
+    restore the addressing plan, not only routes and rules. `config_dir`
+    names the directory the laboratory keeps its device configurations in;
+    it defaults to the one of the original two-router lab.
     """
-    text = (CONFIG_DIR / device / "frr.conf").read_text()
+    text = ((config_dir or CONFIG_DIR) / device / "frr.conf").read_text()
     interfaces, current = [], None
     for line in text.splitlines():
         stripped = line.strip()
@@ -186,16 +191,26 @@ def intended_interfaces(device: str) -> list[tuple[str, str]]:
     return interfaces
 
 
-def reset_lab(intent: dict) -> None:
-    """Restore intended interface addressing, routes, and policy."""
+def reset_lab(intent: dict, devices: tuple[str, ...] = ("r1", "r2"),
+              config_dir: Path | None = None,
+              policy_script: Path | None = None) -> None:
+    """Restore intended interface addressing, routes, and policy.
+
+    The defaults describe the original two-router laboratory, so nothing
+    changes for the campaign. Another laboratory passes its own routers and
+    its own configuration directory. A route fact that names a protocol
+    rather than a next hop is left alone: the routing daemon installs it,
+    and there is no static route to reassert.
+    """
     routes = [
         (f["node"], f["prefix"], f["via"])
-        for f in intent["config_facts"] if f["kind"] == "route"
+        for f in intent["config_facts"]
+        if f["kind"] == "route" and "via" in f
     ]
-    for device in ("r1", "r2"):
+    for device in devices:
         # 1. Addressing: repair ONLY what is actually wrong. Flushing a healthy
         #    interface disturbs the routing daemon and causes reset failures.
-        for iface, address in intended_interfaces(device):
+        for iface, address in intended_interfaces(device, config_dir):
             sh(["docker", "exec", PREFIX + device,
                 "ip", "link", "set", iface, "up"])
             current = sh(["docker", "exec", PREFIX + device,
@@ -230,9 +245,16 @@ def reset_lab(intent: dict) -> None:
                            f"-c 'no ip route {prefix} {next_hop}' "
                            f"-c 'ip route {prefix} {next_hop}'")
 
-    for rule in intent["policy_rules"]["must_deny"]:
-        sh(["docker", "exec", PREFIX + "r1", "iptables", "-I", "FORWARD",
-            "-s", rule["src"], "-d", rule["dst"], "-j", "DROP"])
+    if policy_script is not None:
+        # Кога лабораторијата носи своја скрипта за политиката, редоследот на
+        # правилата е дел од дефиницијата: дозволата за воспоставени врски мора
+        # да застане над забраните. Тој редослед не може да се изведе од
+        # намерата, па скриптата е изворот.
+        sh(["bash", str(policy_script)], timeout=300)
+    else:
+        for rule in intent["policy_rules"]["must_deny"]:
+            sh(["docker", "exec", PREFIX + "r1", "iptables", "-I", "FORWARD",
+                "-s", rule["src"], "-d", rule["dst"], "-j", "DROP"])
 
     # 4. Let the routing daemon reconverge before anything is measured.
     time.sleep(SETTLE_SECONDS)
@@ -267,14 +289,16 @@ def restart_frr(device: str) -> str | None:
     return None
 
 
-def deep_reset(intent: dict) -> list[str]:
+def deep_reset(intent: dict, devices: tuple[str, ...] = ("r1", "r2"),
+               **reset_kwargs) -> list[str]:
     """Escalated recovery: rebuild routing state from the config files."""
     actions = []
-    for device in ("r1", "r2"):
+    for device in devices:
         used = restart_frr(device)
         actions.append(f"{device}: {'restarted FRR via ' + used if used else 'FRR restart FAILED'}")
     time.sleep(SETTLE_SECONDS * 2)
-    reset_lab(intent)  # reassert policy and any missing routes on top
+    # reassert policy and any missing routes on top
+    reset_lab(intent, devices, **reset_kwargs)
     return actions
 
 
@@ -309,10 +333,14 @@ def pause_for_redeploy(intent_path: Path, report_path: Path) -> bool:
 
 
 def reset_and_verify(intent: dict, intent_path: Path, report_path: Path,
-                     attempts: int = 3) -> bool:
-    """Reset and validate, escalating to an FRR restart if the soft reset fails."""
+                     attempts: int = 3, **reset_kwargs) -> bool:
+    """Reset and validate, escalating to an FRR restart if the soft reset fails.
+
+    `reset_kwargs` are passed through to reset_lab: the devices, the
+    configuration directory and the policy script of the loaded laboratory.
+    """
     for attempt in range(1, attempts + 1):
-        reset_lab(intent)
+        reset_lab(intent, **reset_kwargs)
         report = run_validator(intent_path, report_path)
         if report.get("verdict") == "MATCHES_INTENT":
             return True
@@ -321,7 +349,7 @@ def reset_and_verify(intent: dict, intent_path: Path, report_path: Path,
             time.sleep(SETTLE_SECONDS * 2)
 
     print("    soft reset failed; restarting the routing daemons")
-    for action in deep_reset(intent):
+    for action in deep_reset(intent, **reset_kwargs):
         print(f"      {action}")
     report = run_validator(intent_path, report_path)
     if report.get("verdict") == "MATCHES_INTENT":
