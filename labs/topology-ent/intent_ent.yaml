@@ -1,0 +1,66 @@
+# Намера за лабораторијата со градба на претпријатие.
+# Истата структура како кај другите лаборатории, за да можат
+# проверката, валидаторот и контролната табла да ја користат без измени.
+
+lab: thesis-net-ent
+
+segments:
+  hq-users:    {subnet: 10.10.10.0/24, connected_to: edge-hq, gateway: 10.10.10.1, host: 10.10.10.11}
+  hq-mgmt:     {subnet: 10.10.99.0/24, connected_to: edge-hq, gateway: 10.10.99.1, host: 10.10.99.11}
+  br-users:    {subnet: 10.20.20.0/24, connected_to: edge-br, gateway: 10.20.20.1, host: 10.20.20.11}
+  dmz:         {subnet: 10.30.30.0/24, connected_to: fw-dmz, gateway: 10.30.30.1, host: 10.30.30.11}
+
+transits:
+  - {subnet: 10.0.0.0/30, ips: {core1: 10.0.0.1, core2: 10.0.0.2}}
+  - {subnet: 10.0.0.4/30, ips: {core1: 10.0.0.5, edge-hq: 10.0.0.6}}
+  - {subnet: 10.0.0.8/30, ips: {core2: 10.0.0.9, edge-hq: 10.0.0.10}}
+  - {subnet: 10.0.0.12/30, ips: {core1: 10.0.0.13, edge-br: 10.0.0.14}}
+  - {subnet: 10.0.0.16/30, ips: {core2: 10.0.0.17, edge-br: 10.0.0.18}}
+  - {subnet: 10.0.0.20/30, ips: {core1: 10.0.0.21, fw-dmz: 10.0.0.22}}
+
+# ---- Однесување на податочниот план ----
+reachability:
+  - {id: R1, src: pc-hq1, dst: 10.30.30.11, expect: reachable,   method: ping,
+     why: "корисниците смеат до веб-серверот во DMZ"}
+  - {id: R2, src: pc-hq1, dst: 10.30.30.12, expect: unreachable, method: ping,
+     why: "корисниците немаат право директно до базата"}
+  - {id: R3, src: pc-hq1, dst: 10.10.99.11, expect: unreachable, method: ping,
+     why: "управувачката мрежа е одвоена од корисничката"}
+  - {id: R4, src: pc-br1, dst: 10.10.10.11, expect: reachable,   method: ping,
+     why: "подружницата и седиштето се поврзани преку јадрото"}
+  - {id: R5, src: pc-hq1, dst: 10.10.10.12, expect: reachable,   method: ping,
+     why: "комуникација во ист VLAN преку комутаторот"}
+  - {id: R6, src: srv-web, dst: 10.10.10.11, expect: unreachable, method: ping,
+     why: "DMZ не смее да иницира кон внатрешната мрежа"}
+  - {id: R7, src: pc-mgmt, dst: 10.30.30.11, expect: reachable,  method: ping,
+     why: "управувачката станица ги достигнува серверите"}
+
+# ---- Однесување на контролниот план ----
+# Кај динамичко рутирање не се проверува внесен запис, туку дали
+# протоколот навистина ја научил мрежата.
+config_facts:
+  - {id: C1, node: fw-dmz, kind: iptables_rule, match: "-s 10.10.10.0/24 -d 10.30.30.12/32 -j DROP",
+     why: "забраната корисници→база е на границата на DMZ"}
+  - {id: C2, node: fw-dmz, kind: iptables_rule, match: "-s 10.30.30.0/24 -d 10.10.10.0/24 -j DROP",
+     why: "DMZ не смее да иницира кон внатре"}
+  - {id: C3, node: edge-hq, kind: iptables_rule, match: "-s 10.10.10.0/24 -d 10.10.99.0/24 -j DROP",
+     why: "управувачката мрежа е заштитена на рабниот рутер"}
+  - {id: C4, node: core1, kind: route, prefix: 10.10.10.0/24, protocol: ospf,
+     why: "OSPF ја научил корисничката мрежа"}
+  - {id: C5, node: edge-br, kind: route, prefix: 10.10.10.0/24, protocol: ospf,
+     why: "подружницата ја гледа мрежата на седиштето"}
+  - {id: C6, node: core2, kind: route, prefix: 10.30.30.0/24, protocol: ospf,
+     why: "второто јадро ја гледа DMZ"}
+  - {id: C7, node: edge-hq, kind: route, prefix: 10.20.20.0/24, protocol: ospf,
+     why: "седиштето ја гледа подружницата"}
+
+# ---- Ограничувања за проверката пред примена ----
+policy_rules:
+  must_deny:
+    - {node: fw-dmz, src: 10.10.10.0/24, dst: 10.30.30.12/32}
+    - {node: fw-dmz, src: 10.20.20.0/24, dst: 10.30.30.12/32}
+    - {node: fw-dmz, src: 10.30.30.0/24, dst: 10.10.10.0/24}
+    - {node: edge-hq, src: 10.10.10.0/24, dst: 10.10.99.0/24}
+  must_allow:
+    - {src: 10.10.10.0/24, dst: 10.30.30.11/32}
+    - {src: 10.20.20.0/24, dst: 10.10.10.0/24}
