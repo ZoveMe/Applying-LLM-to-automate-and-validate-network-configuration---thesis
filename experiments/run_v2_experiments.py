@@ -110,6 +110,7 @@ def run_matrix(
     url: str,
     out_dir: Path,
     pipeline=run_pipeline,
+    intent_path: Path = None,
 ) -> dict:
     """Run the live matrix and return its non-scoring manifest."""
     if repetitions < 1:
@@ -125,11 +126,15 @@ def run_matrix(
     for model in models:
         for case in cases:
             for repetition in range(1, repetitions + 1):
+                # `intent_path` се пренесува само кога е зададен, за повикот
+                # кон замрзнатата кампања да остане идентичен со поранешниот.
+                extra = {"intent_path": intent_path} if intent_path else {}
                 evidence = pipeline(
                     case["requirement"],
                     model=model,
                     retries=retries,
                     url=url,
+                    **extra,
                 )
 
                 if str(evidence.get("model", "")).startswith("MOCK("):
@@ -191,6 +196,11 @@ def main() -> int:
     parser.add_argument("--cases", default=str(DEFAULT_CASES))
     parser.add_argument("--case-ids", nargs="+")
     parser.add_argument("--out-dir", required=True)
+    parser.add_argument(
+        "--intent",
+        help="датотека со намера на друга лабораторија. Изостанета, се "
+             "користи основната со два рутери и замрзнатиот шаблон, па "
+             "кампањата се повторува непроменета.")
     args = parser.parse_args()
 
     try:
@@ -204,6 +214,7 @@ def main() -> int:
             retries=args.retries,
             url=args.url,
             out_dir=Path(args.out_dir),
+            intent_path=Path(args.intent) if args.intent else None,
         )
     except (
         FileExistsError,

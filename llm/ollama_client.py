@@ -42,7 +42,8 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT / "validation"))
-from schema import ConfigSuggestion  # noqa: E402
+from schema import (ConfigSuggestion, devices_in_intent,  # noqa: E402
+                    suggestion_model_for)
 from static_gate import DEFAULT_INTENT, Gate, load_intent  # noqa: E402
 
 DEFAULT_MODEL = "qwen2.5-coder:7b-instruct-q4_K_M"
@@ -51,19 +52,50 @@ TEMPLATE_PATH = REPO_ROOT / "llm" / "prompt_template.txt"
 GEN_OPTIONS = {"temperature": 0, "seed": 42, "num_ctx": 8192, "num_predict": 1024}
 
 
-def build_prompt(requirement: str) -> str:
-    template = TEMPLATE_PATH.read_text()
-    schema = json.dumps(ConfigSuggestion.model_json_schema(), indent=2)
-    return template.replace("{{SCHEMA}}", schema).replace("{{REQUIREMENT}}", requirement)
+def contract_for(intent_path: Path = None):
+    """Договорот што важи за дадената лабораторија."""
+    if intent_path is None:
+        return ConfigSuggestion
+    import yaml
+    intent = yaml.safe_load(Path(intent_path).read_text(encoding='utf-8'))
+    return suggestion_model_for(devices_in_intent(intent))
 
 
-def call_ollama(prompt: str, model: str, url: str, timeout: int = 600) -> str:
+def build_prompt(requirement: str, template: Path = None,
+                 intent_path: Path = None) -> str:
+    """The prompt sent to the model.
+
+    Called with no extra arguments it behaves exactly as before: the frozen
+    template describing the original two-router laboratory. That path must not
+    change, because the 360 preserved runs were produced with it.
+
+    Another laboratory passes its own template and intent file; the inventory
+    is then derived from the intent, so the description the model reads and the
+    constraints the gate enforces cannot drift apart.
+    """
+    schema = json.dumps(contract_for(intent_path).model_json_schema(), indent=2)
+    if intent_path is None:
+        text = (template or TEMPLATE_PATH).read_text()
+        return text.replace("{{SCHEMA}}", schema).replace(
+            "{{REQUIREMENT}}", requirement)
+    sys.path.insert(0, str(REPO_ROOT / "experiments"))
+    from lab_inventory import build_prompt as build_from_intent  # noqa: E402
+    return build_from_intent(
+        template or (REPO_ROOT / "llm" / "prompt_template_multi.txt"),
+        intent_path, schema, requirement)
+
+
+def call_ollama(prompt: str, model: str, url: str, timeout: int = 600,
+                contract=None) -> str:
+    """Ограниченото декодирање мора да го користи договорот на таа
+    лабораторија; инаку моделот е принуден да враќа имиња на уреди од
+    друга мрежа и ниту еден исправен одговор не е можен."""
     body = json.dumps(
         {
             "model": model,
             "messages": [{"role": "user", "content": prompt}],
             "stream": False,
-            "format": ConfigSuggestion.model_json_schema(),
+            "format": (contract or ConfigSuggestion).model_json_schema(),
             "options": GEN_OPTIONS,
         }
     ).encode()
@@ -78,12 +110,21 @@ def call_ollama(prompt: str, model: str, url: str, timeout: int = 600) -> str:
 
 
 def run_pipeline(requirement: str, model: str = DEFAULT_MODEL, retries: int = 3,
-                 mock_raw: str = None, url: str = OLLAMA_URL) -> dict:
+                 mock_raw: str = None, url: str = OLLAMA_URL,
+                 intent_path: Path = None, template: Path = None) -> dict:
+    """One requirement through the whole guarded pipeline.
+
+    `intent_path` selects the laboratory. Left as None it is the original
+    two-router one, so the frozen campaign reproduces unchanged. When it is
+    given, the same file feeds both the prompt and the gate — the model is then
+    described exactly the network it is judged against.
+    """
     evidence = {
         "timestamp": datetime.now().isoformat(timespec="seconds"),
         "model": model if mock_raw is None else f"MOCK({model})",
         "ollama_url": url if mock_raw is None else None,
         "generation_options": GEN_OPTIONS,
+        "intent": str(intent_path) if intent_path else str(DEFAULT_INTENT),
         "requirement": requirement,
         "attempts": [],
         "proposal": None,
@@ -91,14 +132,16 @@ def run_pipeline(requirement: str, model: str = DEFAULT_MODEL, retries: int = 3,
         "outcome": None,
         "total_latency_s": 0.0,
     }
-    prompt = build_prompt(requirement)
+    contract = contract_for(intent_path)
+    prompt = build_prompt(requirement, template, intent_path)
     proposal = None
     attempts = 1 if mock_raw is not None else max(1, retries)
 
     for i in range(attempts):
         t0 = time.time()
         try:
-            raw = mock_raw if mock_raw is not None else call_ollama(prompt, model, url)
+            raw = (mock_raw if mock_raw is not None
+                   else call_ollama(prompt, model, url, contract=contract))
         except (urllib.error.URLError, TimeoutError, OSError) as e:
             evidence["attempts"].append(
                 {"n": i + 1, "raw": None, "schema_valid": False,
@@ -109,7 +152,7 @@ def run_pipeline(requirement: str, model: str = DEFAULT_MODEL, retries: int = 3,
         latency = round(time.time() - t0, 2)
         evidence["total_latency_s"] = round(evidence["total_latency_s"] + latency, 2)
         try:
-            proposal = ConfigSuggestion.model_validate_json(raw)
+            proposal = contract.model_validate_json(raw)
             evidence["attempts"].append(
                 {"n": i + 1, "raw": raw, "schema_valid": True, "error": None, "latency_s": latency}
             )
@@ -138,7 +181,7 @@ def run_pipeline(requirement: str, model: str = DEFAULT_MODEL, retries: int = 3,
         return evidence
 
     # Only PROPOSE decisions reach the deterministic gate.
-    gate = Gate(load_intent(Path(DEFAULT_INTENT)))
+    gate = Gate(load_intent(Path(intent_path or DEFAULT_INTENT)))
     report = gate.run(
         proposal.model_dump_json(),
         source=f"llm:{evidence['model']}",

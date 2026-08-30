@@ -10,3 +10,10 @@ __pycache__/
 
 # Temporary logs
 *.log
+
+# Interactive-session scratch (console, dashboard, reset tools) — not evidence
+docs/evidence/_console-scratch/
+docs/evidence/_dashboard-scratch/
+docs/evidence/_reset-scratch/
+# Transient config backup taken during free-form runs
+docs/evidence/**/_config-backup/

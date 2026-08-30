@@ -1,0 +1,98 @@
+---
+# Ја применува декларираната пристапна политика врз лабораторијата со градба
+# на претпријатие.
+#
+# Ја заменува apply-policy.sh. Разликата не е во јазикот туку во тоа што овде
+# идемпотентноста е видлива: секоја задача пријавува ok или changed, па второто
+# извршување мора да заврши со changed=0. Кај школката тоа се тврди, овде се
+# гледа во излезот.
+#
+# Правилата и уредите не се напишани тука — доаѓаат од датотеката со намера
+# преку динамичкиот инвентар, па не можат да се разидат од она што го проверува
+# валидаторот.
+#
+# Извршување:
+#   export THESIS_INTENT=labs/topology-ent/intent_ent.yaml
+#   export CLAB_PREFIX=clab-thesis-net-ent-
+#   ansible-playbook -i ansible/inventory_from_intent.py ansible/apply_policy_ent.yml
+
+- name: Примени ја пристапната политика на уредите што ја носат
+  hosts: routers
+  gather_facts: false
+  any_errors_fatal: true
+
+  tasks:
+    - name: Прескокни ги уредите без забрани во намерата
+      ansible.builtin.meta: end_host
+      when: deny_rules | default([]) | length == 0
+
+    - name: Обезбеди iptables во контејнерот
+      ansible.builtin.raw: >-
+        command -v iptables >/dev/null 2>&1
+        || apk add --no-cache iptables >/dev/null 2>&1
+      changed_when: false
+
+    # Дозволата за веќе воспоставени врски мора да стои НАД забраните, инаку
+    # одговорот на дозволен сообраќај паѓа во забраната DMZ -> внатре и
+    # дозволената насока престанува да работи. Затоа прво се брише ако постои,
+    # па се внесува повторно на позиција 1 откако забраните се на место.
+    - name: Провери дали постои дозвола за воспоставени врски
+      ansible.builtin.raw: >-
+        iptables -C FORWARD -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+      register: conntrack_present
+      failed_when: false
+      changed_when: false
+
+    - name: Отстрани ја дозволата за да се внесе повторно најгоре
+      ansible.builtin.raw: >-
+        iptables -D FORWARD -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+      when: conntrack_present.rc == 0
+      changed_when: false
+
+    - name: Провери кои забрани веќе постојат
+      ansible.builtin.raw: >-
+        iptables -C FORWARD -s {{ item.src }} -d {{ item.dst }} -j DROP
+      loop: "{{ deny_rules }}"
+      loop_control:
+        label: "{{ item.src }} -> {{ item.dst }}"
+      register: deny_present
+      failed_when: false
+      changed_when: false
+
+    - name: Внеси ги забраните што недостасуваат
+      ansible.builtin.raw: >-
+        iptables -I FORWARD -s {{ item.item.src }} -d {{ item.item.dst }} -j DROP
+      loop: "{{ deny_present.results }}"
+      loop_control:
+        label: "{{ item.item.src }} -> {{ item.item.dst }}"
+      when: item.rc != 0
+      changed_when: true
+
+    - name: Постави ја дозволата за воспоставени врски на прво место
+      ansible.builtin.raw: >-
+        iptables -I FORWARD 1 -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+      changed_when: conntrack_present.rc != 0
+
+    - name: Прочитај го синџирот FORWARD
+      ansible.builtin.raw: iptables -S FORWARD
+      register: forward_chain
+      changed_when: false
+
+    - name: Потврди дека дозволата за воспоставени врски е прва
+      ansible.builtin.assert:
+        that:
+          - forward_chain.stdout_lines
+            | select('search', 'conntrack')
+            | list | length == 1
+          - (forward_chain.stdout_lines
+             | reject('search', '^-P')
+             | list | first) is search('conntrack')
+        fail_msg: >-
+          Дозволата за воспоставени врски не е прва во синџирот на
+          {{ inventory_hostname }}; забраната би го блокирала и одговорот
+          на дозволен сообраќај.
+        success_msg: "Редоследот на правилата е исправен"
+
+    - name: Прикажи го синџирот
+      ansible.builtin.debug:
+        msg: "{{ forward_chain.stdout_lines | reject('equalto', '') | list }}"

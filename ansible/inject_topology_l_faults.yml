@@ -28,7 +28,7 @@
           echo FAULT_F1_INJECTED
         else
           echo FAULT_F1_ALREADY_PRESENT
-        fi
+        fiansible
       when: inventory_hostname == 'r1'
       register: fault_f1
       changed_when: "'FAULT_F1_INJECTED' in fault_f1.stdout"

@@ -1,0 +1,34 @@
+Add three-condition ablation, live demonstration dashboard, and Week 8 analysis
+
+Experiments (560 live runs this week; 848 total across the project):
+- Live counterfactual ablation: the 80 proposals the gate rejected, applied
+  verbatim to the live lab. 32 broke intent, 6 breached policy, 24 broke
+  connectivity. Converts the Week 7 post-hoc claim into measurement.
+- Free-form ungoverned baseline: 120 runs across 12 models emitting raw router
+  commands. 40 policy breaches (33%), 53 broke intent, 4 runs left the lab
+  unrecoverable by any reconfiguration command.
+- Three-condition comparison: breach rate 0% (guarded, n=360) -> 8% (schema
+  only, n=80) -> 33% (free-form, n=120).
+
+Findings:
+- The schema alone gives a fourfold breach reduction with no gate; the gate and
+  approval layer remove the remainder. Neither layer is redundant.
+- A configuration-fact check (C1) caught a relocated security control that
+  reachability testing (R2) passed - direct support for the two-part validator.
+- All 12 models breached the policy at least once when ungoverned.
+- Damage concentrates entirely in requests where the correct answer is refusal:
+  legitimate requests produced 2 damaged runs out of 48.
+- Gate confusion matrix: recall 1.000, 0 false negatives over 156 gated runs.
+
+Tooling:
+- live_llm_dashboard.py: browser console with Guarded/Ungoverned toggle;
+  guarded mode visualises schema -> decision -> gate -> SHA-256 approval and
+  refuses deployment if the proposal bytes change after approval.
+- live_llm_console.py, reset_lab.py (--check, --deep),
+  live_counterfactual_ablation.py, live_freeform_ablation.py,
+  analyze_three_conditions.py, analyze_cross_task.py, analyze_v2_deep.py
+- Test suite: 186 passing, entirely offline.
+
+Documentation: MASTER-RECORD.md, three-condition-results.md,
+live-ablation-results.md, cross-task-results.md, explain-13m-results.md,
+uniqueness-and-contributions.md, plus ready-to-paste Macedonian chapter text.

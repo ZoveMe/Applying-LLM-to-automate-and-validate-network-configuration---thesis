@@ -30,7 +30,8 @@ import yaml
 from pydantic import ValidationError
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from schema import ConfigSuggestion  # noqa: E402
+from schema import (ConfigSuggestion, devices_in_intent,  # noqa: E402
+                    suggestion_model_for)
 
 PKG_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_INTENT = PKG_ROOT / "intent" / "intended_state.yaml"
@@ -40,30 +41,66 @@ def load_intent(path: Path) -> dict:
     return yaml.safe_load(path.read_text())
 
 
+def transit_links(intent: dict) -> list[tuple[str, dict[str, str]]]:
+    """(subnet, {router: address}) for every transit link in the intent.
+
+    Two shapes are in use and both must work, otherwise the gate silently
+    knows nothing about a lab's transits — and a gate that knows no next hops
+    rejects every route, which looks like the model failing:
+
+        transit:  {subnet: ..., r1: ..., r2: ...}          one link
+        transits: [{subnet: ..., ips: {r1: ..., r2: ...}}]  a list
+    """
+    links: list[tuple[str, dict[str, str]]] = []
+    for item in intent.get("transits", []):
+        links.append((item["subnet"], dict(item.get("ips", {}))))
+    single = intent.get("transit")
+    if isinstance(single, dict):
+        links.append((single["subnet"],
+                      {k: v for k, v in single.items() if k != "subnet"}))
+    if not links:
+        raise ValueError(
+            "intent declares no transit link: the gate would have no valid "
+            "next hop for any router and would reject every route")
+    return links
+
+
 def known_networks(intent: dict) -> dict:
     nets = {
         name: ipaddress.ip_network(seg["subnet"])
         for name, seg in intent["segments"].items()
     }
-    nets["transit"] = ipaddress.ip_network(intent["transit"]["subnet"])
+    for index, (subnet, _) in enumerate(transit_links(intent)):
+        # The single-transit lab named this key exactly "transit"; keeping that
+        # name for the first link leaves its reports unchanged.
+        key = "transit" if index == 0 else f"transit{index + 1}"
+        nets[key] = ipaddress.ip_network(subnet)
     return nets
 
 
 def valid_next_hops(intent: dict) -> dict[str, set[str]]:
-    """Return only the directly connected peer address for each router."""
-    return {
-        "r1": {str(ipaddress.ip_address(intent["transit"]["r2"]))},
-        "r2": {str(ipaddress.ip_address(intent["transit"]["r1"]))},
-    }
+    """The directly connected peer addresses of each router.
+
+    Derived from the transit links rather than hard-coded for r1 and r2, so a
+    lab with five routers and six links is constrained just as tightly.
+    """
+    hops: dict[str, set[str]] = {}
+    for _, ips in transit_links(intent):
+        for router in ips:
+            hops.setdefault(router, set()).update(
+                str(ipaddress.ip_address(addr))
+                for peer, addr in ips.items() if peer != router
+            )
+    return hops
 
 
 def directly_connected_networks(intent: dict) -> dict[str, set]:
     """Return the networks attached directly to each router."""
-    transit = ipaddress.ip_network(intent["transit"]["subnet"])
-    connected = {
-        "r1": {transit},
-        "r2": {transit},
-    }
+    connected: dict[str, set] = {}
+    for subnet, ips in transit_links(intent):
+        network = ipaddress.ip_network(subnet)
+        for router in ips:
+            connected.setdefault(router, set()).add(network)
 
     for segment in intent["segments"].values():
         node = segment["connected_to"]
@@ -108,6 +145,10 @@ def traffic_overlaps(rule, intended_pair: dict) -> bool:
 class Gate:
     def __init__(self, intent: dict):
         self.intent = intent
+        # Договорот се гради од уредите на оваа лабораторија. За основната
+        # тоа дава ист список како замрзнатиот, па нејзиното однесување
+        # останува непроменето.
+        self.model = suggestion_model_for(devices_in_intent(intent))
         self.nets = known_networks(intent)
         self.hops_by_node = valid_next_hops(intent)
         self.connected_by_node = directly_connected_networks(intent)
@@ -127,7 +168,7 @@ class Gate:
     # ---------- layer 1: schema ----------
     def check_schema(self, raw: str):
         try:
-            suggestion = ConfigSuggestion.model_validate_json(raw)
+            suggestion = self.model.model_validate_json(raw)
             self.record("schema", "suggestion conforms to ConfigSuggestion schema", True)
             return suggestion
         except ValidationError as e:

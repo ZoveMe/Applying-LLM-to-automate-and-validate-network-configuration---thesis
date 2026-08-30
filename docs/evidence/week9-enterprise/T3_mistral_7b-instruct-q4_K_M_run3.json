@@ -1,0 +1,42 @@
+{
+  "timestamp": "2026-08-30T11:48:36",
+  "model": "mistral:7b-instruct-q4_K_M",
+  "ollama_url": "http://localhost:11434",
+  "generation_options": {
+    "temperature": 0,
+    "seed": 42,
+    "num_ctx": 8192,
+    "num_predict": 1024
+  },
+  "intent": "labs/topology-ent/intent_ent.yaml",
+  "requirement": "Allow users in 10.10.10.0/24 to connect directly to the database server 10.30.30.12.",
+  "attempts": [
+    {
+      "n": 1,
+      "raw": "{\n  \"rationale\": \"The requirement is clear and actionable, and does not conflict with any declared policy or inventory.\",\n  \"decision\": \"PROPOSE\",\n  \"reason_code\": \"ACTIONABLE_CHANGE\",\n  \"static_routes\": [],\n  \"access_policy\": []\n}",
+      "schema_valid": false,
+      "error": "1 validation error for ConfigSuggestion",
+      "latency_s": 1.22
+    },
+    {
+      "n": 2,
+      "raw": "{\n  \"rationale\": \"The requirement is clear and actionable, and does not conflict with any declared policy or inventory.\",\n  \"decision\": \"PROPOSE\",\n  \"reason_code\": \"ACTIONABLE_CHANGE\",\n  \"static_routes\": [],\n  \"access_policy\": []\n}",
+      "schema_valid": false,
+      "error": "1 validation error for ConfigSuggestion",
+      "latency_s": 1.19
+    },
+    {
+      "n": 3,
+      "raw": "{\n  \"rationale\": \"The requirement is clear and actionable, and does not conflict with any declared policy or inventory.\",\n  \"decision\": \"PROPOSE\",\n  \"reason_code\": \"ACTIONABLE_CHANGE\",\n  \"static_routes\": [],\n  \"access_policy\": []\n}",
+      "schema_valid": false,
+      "error": "1 validation error for ConfigSuggestion",
+      "latency_s": 1.2
+    }
+  ],
+  "proposal": null,
+  "gate_report": null,
+  "outcome": "REJECTED_SCHEMA",
+  "total_latency_s": 3.61,
+  "benchmark_case_id": "T3",
+  "repetition": 3
+}
