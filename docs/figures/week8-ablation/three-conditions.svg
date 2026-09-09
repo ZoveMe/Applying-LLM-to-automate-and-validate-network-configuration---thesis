@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="470" viewBox="0 0 1080 470" role="img" aria-labelledby="title description">
+<title id="title">Security policy breach rate by safety condition</title>
+<desc id="description">560 live runs across twelve models; breach rate rises from 0 percent under the guarded pipeline to 33 percent when all deterministic structure is removed.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="40" y="44" font-family="Arial, sans-serif" font-size="25" font-weight="700" fill="#111827">Removing deterministic structure raises the breach rate</text>
+<text x="40" y="73" font-family="Arial, sans-serif" font-size="14" fill="#4b5563">560 live runs · 12 local models · identical requirements, laboratory and validator in every condition.</text>
+
+<rect x="40" y="97" width="18" height="18" rx="3" fill="#dc2626"/>
+<text x="67" y="111" font-family="Arial, sans-serif" font-size="14" fill="#1f2937">Security policy breached</text>
+<rect x="300" y="97" width="18" height="18" rx="3" fill="#f59e0b"/>
+<text x="327" y="111" font-family="Arial, sans-serif" font-size="14" fill="#1f2937">Network left not matching intent</text>
+
+<line x1="360" y1="145" x2="360" y2="395" stroke="#e5e7eb" stroke-width="1"/>
+<text x="360" y="425" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#6b7280">0%</text>
+<line x1="490" y1="145" x2="490" y2="395" stroke="#e5e7eb" stroke-width="1"/>
+<text x="490" y="425" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#6b7280">10%</text>
+<line x1="620" y1="145" x2="620" y2="395" stroke="#e5e7eb" stroke-width="1"/>
+<text x="620" y="425" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#6b7280">20%</text>
+<line x1="750" y1="145" x2="750" y2="395" stroke="#e5e7eb" stroke-width="1"/>
+<text x="750" y="425" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#6b7280">30%</text>
+<line x1="880" y1="145" x2="880" y2="395" stroke="#e5e7eb" stroke-width="1"/>
+<text x="880" y="425" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#6b7280">40%</text>
+<line x1="1010" y1="145" x2="1010" y2="395" stroke="#e5e7eb" stroke-width="1"/>
+<text x="1010" y="425" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#6b7280">50%</text>
+
+<text x="345" y="180" text-anchor="end" font-family="Arial, sans-serif" font-size="14" font-weight="700" fill="#1f2937">A · Guarded pipeline</text>
+<text x="345" y="199" text-anchor="end" font-family="Arial, sans-serif" font-size="11.5" fill="#6b7280">schema + gate + approval · n=360</text>
+<rect x="360" y="160" width="2" height="18" rx="1" fill="#dc2626"/>
+<text x="370" y="174" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#dc2626">0%</text>
+<rect x="360" y="181" width="2" height="18" rx="1" fill="#f59e0b"/>
+<text x="370" y="195" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#b45309">0%</text>
+
+<text x="345" y="265" text-anchor="end" font-family="Arial, sans-serif" font-size="14" font-weight="700" fill="#1f2937">B · Structured, ungoverned</text>
+<text x="345" y="284" text-anchor="end" font-family="Arial, sans-serif" font-size="11.5" fill="#6b7280">schema only, applied verbatim · n=80</text>
+<rect x="360" y="245" width="97.5" height="18" rx="3" fill="#dc2626"/>
+<text x="465" y="259" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#374151">7.5%</text>
+<rect x="360" y="266" width="520" height="18" rx="3" fill="#f59e0b"/>
+<text x="887" y="280" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#374151">40%</text>
+
+<text x="345" y="350" text-anchor="end" font-family="Arial, sans-serif" font-size="14" font-weight="700" fill="#1f2937">C · Free-form, ungoverned</text>
+<text x="345" y="369" text-anchor="end" font-family="Arial, sans-serif" font-size="11.5" fill="#6b7280">any router command · n=120</text>
+<rect x="360" y="330" width="433.3" height="18" rx="3" fill="#dc2626"/>
+<text x="800" y="344" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#374151">33.3%</text>
+<rect x="360" y="351" width="574.2" height="18" rx="3" fill="#f59e0b"/>
+<text x="941" y="365" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#374151">44.2%</text>
+
+<text x="40" y="455" font-family="Arial, sans-serif" font-size="12" fill="#6b7280">Every one of the twelve models breached the policy at least once under condition C. Condition A admitted no unsafe change in 360 runs.</text>
+</svg>

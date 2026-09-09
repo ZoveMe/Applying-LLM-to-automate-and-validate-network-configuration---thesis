@@ -1,0 +1,99 @@
+{
+  "timestamp": "2026-08-30T11:48:25",
+  "model": "mistral:7b-instruct-q4_K_M",
+  "ollama_url": "http://localhost:11434",
+  "generation_options": {
+    "temperature": 0,
+    "seed": 42,
+    "num_ctx": 8192,
+    "num_predict": 1024
+  },
+  "intent": "labs/topology-ent/intent_ent.yaml",
+  "requirement": "Add a static route on core2 so that the DMZ network 10.30.30.0/24 is reachable, using a next hop that exists in the inventory.",
+  "attempts": [
+    {
+      "n": 1,
+      "raw": "{\n  \"rationale\": \"The requirement is clear and actionable. The proposed change does not conflict with any declared policy or references invalid inventory. Therefore, we propose to add a static route on core2 so that the DMZ network 10.30.30.0/24 is reachable.\",\n  \"decision\": \"PROPOSE\",\n  \"reason_code\": \"ACTIONABLE_CHANGE\",\n  \"static_routes\": [\n    {\n      \"node\": \"core2\",\n      \"prefix\": \"10.30.30.0/24\",\n      \"next_hop\": \"10.0.0.18\"\n    }\n  ]\n}",
+      "schema_valid": true,
+      "error": null,
+      "latency_s": 2.86
+    }
+  ],
+  "proposal": {
+    "rationale": "The requirement is clear and actionable. The proposed change does not conflict with any declared policy or references invalid inventory. Therefore, we propose to add a static route on core2 so that the DMZ network 10.30.30.0/24 is reachable.",
+    "decision": "PROPOSE",
+    "reason_code": "ACTIONABLE_CHANGE",
+    "static_routes": [
+      {
+        "node": "core2",
+        "prefix": "10.30.30.0/24",
+        "next_hop": "10.0.0.18"
+      }
+    ],
+    "access_policy": []
+  },
+  "gate_report": {
+    "gate": "static_pre_deployment",
+    "suggestion_file": "llm:mistral:7b-instruct-q4_K_M",
+    "timestamp": "2026-08-30T11:48:28",
+    "verdict": "PASS_PENDING_HUMAN_APPROVAL",
+    "summary": {
+      "passed": 8,
+      "failed": 0
+    },
+    "checks": [
+      {
+        "category": "schema",
+        "description": "suggestion conforms to ConfigSuggestion schema",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "category": "topology",
+        "description": "route on core2: 10.30.30.0/24 via 10.0.0.18",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "category": "policy",
+        "description": "intent requires DENY 10.10.10.0/24 -> 10.30.30.12/32",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "category": "policy",
+        "description": "intent requires DENY 10.20.20.0/24 -> 10.30.30.12/32",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "category": "policy",
+        "description": "intent requires DENY 10.30.30.0/24 -> 10.10.10.0/24",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "category": "policy",
+        "description": "intent requires DENY 10.10.10.0/24 -> 10.10.99.0/24",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "category": "policy",
+        "description": "intent requires ALLOW 10.10.10.0/24 -> 10.30.30.11/32",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "category": "policy",
+        "description": "intent requires ALLOW 10.20.20.0/24 -> 10.10.10.0/24",
+        "result": "PASS",
+        "detail": ""
+      }
+    ]
+  },
+  "outcome": "ACCEPTED",
+  "total_latency_s": 2.86,
+  "benchmark_case_id": "T2",
+  "repetition": 3
+}

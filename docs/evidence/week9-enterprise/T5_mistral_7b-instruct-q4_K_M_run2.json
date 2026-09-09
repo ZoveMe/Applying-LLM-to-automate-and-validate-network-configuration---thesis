@@ -1,0 +1,132 @@
+{
+  "timestamp": "2026-08-30T11:48:48",
+  "model": "mistral:7b-instruct-q4_K_M",
+  "ollama_url": "http://localhost:11434",
+  "generation_options": {
+    "temperature": 0,
+    "seed": 42,
+    "num_ctx": 8192,
+    "num_predict": 1024
+  },
+  "intent": "labs/topology-ent/intent_ent.yaml",
+  "requirement": "Configure BGP peering between core1 and our internet provider, and redistribute the OSPF routes into it.",
+  "attempts": [
+    {
+      "n": 1,
+      "raw": "{\n  \"rationale\": \"The requirement is clear and actionable. It does not conflict with any declared policy or references invalid inventory. The request can be represented using static_routes.\",\n  \"decision\": \"PROPOSE\",\n  \"reason_code\": \"ACTIONABLE_CHANGE\",\n  \"static_routes\": [\n    {\n      \"node\": \"core1\",\n      \"prefix\": \"10.0.0.0/30\",\n      \"next_hop\": \"10.0.0.2\"\n    },\n    {\n      \"node\": \"core1\",\n      \"prefix\": \"10.0.0.4/30\",\n      \"next_hop\": \"10.0.0.6\"\n    },\n    {\n      \"node\": \"core1\",\n      \"prefix\": \"10.0.0.12/30\",\n      \"next_hop\": \"10.0.0.14\"\n    },\n    {\n      \"node\": \"core1\",\n      \"prefix\": \"10.0.0.20/30\",\n      \"next_hop\": \"10.0.0.22\"\n    }\n  ]\n}",
+      "schema_valid": true,
+      "error": null,
+      "latency_s": 6.68
+    }
+  ],
+  "proposal": {
+    "rationale": "The requirement is clear and actionable. It does not conflict with any declared policy or references invalid inventory. The request can be represented using static_routes.",
+    "decision": "PROPOSE",
+    "reason_code": "ACTIONABLE_CHANGE",
+    "static_routes": [
+      {
+        "node": "core1",
+        "prefix": "10.0.0.0/30",
+        "next_hop": "10.0.0.2"
+      },
+      {
+        "node": "core1",
+        "prefix": "10.0.0.4/30",
+        "next_hop": "10.0.0.6"
+      },
+      {
+        "node": "core1",
+        "prefix": "10.0.0.12/30",
+        "next_hop": "10.0.0.14"
+      },
+      {
+        "node": "core1",
+        "prefix": "10.0.0.20/30",
+        "next_hop": "10.0.0.22"
+      }
+    ],
+    "access_policy": []
+  },
+  "gate_report": {
+    "gate": "static_pre_deployment",
+    "suggestion_file": "llm:mistral:7b-instruct-q4_K_M",
+    "timestamp": "2026-08-30T11:48:54",
+    "verdict": "REJECT",
+    "summary": {
+      "passed": 7,
+      "failed": 4
+    },
+    "checks": [
+      {
+        "category": "schema",
+        "description": "suggestion conforms to ConfigSuggestion schema",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "category": "topology",
+        "description": "route on core1: 10.0.0.0/30 via 10.0.0.2",
+        "result": "FAIL",
+        "detail": "10.0.0.0/30 is directly connected to core1; a static route is nonsensical"
+      },
+      {
+        "category": "topology",
+        "description": "route on core1: 10.0.0.4/30 via 10.0.0.6",
+        "result": "FAIL",
+        "detail": "10.0.0.4/30 is directly connected to core1; a static route is nonsensical"
+      },
+      {
+        "category": "topology",
+        "description": "route on core1: 10.0.0.12/30 via 10.0.0.14",
+        "result": "FAIL",
+        "detail": "10.0.0.12/30 is directly connected to core1; a static route is nonsensical"
+      },
+      {
+        "category": "topology",
+        "description": "route on core1: 10.0.0.20/30 via 10.0.0.22",
+        "result": "FAIL",
+        "detail": "10.0.0.20/30 is directly connected to core1; a static route is nonsensical"
+      },
+      {
+        "category": "policy",
+        "description": "intent requires DENY 10.10.10.0/24 -> 10.30.30.12/32",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "category": "policy",
+        "description": "intent requires DENY 10.20.20.0/24 -> 10.30.30.12/32",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "category": "policy",
+        "description": "intent requires DENY 10.30.30.0/24 -> 10.10.10.0/24",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "category": "policy",
+        "description": "intent requires DENY 10.10.10.0/24 -> 10.10.99.0/24",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "category": "policy",
+        "description": "intent requires ALLOW 10.10.10.0/24 -> 10.30.30.11/32",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "category": "policy",
+        "description": "intent requires ALLOW 10.20.20.0/24 -> 10.10.10.0/24",
+        "result": "PASS",
+        "detail": ""
+      }
+    ]
+  },
+  "outcome": "REJECTED_GATE",
+  "total_latency_s": 6.68,
+  "benchmark_case_id": "T5",
+  "repetition": 2
+}

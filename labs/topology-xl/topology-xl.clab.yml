@@ -1,0 +1,147 @@
+name: thesis-net-xl
+
+# Extended laboratory: 3 routers, 3 switches, 3 PCs, 2 servers.
+#
+#            pc1   pc2                    srv1  srv2
+#              \   /                        \   /
+#               sw1                          sw2
+#                |                            |
+#               r1 ──────── 10.0.12.0/30 ──── r2
+#                 \                          /
+#                  10.0.13.0/30    10.0.23.0/30
+#                    \                      /
+#                     \────────  r3  ──────/
+#                                |
+#                               sw3
+#                                |
+#                               pc3
+#
+# Segments      client     10.0.1.0/24   on r1  (pc1 .10, pc2 .11)
+#               server     10.0.2.0/24   on r2  (srv1 .10, srv2 .11)
+#               management 10.0.99.0/24  on r3  (pc3 .10)
+# Transits      r1-r2 10.0.12.0/30 · r1-r3 10.0.13.0/30 · r2-r3 10.0.23.0/30
+# Policy        client -> management DENIED on r1
+#
+# The routers form a triangle, so every pair is directly connected — unlike
+# the two-router core lab, no single transit link partitions the network.
+#
+# This lab is ADDITIVE. The core lab (topology.clab.yml) and its intent file
+# are unchanged, so the frozen Chapter 6 evidence remains valid.
+
+topology:
+  nodes:
+    # ------------------------------------------------------------ routers
+    r1:
+      kind: linux
+      image: frrouting/frr:latest
+      binds:
+        - configs/r1/frr.conf:/etc/frr/frr.conf
+        - ../../configs/daemons:/etc/frr/daemons
+    r2:
+      kind: linux
+      image: frrouting/frr:latest
+      binds:
+        - configs/r2/frr.conf:/etc/frr/frr.conf
+        - ../../configs/daemons:/etc/frr/daemons
+    r3:
+      kind: linux
+      image: frrouting/frr:latest
+      binds:
+        - configs/r3/frr.conf:/etc/frr/frr.conf
+        - ../../configs/daemons:/etc/frr/daemons
+
+    # ----------------------------------------------------------- switches
+    # Containerlab has no switch node type, so each switch is a Linux
+    # bridge: all its ports are enslaved to br0 and carry no IP address.
+    # This is what lets several hosts share one router interface.
+    sw1:
+      kind: linux
+      image: alpine:latest
+      exec:
+        - apk add --no-cache iproute2
+        - ip link add name br0 type bridge
+        - ip link set br0 up
+        - ip link set eth1 master br0
+        - ip link set eth2 master br0
+        - ip link set eth3 master br0
+        - ip link set eth1 up
+        - ip link set eth2 up
+        - ip link set eth3 up
+    sw2:
+      kind: linux
+      image: alpine:latest
+      exec:
+        - apk add --no-cache iproute2
+        - ip link add name br0 type bridge
+        - ip link set br0 up
+        - ip link set eth1 master br0
+        - ip link set eth2 master br0
+        - ip link set eth3 master br0
+        - ip link set eth1 up
+        - ip link set eth2 up
+        - ip link set eth3 up
+    sw3:
+      kind: linux
+      image: alpine:latest
+      exec:
+        - apk add --no-cache iproute2
+        - ip link add name br0 type bridge
+        - ip link set br0 up
+        - ip link set eth1 master br0
+        - ip link set eth2 master br0
+        - ip link set eth1 up
+        - ip link set eth2 up
+
+    # ---------------------------------------------------------------- PCs
+    pc1:
+      kind: linux
+      image: alpine:latest
+      exec:
+        - ip addr add 10.0.1.10/24 dev eth1
+        - ip route add 10.0.0.0/16 via 10.0.1.1
+    pc2:
+      kind: linux
+      image: alpine:latest
+      exec:
+        - ip addr add 10.0.1.11/24 dev eth1
+        - ip route add 10.0.0.0/16 via 10.0.1.1
+    pc3:
+      kind: linux
+      image: alpine:latest
+      exec:
+        - ip addr add 10.0.99.10/24 dev eth1
+        - ip route add 10.0.0.0/16 via 10.0.99.1
+
+    # ------------------------------------------------------------ servers
+    srv1:
+      kind: linux
+      image: alpine:latest
+      exec:
+        - ip addr add 10.0.2.10/24 dev eth1
+        - ip route add 10.0.0.0/16 via 10.0.2.1
+    srv2:
+      kind: linux
+      image: alpine:latest
+      exec:
+        - ip addr add 10.0.2.11/24 dev eth1
+        - ip route add 10.0.0.0/16 via 10.0.2.1
+
+  links:
+    # client segment: pc1 and pc2 behind sw1 on r1:eth1
+    - endpoints: ["r1:eth1", "sw1:eth1"]
+    - endpoints: ["sw1:eth2", "pc1:eth1"]
+    - endpoints: ["sw1:eth3", "pc2:eth1"]
+
+    # server segment: srv1 and srv2 behind sw2 on r2:eth2
+    - endpoints: ["r2:eth2", "sw2:eth1"]
+    - endpoints: ["sw2:eth2", "srv1:eth1"]
+    - endpoints: ["sw2:eth3", "srv2:eth1"]
+
+    # management segment: pc3 behind sw3 on r3:eth3
+    - endpoints: ["r3:eth3", "sw3:eth1"]
+    - endpoints: ["sw3:eth2", "pc3:eth1"]
+
+    # router triangle
+    - endpoints: ["r1:eth2", "r2:eth1"]
+    - endpoints: ["r1:eth3", "r3:eth1"]
+    - endpoints: ["r2:eth3", "r3:eth2"]

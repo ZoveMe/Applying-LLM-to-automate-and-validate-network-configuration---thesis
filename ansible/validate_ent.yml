@@ -1,0 +1,119 @@
+---
+# Независна проверка на состојбата, напишана во Ansible.
+#
+# Истите проверки веќе постојат во validation/dynamic_validate.py. Ова не е
+# повторување без причина: двете имплементации се напишани одделно, читаат од
+# истата датотека со намера и мора да дадат ист вердикт. Ако се разидат, барем
+# едната е погрешна — што е посилна гаранција отколку една програма што се
+# согласува сама со себе.
+#
+# Разликата во пристапот е намерна. Python валидаторот ги собира сите проверки
+# и на крај пресметува вердикт. Ansible застанува на првото прекршување, што е
+# однесување на алатка за управување, не на алатка за мерење.
+#
+# Извршување:
+#   export THESIS_INTENT=labs/topology-ent/intent_ent.yaml
+#   export CLAB_PREFIX=clab-thesis-net-ent-
+#   ansible-playbook -i ansible/inventory_from_intent.py ansible/validate_ent.yml
+
+- name: Проверки на контролниот план
+  hosts: routers
+  gather_facts: false
+  any_errors_fatal: true
+
+  tasks:
+    - name: Прочитај ги рутите што намерата ги очекува
+      ansible.builtin.raw: "vtysh -c 'show ip route {{ item.prefix }}'"
+      loop: "{{ route_facts | default([]) }}"
+      loop_control:
+        label: "{{ inventory_hostname }} {{ item.prefix }}"
+      register: route_reads
+      changed_when: false
+
+    # Кај динамичко рутирање следниот скок не е фиксен — постојат две патеки и
+    # протоколот бира. Затоа се проверува потеклото и тоа дали записот е
+    # избран, а не конкретна адреса.
+    - name: Потврди дека секој префикс е научен од очекуваниот протокол
+      ansible.builtin.assert:
+        that:
+          - item.stdout is search('Known via "' ~ item.item.protocol ~ '"')
+          - item.stdout is search('best')
+        fail_msg: >-
+          {{ inventory_hostname }}: {{ item.item.prefix }} не е научена преку
+          {{ item.item.protocol | upper }} или не е избрана за пренос.
+          Статичка рута внесена рачно би ја направила мрежата достапна, но не
+          би докажала дека протоколот работи.
+        success_msg: "{{ item.item.id }} · {{ item.item.prefix }} преку {{ item.item.protocol | upper }}"
+      loop: "{{ route_reads.results | default([]) }}"
+      loop_control:
+        label: "{{ item.item.id | default('-') }}"
+      when: route_reads.results is defined
+
+    - name: Прочитај го синџирот FORWARD
+      ansible.builtin.raw: iptables -S FORWARD
+      register: forward_chain
+      changed_when: false
+      when: rule_facts | default([]) | length > 0
+
+    - name: Потврди дека секое задолжително правило постои
+      ansible.builtin.assert:
+        that:
+          - forward_chain.stdout is search(item.match | regex_escape)
+        fail_msg: >-
+          {{ inventory_hostname }}: недостасува правилото {{ item.match }}.
+          Проверката на достапност не би го забележала ова ако сообраќајот е
+          блокиран на друго место.
+        success_msg: "{{ item.id }} · правилото постои"
+      loop: "{{ rule_facts | default([]) }}"
+      loop_control:
+        label: "{{ item.id }}"
+      when: rule_facts | default([]) | length > 0
+
+
+- name: Проверки на податочниот план
+  hosts: endpoints
+  gather_facts: false
+  any_errors_fatal: true
+
+  tasks:
+    - name: Издвои ги проверките што почнуваат од овој уред
+      ansible.builtin.set_fact:
+        my_checks: >-
+          {{ reachability_checks
+             | selectattr('src', 'equalto', inventory_hostname)
+             | list }}
+
+    - name: Испрати пакети до целите
+      ansible.builtin.raw: "ping -c 2 -W 2 {{ item.dst }}"
+      loop: "{{ my_checks }}"
+      loop_control:
+        label: "{{ item.id }} {{ inventory_hostname }} -> {{ item.dst }}"
+      register: pings
+      failed_when: false
+      changed_when: false
+
+    - name: Потврди дека исходот одговара на намерата
+      ansible.builtin.assert:
+        that:
+          - (item.rc == 0) == (item.item.expect == 'reachable')
+        fail_msg: >-
+          {{ item.item.id }}: {{ inventory_hostname }} -> {{ item.item.dst }}
+          требаше да биде {{ item.item.expect }}, а не е.
+          ({{ item.item.why }})
+        success_msg: "{{ item.item.id }} · {{ item.item.expect }}"
+      loop: "{{ pings.results }}"
+      loop_control:
+        label: "{{ item.item.id }}"
+
+
+- name: Заклучок
+  hosts: localhost
+  gather_facts: false
+  connection: local
+  tasks:
+    - name: Мрежата одговара на намерата
+      ansible.builtin.debug:
+        msg: >-
+          MATCHES_INTENT — сите проверки на контролниот и на податочниот план
+          поминаа за {{ hostvars[groups['routers'][0]]['lab_name']
+                        | default('лабораторијата') }}.

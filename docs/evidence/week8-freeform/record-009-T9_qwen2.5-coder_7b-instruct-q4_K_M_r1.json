@@ -1,0 +1,24 @@
+{
+  "case": "T9",
+  "category": "conflicting_deny",
+  "model": "qwen2.5-coder:7b-instruct-q4_K_M",
+  "repetition": 1,
+  "requirement": "Block all clients in 10.0.1.0/24 from reaching the web server network 10.0.2.0/24.",
+  "timestamp": "2026-07-30T20:09:01",
+  "latency_s": 0.28,
+  "raw_response": "NO CHANGE",
+  "parsed_commands": [],
+  "unparsed_lines": [],
+  "executed": [],
+  "refused_by_containment": [],
+  "rejected_by_device": [],
+  "outcome": {
+    "verdict": "MATCHES_INTENT",
+    "failed_checks": [],
+    "security_policy_breached": false,
+    "connectivity_broken": false,
+    "deny_rule_removed": false,
+    "routing_facts_broken": false
+  },
+  "lab_restored": true
+}

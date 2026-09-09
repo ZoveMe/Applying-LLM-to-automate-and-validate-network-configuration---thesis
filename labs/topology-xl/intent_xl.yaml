@@ -1,0 +1,74 @@
+# intent_xl.yaml — intended state of the extended laboratory.
+# Same structure as intent/intended_state.yaml so the validator, the gate and
+# the dashboard can all use it unchanged.
+#
+# 3 routers (triangle) · 3 switches · 3 PCs · 2 servers
+
+lab: thesis-net-xl
+
+segments:
+  client:
+    subnet: 10.0.1.0/24
+    connected_to: r1
+    gateway: 10.0.1.1
+    host: 10.0.1.10          # pc1; pc2 is 10.0.1.11 on the same segment
+  server:
+    subnet: 10.0.2.0/24
+    connected_to: r2
+    gateway: 10.0.2.1
+    host: 10.0.2.10          # srv1; srv2 is 10.0.2.11
+  management:
+    subnet: 10.0.99.0/24
+    connected_to: r3
+    gateway: 10.0.99.1
+    host: 10.0.99.10         # pc3
+
+transits:
+  - subnet: 10.0.12.0/30
+    ips: {r1: 10.0.12.1, r2: 10.0.12.2}
+  - subnet: 10.0.13.0/30
+    ips: {r1: 10.0.13.1, r3: 10.0.13.2}
+  - subnet: 10.0.23.0/30
+    ips: {r2: 10.0.23.1, r3: 10.0.23.2}
+
+# ---- Dynamic checks: expected data-plane behaviour ----
+reachability:
+  - {id: R1, src: pc1,  dst: 10.0.2.10,  expect: reachable,   method: ping,
+     why: "client -> server is allowed"}
+  - {id: R2, src: pc1,  dst: 10.0.99.10, expect: unreachable, method: ping,
+     why: "client -> management is denied by policy"}
+  - {id: R3, src: srv1, dst: 10.0.1.10,  expect: reachable,   method: ping,
+     why: "server -> client return path"}
+  - {id: R4, src: pc1,  dst: 10.0.1.11,  expect: reachable,   method: ping,
+     why: "pc1 -> pc2 across sw1, proves layer-2 switching works"}
+  - {id: R5, src: srv1, dst: 10.0.2.11,  expect: reachable,   method: ping,
+     why: "srv1 -> srv2 across sw2"}
+  - {id: R6, src: pc3,  dst: 10.0.2.10,  expect: reachable,   method: ping,
+     why: "management -> server is allowed"}
+
+# ---- Dynamic checks: expected control-plane facts ----
+# Six route facts: each router needs a path to the two segments it does not
+# host. On the triangle every destination is one hop away.
+config_facts:
+  - {id: C1, node: r1, kind: iptables_rule,
+     match: "-s 10.0.1.0/24 -d 10.0.99.0/24 -j DROP",
+     why: "deny rule present in r1 FORWARD chain"}
+  - {id: C2, node: r1, kind: route, prefix: 10.0.2.0/24,  via: 10.0.12.2,
+     why: "r1 reaches server via r2"}
+  - {id: C3, node: r1, kind: route, prefix: 10.0.99.0/24, via: 10.0.13.2,
+     why: "r1 reaches management via r3 directly"}
+  - {id: C4, node: r2, kind: route, prefix: 10.0.1.0/24,  via: 10.0.12.1,
+     why: "r2 reaches client via r1"}
+  - {id: C5, node: r2, kind: route, prefix: 10.0.99.0/24, via: 10.0.23.2,
+     why: "r2 reaches management via r3"}
+  - {id: C6, node: r3, kind: route, prefix: 10.0.1.0/24,  via: 10.0.13.1,
+     why: "r3 reaches client via r1"}
+  - {id: C7, node: r3, kind: route, prefix: 10.0.2.0/24,  via: 10.0.23.1,
+     why: "r3 reaches server via r2"}
+
+# ---- Static-gate constraints ----
+policy_rules:
+  must_deny:
+    - {node: r1, src: 10.0.1.0/24, dst: 10.0.99.0/24}
+  must_allow:
+    - {src: 10.0.1.0/24, dst: 10.0.2.0/24}

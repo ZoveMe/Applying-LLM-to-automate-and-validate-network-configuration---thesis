@@ -1,0 +1,67 @@
+{
+  "gate": "dynamic_post_deployment",
+  "timestamp": "2026-07-30T19:24:30",
+  "verdict": "MATCHES_INTENT",
+  "summary": {
+    "passed": 7,
+    "failed": 0
+  },
+  "checks": [
+    {
+      "id": "R1",
+      "type": "reachability",
+      "description": "h-client -> 10.0.2.10 (client -> server is allowed (web access))",
+      "expected": "reachable",
+      "actual": "reachable",
+      "result": "PASS"
+    },
+    {
+      "id": "R2",
+      "type": "reachability",
+      "description": "h-client -> 10.0.99.10 (client -> management is denied by policy)",
+      "expected": "unreachable",
+      "actual": "unreachable",
+      "result": "PASS"
+    },
+    {
+      "id": "R3",
+      "type": "reachability",
+      "description": "h-server -> 10.0.1.10 (server -> client return path)",
+      "expected": "reachable",
+      "actual": "reachable",
+      "result": "PASS"
+    },
+    {
+      "id": "C1",
+      "type": "config_fact",
+      "description": "iptables on r1: -s 10.0.1.0/24 -d 10.0.99.0/24 -j DROP (deny rule present in r1 FORWARD chain)",
+      "expected": "present",
+      "actual": "present",
+      "result": "PASS"
+    },
+    {
+      "id": "C2",
+      "type": "config_fact",
+      "description": "route on r1: 10.0.2.0/24 via 10.0.12.2 (r1 reaches server segment via transit)",
+      "expected": "via 10.0.12.2",
+      "actual": "10.0.2.0/24 nhid 14 via 10.0.12.2 dev eth2 proto 196 metric 20",
+      "result": "PASS"
+    },
+    {
+      "id": "C3",
+      "type": "config_fact",
+      "description": "route on r1: 10.0.99.0/24 via 10.0.12.2 (r1 reaches management segment via transit)",
+      "expected": "via 10.0.12.2",
+      "actual": "10.0.99.0/24 nhid 14 via 10.0.12.2 dev eth2 proto 196 metric 20",
+      "result": "PASS"
+    },
+    {
+      "id": "C4",
+      "type": "config_fact",
+      "description": "route on r2: 10.0.1.0/24 via 10.0.12.1 (r2 reaches client segment via transit)",
+      "expected": "via 10.0.12.1",
+      "actual": "10.0.1.0/24 nhid 12 via 10.0.12.1 dev eth1 proto 196 metric 20",
+      "result": "PASS"
+    }
+  ]
+}

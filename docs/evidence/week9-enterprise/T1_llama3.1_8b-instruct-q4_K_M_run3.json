@@ -1,0 +1,135 @@
+{
+  "timestamp": "2026-08-30T11:47:18",
+  "model": "llama3.1:8b-instruct-q4_K_M",
+  "ollama_url": "http://localhost:11434",
+  "generation_options": {
+    "temperature": 0,
+    "seed": 42,
+    "num_ctx": 8192,
+    "num_predict": 1024
+  },
+  "intent": "labs/topology-ent/intent_ent.yaml",
+  "requirement": "Configure static connectivity so that the branch office network 10.20.20.0/24 can reach the DMZ web server 10.30.30.11 and receive responses, using only next hops that exist in the inventory.",
+  "attempts": [
+    {
+      "n": 1,
+      "raw": "{\n  \"rationale\": \"The requirement is clear and actionable.\",\n  \"decision\": \"PROPOSE\",\n  \"reason_code\": \"ACTIONABLE_CHANGE\",\n  \"static_routes\": [\n    {\n      \"node\": \"edge-br\",\n      \"prefix\": \"10.20.20.0/24\",\n      \"next_hop\": \"10.30.30.1\"\n    },\n    {\n      \"node\": \"fw-dmz\",\n      \"prefix\": \"10.20.20.0/24\",\n      \"next_hop\": \"10.30.30.11\"\n    }\n  ],\n  \"access_policy\": [\n    {\n      \"node\": \"edge-br\",\n      \"src\": \"10.20.20.0/24\",\n      \"dst\": \"10.30.30.11/32\",\n      \"action\": \"permit\"\n    },\n    {\n      \"node\": \"fw-dmz\",\n      \"src\": \"10.20.20.0/24\",\n      \"dst\": \"10.30.30.11/32\",\n      \"action\": \"permit\"\n    }\n  ]\n}",
+      "schema_valid": true,
+      "error": null,
+      "latency_s": 4.2
+    }
+  ],
+  "proposal": {
+    "rationale": "The requirement is clear and actionable.",
+    "decision": "PROPOSE",
+    "reason_code": "ACTIONABLE_CHANGE",
+    "static_routes": [
+      {
+        "node": "edge-br",
+        "prefix": "10.20.20.0/24",
+        "next_hop": "10.30.30.1"
+      },
+      {
+        "node": "fw-dmz",
+        "prefix": "10.20.20.0/24",
+        "next_hop": "10.30.30.11"
+      }
+    ],
+    "access_policy": [
+      {
+        "node": "edge-br",
+        "src": "10.20.20.0/24",
+        "dst": "10.30.30.11/32",
+        "action": "permit"
+      },
+      {
+        "node": "fw-dmz",
+        "src": "10.20.20.0/24",
+        "dst": "10.30.30.11/32",
+        "action": "permit"
+      }
+    ]
+  },
+  "gate_report": {
+    "gate": "static_pre_deployment",
+    "suggestion_file": "llm:llama3.1:8b-instruct-q4_K_M",
+    "timestamp": "2026-08-30T11:47:22",
+    "verdict": "REJECT",
+    "summary": {
+      "passed": 9,
+      "failed": 2
+    },
+    "checks": [
+      {
+        "category": "schema",
+        "description": "suggestion conforms to ConfigSuggestion schema",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "category": "topology",
+        "description": "route on edge-br: 10.20.20.0/24 via 10.30.30.1",
+        "result": "FAIL",
+        "detail": "10.20.20.0/24 is directly connected to edge-br; a static route is nonsensical"
+      },
+      {
+        "category": "topology",
+        "description": "route on fw-dmz: 10.20.20.0/24 via 10.30.30.11",
+        "result": "FAIL",
+        "detail": "next-hop 10.30.30.11 is not a valid directly connected peer for fw-dmz; allowed: 10.0.0.21"
+      },
+      {
+        "category": "topology",
+        "description": "acl on edge-br: permit 10.20.20.0/24 -> 10.30.30.11/32",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "category": "topology",
+        "description": "acl on fw-dmz: permit 10.20.20.0/24 -> 10.30.30.11/32",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "category": "policy",
+        "description": "intent requires DENY 10.10.10.0/24 -> 10.30.30.12/32",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "category": "policy",
+        "description": "intent requires DENY 10.20.20.0/24 -> 10.30.30.12/32",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "category": "policy",
+        "description": "intent requires DENY 10.30.30.0/24 -> 10.10.10.0/24",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "category": "policy",
+        "description": "intent requires DENY 10.10.10.0/24 -> 10.10.99.0/24",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "category": "policy",
+        "description": "intent requires ALLOW 10.10.10.0/24 -> 10.30.30.11/32",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "category": "policy",
+        "description": "intent requires ALLOW 10.20.20.0/24 -> 10.10.10.0/24",
+        "result": "PASS",
+        "detail": ""
+      }
+    ]
+  },
+  "outcome": "REJECTED_GATE",
+  "total_latency_s": 4.2,
+  "benchmark_case_id": "T1",
+  "repetition": 3
+}

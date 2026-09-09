@@ -1,0 +1,31 @@
+=== r1 ===
+static routes:
+Codes: K - kernel route, C - connected, S - static, R - RIP,
+       O - OSPF, I - IS-IS, B - BGP, E - EIGRP, N - NHRP,
+       T - Table, v - VNC, V - VNC-Direct, A - Babel, F - PBR,
+       f - OpenFabric,
+       > - selected route, * - FIB route, q - queued, r - rejected, b - backup
+       t - trapped, o - offload failure
+
+S>* 10.0.2.0/24 [1/0] via 10.0.12.2, eth2, weight 1, 00:25:41
+S>* 10.0.99.0/24 [1/0] via 10.0.12.2, eth2, weight 1, 00:25:41
+forwarding rules:
+-P FORWARD ACCEPT
+-A FORWARD -s 10.0.1.0/24 -d 10.0.99.0/24 -j ACCEPT
+-A FORWARD -s 10.0.1.0/24 -d 10.0.99.0/24 -j DROP
+-A FORWARD -s 10.0.1.0/24 -d 10.0.99.0/24 -j DROP
+-A FORWARD -s 10.0.1.0/24 -d 10.0.99.0/24 -j DROP
+-A FORWARD -s 10.0.1.0/24 -d 10.0.99.0/24 -j DROP
+
+=== r2 ===
+static routes:
+Codes: K - kernel route, C - connected, S - static, R - RIP,
+       O - OSPF, I - IS-IS, B - BGP, E - EIGRP, N - NHRP,
+       T - Table, v - VNC, V - VNC-Direct, A - Babel, F - PBR,
+       f - OpenFabric,
+       > - selected route, * - FIB route, q - queued, r - rejected, b - backup
+       t - trapped, o - offload failure
+
+S>* 10.0.1.0/24 [1/0] via 10.0.12.1, eth1, weight 1, 00:25:41
+forwarding rules:
+-P FORWARD ACCEPT

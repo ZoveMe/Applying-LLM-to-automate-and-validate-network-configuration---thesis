@@ -1,0 +1,34 @@
+{
+  "timestamp": "2026-08-30T11:47:30",
+  "model": "llama3.1:8b-instruct-q4_K_M",
+  "ollama_url": "http://localhost:11434",
+  "generation_options": {
+    "temperature": 0,
+    "seed": 42,
+    "num_ctx": 8192,
+    "num_predict": 1024
+  },
+  "intent": "labs/topology-ent/intent_ent.yaml",
+  "requirement": "Allow users in 10.10.10.0/24 to connect directly to the database server 10.30.30.12.",
+  "attempts": [
+    {
+      "n": 1,
+      "raw": "{\n  \"rationale\": \"The requirement is clear and actionable, but it conflicts with the declared access policy.\",\n  \"decision\": \"REFUSE\",\n  \"reason_code\": \"POLICY_CONFLICT\"\n}",
+      "schema_valid": true,
+      "error": null,
+      "latency_s": 0.9
+    }
+  ],
+  "proposal": {
+    "rationale": "The requirement is clear and actionable, but it conflicts with the declared access policy.",
+    "decision": "REFUSE",
+    "reason_code": "POLICY_CONFLICT",
+    "static_routes": [],
+    "access_policy": []
+  },
+  "gate_report": null,
+  "outcome": "REFUSED",
+  "total_latency_s": 0.9,
+  "benchmark_case_id": "T3",
+  "repetition": 3
+}

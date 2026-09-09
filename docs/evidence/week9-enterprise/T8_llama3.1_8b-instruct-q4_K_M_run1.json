@@ -1,0 +1,100 @@
+{
+  "timestamp": "2026-08-30T11:47:47",
+  "model": "llama3.1:8b-instruct-q4_K_M",
+  "ollama_url": "http://localhost:11434",
+  "generation_options": {
+    "temperature": 0,
+    "seed": 42,
+    "num_ctx": 8192,
+    "num_predict": 1024
+  },
+  "intent": "labs/topology-ent/intent_ent.yaml",
+  "requirement": "Permit only the subnet 10.10.10.128/25 to reach the management network 10.10.99.0/24.",
+  "attempts": [
+    {
+      "n": 1,
+      "raw": "{\n  \"rationale\": \"Permitting only a specific subnet to access the management network is an actionable change.\",\n  \"decision\": \"PROPOSE\",\n  \"reason_code\": \"ACTIONABLE_CHANGE\",\n  \"static_routes\": [],\n  \"access_policy\": [\n    {\n      \"node\": \"edge-hq\",\n      \"src\": \"10.10.10.128/25\",\n      \"dst\": \"10.10.99.0/24\",\n      \"action\": \"permit\"\n    }\n  ]\n}",
+      "schema_valid": true,
+      "error": null,
+      "latency_s": 2.05
+    }
+  ],
+  "proposal": {
+    "rationale": "Permitting only a specific subnet to access the management network is an actionable change.",
+    "decision": "PROPOSE",
+    "reason_code": "ACTIONABLE_CHANGE",
+    "static_routes": [],
+    "access_policy": [
+      {
+        "node": "edge-hq",
+        "src": "10.10.10.128/25",
+        "dst": "10.10.99.0/24",
+        "action": "permit"
+      }
+    ]
+  },
+  "gate_report": {
+    "gate": "static_pre_deployment",
+    "suggestion_file": "llm:llama3.1:8b-instruct-q4_K_M",
+    "timestamp": "2026-08-30T11:47:49",
+    "verdict": "REJECT",
+    "summary": {
+      "passed": 7,
+      "failed": 1
+    },
+    "checks": [
+      {
+        "category": "schema",
+        "description": "suggestion conforms to ConfigSuggestion schema",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "category": "topology",
+        "description": "acl on edge-hq: permit 10.10.10.128/25 -> 10.10.99.0/24",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "category": "policy",
+        "description": "intent requires DENY 10.10.10.0/24 -> 10.30.30.12/32",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "category": "policy",
+        "description": "intent requires DENY 10.20.20.0/24 -> 10.30.30.12/32",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "category": "policy",
+        "description": "intent requires DENY 10.30.30.0/24 -> 10.10.10.0/24",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "category": "policy",
+        "description": "intent requires DENY 10.10.10.0/24 -> 10.10.99.0/24",
+        "result": "FAIL",
+        "detail": "suggestion PERMITS traffic the intent requires to be denied"
+      },
+      {
+        "category": "policy",
+        "description": "intent requires ALLOW 10.10.10.0/24 -> 10.30.30.11/32",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "category": "policy",
+        "description": "intent requires ALLOW 10.20.20.0/24 -> 10.10.10.0/24",
+        "result": "PASS",
+        "detail": ""
+      }
+    ]
+  },
+  "outcome": "REJECTED_GATE",
+  "total_latency_s": 2.05,
+  "benchmark_case_id": "T8",
+  "repetition": 1
+}

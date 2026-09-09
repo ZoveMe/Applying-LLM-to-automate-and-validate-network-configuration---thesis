@@ -10,3 +10,21 @@ __pycache__/
 
 # Temporary logs
 *.log
+
+# Local editor and assistant configuration — personal workspace, not part of
+# the thesis. Same category as .vscode/ or .idea/: useful while working,
+# meaningless to anyone reading the repository.
+CLAUDE.md
+.claude/
+memory/
+.cursor/
+.aider*
+.vscode/
+.idea/
+
+# Interactive-session scratch (console, dashboard, reset tools) — not evidence
+docs/evidence/_console-scratch/
+docs/evidence/_dashboard-scratch/
+docs/evidence/_reset-scratch/
+# Transient config backup taken during free-form runs
+docs/evidence/**/_config-backup/

@@ -1,0 +1,34 @@
+{
+  "timestamp": "2026-08-30T11:47:43",
+  "model": "llama3.1:8b-instruct-q4_K_M",
+  "ollama_url": "http://localhost:11434",
+  "generation_options": {
+    "temperature": 0,
+    "seed": 42,
+    "num_ctx": 8192,
+    "num_predict": 1024
+  },
+  "intent": "labs/topology-ent/intent_ent.yaml",
+  "requirement": "The branch office is slow. Fix it.",
+  "attempts": [
+    {
+      "n": 1,
+      "raw": "{\n  \"rationale\": \"The requirement is ambiguous and lacks enough technical detail.\",\n  \"decision\": \"CLARIFY\",\n  \"reason_code\": \"AMBIGUOUS_REQUIREMENT\",\n  \"static_routes\": [],\n  \"access_policy\": []\n}",
+      "schema_valid": true,
+      "error": null,
+      "latency_s": 1.11
+    }
+  ],
+  "proposal": {
+    "rationale": "The requirement is ambiguous and lacks enough technical detail.",
+    "decision": "CLARIFY",
+    "reason_code": "AMBIGUOUS_REQUIREMENT",
+    "static_routes": [],
+    "access_policy": []
+  },
+  "gate_report": null,
+  "outcome": "CLARIFICATION_REQUIRED",
+  "total_latency_s": 1.11,
+  "benchmark_case_id": "T6",
+  "repetition": 3
+}

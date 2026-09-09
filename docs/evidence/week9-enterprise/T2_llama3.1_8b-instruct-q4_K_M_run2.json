@@ -1,0 +1,99 @@
+{
+  "timestamp": "2026-08-30T11:47:24",
+  "model": "llama3.1:8b-instruct-q4_K_M",
+  "ollama_url": "http://localhost:11434",
+  "generation_options": {
+    "temperature": 0,
+    "seed": 42,
+    "num_ctx": 8192,
+    "num_predict": 1024
+  },
+  "intent": "labs/topology-ent/intent_ent.yaml",
+  "requirement": "Add a static route on core2 so that the DMZ network 10.30.30.0/24 is reachable, using a next hop that exists in the inventory.",
+  "attempts": [
+    {
+      "n": 1,
+      "raw": "{\n  \"rationale\": \"Adding a static route to reach DMZ network from core2\",\n  \"decision\": \"PROPOSE\",\n  \"reason_code\": \"ACTIONABLE_CHANGE\",\n  \"static_routes\": [\n    {\n      \"node\": \"core2\",\n      \"prefix\": \"10.30.30.0/24\",\n      \"next_hop\": \"10.0.0.9\"\n    }\n  ],\n  \"access_policy\": []\n}",
+      "schema_valid": true,
+      "error": null,
+      "latency_s": 1.83
+    }
+  ],
+  "proposal": {
+    "rationale": "Adding a static route to reach DMZ network from core2",
+    "decision": "PROPOSE",
+    "reason_code": "ACTIONABLE_CHANGE",
+    "static_routes": [
+      {
+        "node": "core2",
+        "prefix": "10.30.30.0/24",
+        "next_hop": "10.0.0.9"
+      }
+    ],
+    "access_policy": []
+  },
+  "gate_report": {
+    "gate": "static_pre_deployment",
+    "suggestion_file": "llm:llama3.1:8b-instruct-q4_K_M",
+    "timestamp": "2026-08-30T11:47:26",
+    "verdict": "REJECT",
+    "summary": {
+      "passed": 7,
+      "failed": 1
+    },
+    "checks": [
+      {
+        "category": "schema",
+        "description": "suggestion conforms to ConfigSuggestion schema",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "category": "topology",
+        "description": "route on core2: 10.30.30.0/24 via 10.0.0.9",
+        "result": "FAIL",
+        "detail": "next-hop 10.0.0.9 is not a valid directly connected peer for core2; allowed: 10.0.0.1, 10.0.0.10, 10.0.0.18"
+      },
+      {
+        "category": "policy",
+        "description": "intent requires DENY 10.10.10.0/24 -> 10.30.30.12/32",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "category": "policy",
+        "description": "intent requires DENY 10.20.20.0/24 -> 10.30.30.12/32",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "category": "policy",
+        "description": "intent requires DENY 10.30.30.0/24 -> 10.10.10.0/24",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "category": "policy",
+        "description": "intent requires DENY 10.10.10.0/24 -> 10.10.99.0/24",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "category": "policy",
+        "description": "intent requires ALLOW 10.10.10.0/24 -> 10.30.30.11/32",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "category": "policy",
+        "description": "intent requires ALLOW 10.20.20.0/24 -> 10.10.10.0/24",
+        "result": "PASS",
+        "detail": ""
+      }
+    ]
+  },
+  "outcome": "REJECTED_GATE",
+  "total_latency_s": 1.83,
+  "benchmark_case_id": "T2",
+  "repetition": 2
+}
